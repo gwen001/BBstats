@@ -59,7 +59,7 @@ __grabber__
 __db__
 - manual bounty change  
 
-** web ui **
+__web ui__
 - search engine filter: program  
 - search engine filter: with bounty  
 - search engine filter: type  
@@ -70,7 +70,7 @@ __db__
 - scrollbar fot both part, left and right  
 - calendar plugin for dates
 
-** graph **
+__graph__
 - graph: bounties per month per program  
 - graph: bounties per month per type  
 - graph: bounties per month per platform  
