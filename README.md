@@ -52,11 +52,11 @@ You can choose which graph you want to display in `config.php`.
 
 
 ### TODO
-** grabber **
+__grabber__
 - add more platform (Bugcrowd, Cobalt)  
 - find a better way to connect to Hackerone  
 
-** db **
+__db__
 - manual bounty change  
 
 ** web ui **
