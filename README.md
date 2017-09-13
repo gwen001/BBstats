@@ -81,6 +81,6 @@ You can choose which graph you want to display in `config.php`.
 - graph: reports per month per platform  
 - graph: reports per status  
 
-
+	
 I don't believe in license.  
 You can do want you want with this program.  
