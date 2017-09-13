@@ -1,5 +1,5 @@
 # Bug Bounty Stats
-It's a tool that would be able (in the future) to aggregrate your reports/bounties from different platform in order to create combined stats and graphs.  
+It's a tool that would be able (in the future) to aggregrate your reports/bounties from different platforms in order to create combined stats and graphs.  
 
 
 ### Requirements
@@ -53,7 +53,7 @@ Examples:
 You can choose which graph you want to display in `config.php`.  
 
 
-### TODO
+### TODO
 ** grabber **
 - add more platform (Bugcrowd, Cobalt)  
 - find a better way to connect to Hackerone  
