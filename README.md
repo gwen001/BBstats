@@ -24,7 +24,6 @@ firefox http://127.0.0.1/BBstats/
 
 ### Grabber
 ```
-<!-- help -->
 Usage: php data-grabber.php -p <platform> [OPTIONS]
 
 Options:
@@ -45,7 +44,6 @@ Examples:
 	php data-grabber.php -p hackerone -a n
 	php data-grabber.php -p hackerone -a u -n 50
 	php data-grabber.php -p hackerone -a o -rr -tt
-<!-- /help -->
 ```
 
 
