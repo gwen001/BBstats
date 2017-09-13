@@ -57,16 +57,10 @@ __grabber__
 - find a better way to connect to Hackerone  
 
 __db__
-- manual bounty change  
+- manual bounty edit  
 
 __web ui__
-- search engine filter: program  
-- search engine filter: with bounty  
-- search engine filter: type  
-- quick edit: rating  
-- quick edit: edit types  
-- quick edit: delete types  
-- choose what graph you want to display  
+- search engine filter: with/without bounty  
 - scrollbar fot both part, left and right  
 - calendar plugin for dates
 
