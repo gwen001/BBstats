@@ -42,6 +42,10 @@ if( !$db->load(DATABASE_FILE) ) {
 	            fillOpacity: 0.5
 	        },
 			series: {
+				marker: {
+					//enabled: false,
+                    radius: 2
+                },
 				cursor: 'pointer',
 				point: {
 					events: {

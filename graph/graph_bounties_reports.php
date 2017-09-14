@@ -19,6 +19,9 @@ if( !$db->load(DATABASE_FILE) ) {
 	    credits: {
 	        enabled: false
 	    },
+	    chart: {
+	        type: 'line'
+	    },
 	    title: {
 	        text: 'Bounties/Reports/Reputation evolution'
 	    },
@@ -46,6 +49,10 @@ if( !$db->load(DATABASE_FILE) ) {
 	    },
 	    plotOptions: {
 			series: {
+				marker: {
+					//enabled: false,
+                    radius: 2
+                },
 				cursor: 'pointer',
 				point: {
 					events: {
