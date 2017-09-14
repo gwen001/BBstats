@@ -92,8 +92,8 @@ class Report
 	
 	public function getTotalReputation() {
 		$total = 0;
-		foreach( $this->reputations as $b ) {
-			$total += $b->points;
+		foreach( $this->reputations as $r ) {
+			$total += $r->points;
 		}
 		return $total;
 	}

@@ -121,14 +121,14 @@ if( !$db->load(DATABASE_FILE) ) {
 	    	reload: function(){
 		    	$.post( 'ajax.php', {'_a':'graph-reload','graph':'reports-rating'}, function(data) {
 			        data = jQuery.parseJSON( data );
-        			reports_rating.series[0].setData( data.total );
-        			reports_rating.series[1].setData( data.p0 );
-        			reports_rating.series[2].setData( data.p1 );
-        			reports_rating.series[3].setData( data.p2 );
-        			reports_rating.series[4].setData( data.p3 );
-        			reports_rating.series[5].setData( data.p4 );
-        			reports_rating.series[6].setData( data.p5 );
-        			reports_rating.series[7].setData( data.average );
+        			reports_rating.series[0].setData( data.p0 );
+        			reports_rating.series[1].setData( data.p1 );
+        			reports_rating.series[2].setData( data.p2 );
+        			reports_rating.series[3].setData( data.p3 );
+        			reports_rating.series[4].setData( data.p4 );
+        			reports_rating.series[5].setData( data.p5 );
+        			reports_rating.series[6].setData( data.average_report );
+        			reports_rating.series[7].setData( data.average_rate );
         		});
 		    }
 	    }]

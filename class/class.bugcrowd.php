@@ -6,10 +6,10 @@
  * - gwen -
  */
 
-class Cobalt extends Platform
+class Bugcrowd extends Platform
 {
 	public function __construct() {
-		$this->setName( 'cobalt' );
+		$this->setName( 'bugcrowd' );
 	}
 	
 	
@@ -59,7 +59,7 @@ class Cobalt extends Platform
 	
 	
 	public static function getReportLink( $report_id ) {
-		return 'https://app.cobalt.io/godaddy/godaddy-beta/reports/'.$report_id;
+		return 'https://bugcrowd.com/';
 	}
 
 
@@ -67,7 +67,7 @@ class Cobalt extends Platform
 	{
 	}
 
-	
+
 	public function grabReputationFromFile()
 	{
 	}

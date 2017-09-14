@@ -49,7 +49,9 @@ if( !$db->load(DATABASE_FILE) ) {
 				point: {
 					events: {
 						click: function () {
-							setFilterTerm( this.name );
+							if( this.name != 'Other' ) {
+								setFilterTerm( this.name );
+							}
 						}
 					}
 				}

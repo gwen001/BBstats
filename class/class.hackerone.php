@@ -6,31 +6,15 @@
  * - gwen -
  */
 
-class Hackerone
+class Hackerone extends Platform
 {
-	public $name = 'Hackerone';
-	
-	public $username = '';
-	public $password = '';
-	private $cookie_file;
+	CONST REPORT_PAGE_LIMIT = 100;
 	
 	private $cookies = '';
-	private $t_bugs = [];
-	private $t_reports = [];
-	private $t_reports_final = [];
-
+	
 	
 	public function __construct() {
-		//$this->cookie_file = tempnam('/tmp', 'cook_');
-	}
-	
-	
-	public function getReportsFinal() {
-		return $this->t_reports_final;
-	}
-	public function setReportsFinal( $t_reports ) {
-		$this->t_reports_final = $t_reports;
-		return true;
+		$this->setName( 'hackerone' );
 	}
 	
 	
@@ -43,58 +27,42 @@ class Hackerone
 	
 	public function connect()
 	{
-		/*
 		$c = curl_init();
-		curl_setopt( $c, CURLOPT_URL, 'https://hackerone.com/sessions' );
+		curl_setopt( $c, CURLOPT_URL, 'https://hackerone.com/bugs.json?subject=user&report_id=0&view=all&substates%5B%5D=new&substates%5B%5D=triaged&substates%5B%5D=needs-more-info&substates%5B%5D=resolved&substates%5B%5D=informative&substates%5B%5D=not-applicable&substates%5B%5D=duplicate&substates%5B%5D=spam&reported_to_team=&text_query=&program_states%5B%5D=2&program_states%5B%5D=3&program_states%5B%5D=4&program_states%5B%5D=5&sort_type=latest_activity&sort_direction=descending&limit=25&page=1' );
 		//curl_setopt( $c, CURLOPT_SSL_VERIFYPEER, false );
-		curl_setopt( $c, CURLOPT_TIMEOUT, 5 );
+		curl_setopt( $c, CURLOPT_TIMEOUT, 15 );
 		curl_setopt( $c, CURLOPT_FOLLOWLOCATION, true );
-		curl_setopt( $c, CURLOPT_COOKIEJAR, $this->cookie_file );
-		curl_setopt( $c, CURLOPT_COOKIEFILE, $this->cookie_file );
-		curl_setopt( $c, CURLOPT_POST, true );
-		curl_setopt( $c, CURLOPT_POSTFIELDS, 'email=g@10degres.net&password=AQWzsx123&remember_me=false&fingerprint=257e5f05a9c037c485abf291e5c73607' );
-		//curl_setopt( $c, CURLOPT_POSTFIELDS, 'email='.$this->username.'&password='.$this->password.'&remember_me=false&fingerprint=257e5f05a9c037c485abf291e5c73607' );
-		curl_setopt( $c, CURLOPT_HTTPHEADER, ['User-Agent: Mozilla/5.0 (X11; Ubuntu; Linux x86_64; rv:55.0) Gecko/20100101 Firefox/55.0'] );
+		curl_setopt( $c, CURLOPT_COOKIE, $this->cookies );
+		//curl_setopt( $c, CURLOPT_COOKIEJAR, $this->cookie_file );
+		//curl_setopt( $c, CURLOPT_COOKIEFILE, $this->cookie_file );
 		curl_setopt( $c, CURLOPT_RETURNTRANSFER, true );
-		$r = curl_exec($c );
+		$data = curl_exec($c );
 		$t_info = curl_getinfo( $c );
-		var_dump( $r );
-		var_dump( $t_info );
-		*/
-		/*
-		$c = curl_init();
-		curl_setopt( $c, CURLOPT_URL, 'https://hackerone.com/users/sign_in' );
-		//curl_setopt( $c, CURLOPT_SSL_VERIFYPEER, false );
-		curl_setopt( $c, CURLOPT_TIMEOUT, 5 );
-		curl_setopt( $c, CURLOPT_FOLLOWLOCATION, true );
-		curl_setopt( $c, CURLOPT_COOKIEJAR, $this->cookie_file );
-		curl_setopt( $c, CURLOPT_COOKIEFILE, $this->cookie_file );
-		curl_setopt( $c, CURLOPT_POST, true );
-		//curl_setopt( $c, CURLOPT_POSTFIELDS, 'authenticity_token=q%2FeHCkQA8lbaNA3Ykyu8pj%2B8smlAzI2yAsqv1pMu4pUw1kh4FqEHr%2BjLUx5t6Cbt1T7dmRNfUSTbJrVxXez6vA%3D%3D&user%5Bemail%5D='.$this->username.'&user%5Bpassword%5D='.$this->password );
-		curl_setopt( $c, CURLOPT_POSTFIELDS, ['authenticity_token'=>'uQUzmITdJKDaMhWo1cyoVCUoRZFJRjPz 4mntlqI6xKtvYywDOxkuuortLnQ6tcLzBQDif2xPGBFYP4vhw LvQ==','user[email]'=>'g@10degres.net','user[password]'=>'AQWzsx123'] );
-		curl_setopt( $c, CURLOPT_HTTPHEADER, ['User-Agent: Mozilla/5.0 (X11; Ubuntu; Linux x86_64; rv:55.0) Gecko/20100101 Firefox/55.0'] );
-		curl_setopt( $c, CURLOPT_RETURNTRANSFER, true );
-		$r = curl_exec($c );
-		$t_info = curl_getinfo( $c );
-		var_dump( $r );
-		var_dump( $t_info );
-		*/
-
+		//var_dump( $data );
+		//var_dump( $t_info );
+		
+		if( !$data || stristr($data,'You need to sign in') || stristr($data,'Sign in to HackerOne') ) {
+		//if( !$data || $t_info['http_code']!=200 || !$t_info['size_download'] ) {
+			return false;
+		}
+		
 		return true;
 	}
 	
 	
 	public function grabReportList( $quantity )
 	{
-		$limit = 100;
-		$n_page = ceil( $quantity/$limit );
+		$bbstats = BBstats::getInstance();
+		if( $bbstats->isImport() ) {
+			return $this->grabReportListFromFile( $quantity );
+		}
+
+		$n_page = ceil( $quantity/self::REPORT_PAGE_LIMIT );
 		
 		for( $page=1 ; $page<=$n_page ; $page++ )
 		{
-			echo '.';
-			
 			$c = curl_init();
-			curl_setopt( $c, CURLOPT_URL, 'https://hackerone.com/bugs.json?subject=user&report_id=0&view=all&substates%5B%5D=new&substates%5B%5D=triaged&substates%5B%5D=needs-more-info&substates%5B%5D=resolved&substates%5B%5D=informative&substates%5B%5D=not-applicable&substates%5B%5D=duplicate&substates%5B%5D=spam&reported_to_team=&text_query=&program_states%5B%5D=2&program_states%5B%5D=3&program_states%5B%5D=4&program_states%5B%5D=5&sort_type=latest_activity&sort_direction=descending&limit='.$limit.'&page='.$page );
+			curl_setopt( $c, CURLOPT_URL, 'https://hackerone.com/bugs.json?subject=user&report_id=0&view=all&substates%5B%5D=new&substates%5B%5D=triaged&substates%5B%5D=needs-more-info&substates%5B%5D=resolved&substates%5B%5D=informative&substates%5B%5D=not-applicable&substates%5B%5D=duplicate&substates%5B%5D=spam&reported_to_team=&text_query=&program_states%5B%5D=2&program_states%5B%5D=3&program_states%5B%5D=4&program_states%5B%5D=5&sort_type=latest_activity&sort_direction=descending&limit='.self::REPORT_PAGE_LIMIT.'&page='.$page );
 			//curl_setopt( $c, CURLOPT_SSL_VERIFYPEER, false );
 			curl_setopt( $c, CURLOPT_TIMEOUT, 15 );
 			curl_setopt( $c, CURLOPT_FOLLOWLOCATION, true );
@@ -109,8 +77,9 @@ class Hackerone
 			//var_dump( $data );
 			//var_dump( $t_info );
 			
-			if( !$data ) {
+			if( !$data || stristr($data,'You need to sign in') || stristr($data,'Sign in to HackerOne') ) {
 			//if( !$data || $t_info['http_code']!=200 || !$t_info['size_download'] ) {
+				Utils::_print( '.', 'dark_grey' );
 				return false;
 			} else {
 				$t_data = json_decode( $data, true );
@@ -119,25 +88,61 @@ class Hackerone
 					$n_page = $t_data['pages'];
 				}
 			}
+			
+			Utils::_print( '.', 'white' );
 		}
 		
-		echo "\n";
-
 		return $n_page;
 	}
 	
 	
-	public function grabReports( $db, $quantity, $update, $overwrite )
+	protected function grabReportListFromFile( $quantity )
 	{
+		$bbstats = BBstats::getInstance();
+		
+		$fp = fopen( $bbstats->getSourceFile(), 'r' );
+		if( !$fp ) {
+			return false;
+		}
+		
+		for( $i=0 ; ($line=fgetcsv($fp)) && $i<=$quantity ; $i++ )
+		{
+			if( !$i ) {
+				continue;
+			}
+			
+			$report_id = $line[0];
+			$this->t_bugs[ $report_id ] = array_merge( ['id'=>$report_id], $line);
+		}
+		
+		Utils::_print( '.', 'white' );
+
+		return $i;
+	}
+	
+	
+	public function grabReports( $quantity, $t_reputation )
+	{
+		$bbstats = BBstats::getInstance();
+		if( $bbstats->isImport() ) {
+			return $this->grabReportsFromFile( $quantity, $t_reputation );
+		}
+		
+		$db = $bbstats->getDatabase();
+		
 		for( $n=0 ; $n<$quantity && list($k,$bug)=each($this->t_bugs) ; $n++ )
 		{
 			$report_id = $bug['id'];
-			$key = Report::generateKey( $this->name, $report_id );
+			$key = Report::generateKey( $this->getName(), $report_id );
 
-			if( !$db->exists($key) || $update || $overwrite )
+			if( !$db->exists($key) || $bbstats->updateAllowed() || $bbstats->overwriteAllowed() )
 			{
 				$report = $this->grabReport( $report_id );
+				
 				if( $report ) {
+					if( $t_reputation && isset($t_reputation[$report_id]) ) {
+						$report['reputation'] = $t_reputation[$report_id];
+					}
 					$this->t_reports[$key] = $report;
 				}
 			}
@@ -149,7 +154,36 @@ class Hackerone
 	}
 	
 	
-	private function grabReport( $report_id )
+	public function grabReportsFromFile( $quantity, $t_reputation )
+	{
+		$bbstats = BBstats::getInstance();
+		$db = $bbstats->getDatabase();
+
+		for( $n=0 ; $n<$quantity && list($k,$bug)=each($this->t_bugs) ; $n++ )
+		{
+			$report_id = $bug['id'];
+			$key = Report::generateKey( $this->getName(), $report_id );
+
+			if( !$db->exists($key) || $bbstats->updateAllowed() || $bbstats->overwriteAllowed() )
+			{
+				$report = $this->grabReportFromFile( $report_id );
+				
+				if( $report ) {
+					if( $t_reputation && isset($t_reputation[$report_id]) ) {
+						$report['reputation'] = $t_reputation[$report_id];
+					}
+					$this->t_reports[$key] = $report;
+				}
+			}
+		}
+		
+		echo "\n";
+
+		return count($this->t_reports);
+	}
+			
+	
+	protected function grabReport( $report_id )
 	{
 		$c = curl_init();
 		curl_setopt( $c, CURLOPT_URL, 'https://hackerone.com/reports/'.$report_id.'.json' );
@@ -167,20 +201,97 @@ class Hackerone
 		//var_dump( $data );
 		//var_dump( $t_info );
 		
-		if( !$data ) {
+		if( !$data || stristr($data,'You need to sign in') || stristr($data,'Sign in to HackerOne') ) {
 		//if( !$data || $t_info['http_code']!=200 || !$t_info['size_download'] ) {
+			Utils::_print( '.', 'dark_grey' );
 			return false;
 		}
 
-		echo '.';
+		Utils::_print( '.', 'white' );
+		
 		$t_data = json_decode( $data, true );
 		
 		return $t_data;
 	}
+
 	
-	
-	public function grabReputation( $db )
+	protected function grabReportFromFile( $report_id )
 	{
+		if( !isset($this->t_bugs[$report_id]) ) {
+			return false;
+		}
+		
+		$bug = $this->t_bugs[$report_id];
+		
+		$tmp = [];
+		$tmp['id'] = $bug[0];
+		$tmp['title'] = $bug[1];
+		$tmp['team'] = [];
+		$tmp['team']['handle'] = $bug[2];
+		$tmp['activities'] = [];
+		$tmp['activities'][] = [ 'bounty_amount'=>$bug[3], 'created_at'=>$bug[7] ];
+		$tmp['created_at'] = $bug[7];
+		$tmp['substate'] = $bug[8];
+		
+		Utils::_print( '.', 'white' );
+		
+		return $tmp;
+	}
+
+	
+	public function extractReportDatas()
+	{
+		foreach( $this->t_reports as $key=>$report )
+		{
+			$t = [];
+			
+			$r = new Report();
+			$r->setPlatform( $this->getName() );
+			$r->setId( $report['id'] );
+			$r->setTitle( $report['title'] );
+			$r->setCreatedAt( strtotime($report['created_at']) );
+			$r->setProgram( $report['team']['handle'] );
+			$r->setState( $report['substate'] );
+			
+			if( isset($report['reputation']) ) {
+				foreach( $report['reputation'] as $reput ) {
+					$r->addReputation( $reput['created_at'], $reput['points'] );
+				}
+			}
+			
+			foreach( $report['activities'] as $activity )
+			{
+				$bounty_amount = 0;
+				
+				if( isset($activity['bonus_amount']) ) {
+					$bounty_amount += $activity['bonus_amount'];
+				}
+				if( isset($activity['bounty_amount']) ) {
+					$bounty_amount += $activity['bounty_amount'];
+				}
+				
+				if( $bounty_amount ) {
+					$r->addBounty( strtotime($activity['created_at']), $bounty_amount );
+				}
+			}
+
+			$this->t_reports_final[ $key ] = $r;
+		}
+	}
+	
+	
+	public static function getReportLink( $report_id ) {
+		return 'https://hackerone.com/reports/'.$report_id;
+	}
+	
+	
+	public function grabReputation()
+	{
+		$bbstats = BBstats::getInstance();
+		if( $bbstats->isImport() ) {
+			return false;
+		}
+				
 		$page = 1;
 		$t_reput = [];
 		
@@ -202,7 +313,7 @@ class Hackerone
 			//var_dump( $data );
 			//var_dump( $t_info );
 			
-			if( !$data ) {
+			if( !$data || stristr($data,'You need to sign in') || stristr($data,'Sign in to HackerOne') ) {
 			//if( !$data || $t_info['http_code']!=200 || !$t_info['size_download'] ) {
 				return false;
 			}
@@ -211,31 +322,36 @@ class Hackerone
 			$page++;
 			
 			$t_reput = array_merge( $t_reput, $this->extractReputation($data) );
-			//var_dump($t_reput);
-		
+			//var_dump( $t_reput );
+			
 			$grab = preg_match( '#audit-log-item#', $data );
 		}
 		while( $grab );
 		
-		$t_reports = $db->getReports();
-		foreach( $t_reports as $report ) {
-			$report->resetReputation();
-		}
-		
-		foreach( $t_reput as $reput ) {
-			$report = $db->getReportById( $this->name, $reput['report_id'] );
-			if( $report ) {
-				$report->addReputation( $reput['created_at'], $reput['points'] );
+		$t_final = [];
+		foreach( $t_reput as $reput )
+		{
+			$report_id = $reput['report_id'];
+
+			if( !isset($t_final[$report_id]) ) {
+				$t_final[$report_id] = [];
 			}
+			
+			$t_final[$report_id][] = [ 'created_at'=>$reput['created_at'], 'points'=>$reput['points'] ];
 		}
-		
+
 		echo "\n";
 
-		return ($page-1);
+		return $t_final;
 	}
 	
 	
-	private function extractReputation( $data )
+	public function grabReputationFromFile() {
+		
+	}
+
+	
+	protected function extractReputation( $data )
 	{
 		$doc = new DOMDocument();
 		$doc->preserveWhiteSpace = false;
@@ -269,45 +385,5 @@ class Hackerone
 		}
 		
 		return $t_reput;
-	}
-	
-	
-	public function extractDatas()
-	{
-		foreach( $this->t_reports as $key=>$report )
-		{
-			$t = [];
-			
-			$r = new Report();
-			$r->setPlatform( strtolower($this->name) );
-			$r->setId( $report['id'] );
-			$r->setTitle( $report['title'] );
-			$r->setCreatedAt( strtotime($report['created_at']) );
-			$r->setProgram( $report['team']['handle'] );
-			$r->setState( $report['substate'] );
-			
-			foreach( $report['activities'] as $activity )
-			{
-				$bounty_amount = 0;
-				
-				if( isset($activity['bonus_amount']) ) {
-					$bounty_amount += $activity['bonus_amount'];
-				}
-				if( isset($activity['bounty_amount']) ) {
-					$bounty_amount += $activity['bounty_amount'];
-				}
-				
-				if( $bounty_amount ) {
-					$r->addBounty( strtotime($activity['created_at']), $bounty_amount );
-				}
-			}
-
-			$this->t_reports_final[ $key ] = $r;
-		}
-	}
-	
-	
-	public static function getReportLink( $report_id ) {
-		return 'https://hackerone.com/reports/'.$report_id;
 	}
 }

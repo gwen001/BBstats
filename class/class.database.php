@@ -174,8 +174,12 @@ class Database
 	}
 	
 	
-	public function add( $t_new, $update, $overwrite, $_autorate, $_autotag, $_reputation )
+	public function add( $t_new )
 	{
+		$bbstats = BBstats::getInstance();
+		$autorate = $bbstats->getAutoRateMode();
+		$autotag = $bbstats->getAutoTagMode();
+		$reputation = $bbstats->isReputation();
 		$n_new = $n_update = 0;
 
 		// $report = new report to add
@@ -189,48 +193,48 @@ class Database
 				$n_new++;
 				$this->setReport( $key, $report );
 			}
-			elseif( $overwrite ) {
+			elseif( $bbstats->overwriteAllowed() ) {
 				$n_update++;
-				if( $_reputation ) {
+				if( $reputation ) {
 					$report->setReputations( $r->getReputations() );
 				}
-				if( $_autotag == 0 || $_autotag == 1 ) {
+				if( $autotag == 0 || $autotag == 1 ) {
 					if( count($r->getTags()) != 0 ) {
 						$report->setTags( $r->getTags() ); // we want to keep tags that were manually setted, the new report got the old tags
 					}
-				} elseif( $_autotag == 2 ) {
+				} elseif( $autotag == 2 ) {
 					;
 				}
-				if( $_autorate == 0 || $_autorate == 1 ) {
+				if( $autorate == 0 || $autorate == 1 ) {
 					if( $r->getRating() != 0 ) {
 						$report->setRating( $r->getRating() ); // we want to keep rating that was manually setted, the new report got the old rating
 					}
-				} elseif( $_autorate == 2 ) {
+				} elseif( $autorate == 2 ) {
 					;
 				}
 				$this->setReport( $key, $report ); // adding the new report (or overwrite the existing one)
 			}
-			elseif( $update ) {
+			elseif( $bbstats->updateAllowed() ) {
 				$n_update++;
 				// copy the properties of the new report to the old one
 				$r->setTitle( $report->getTitle() );
 				$r->setBounties( $report->getBounties() );
 				$r->setState( $report->getState() );
-				if( $_reputation ) {
+				if( $reputation ) {
 					$r->setReputation( $report->getReputation() ); // we DON'T want to keep the old reputation, overwrite
 				}
-				if( $_autotag == 1 ) {
+				if( $autotag == 1 ) {
 					//if( count($r->getTags()) == 0 ) {
 						$r->setTags( array_merge($r->getTags(),$report->getTags()) ); // we want to keep old and new tags, merge
 					//}
-				} elseif( $_autotag == 2 ) {
+				} elseif( $autotag == 2 ) {
 					$r->setTags( $report->getTags() ); // we DON'T want to keep the old tags, overwrite
 				}
-				if( $_autorate == 1 ) {
+				if( $autorate == 1 ) {
 					if( $r->getRating() == 0 ) {
 						$r->setRating( $report->getRating() ); // force overwrite only if the rating has not been setted before
 					}
-				} elseif( $_autorate == 2 ) {
+				} elseif( $autorate == 2 ) {
 					$r->setRating( $report->getRating() ); // we DON'T want to keep the old rating, overwrite
 				}
 			}

@@ -153,7 +153,7 @@ $end_date = date( 'd/m/Y' );
 	            
             	$('.datatable').DataTable({
             		'paging': true,
-				    'pageLength': 50,
+				    'pageLength': 75,
 				    'order': [[ 5, 'desc' ]],
 				    'dom': '<"row top"<"col-md-3"i><"col-md-3"f><"col-md-6"p>>rt<"row bottom"<"col-md-3"i><"col-md-3"f><"col-md-6"p>>',
 				     'oLanguage': {
