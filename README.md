@@ -78,9 +78,13 @@ __graph__
 
 
 ### Samples
+[https://raw.githubusercontent.com/gwen001/BBstats/master/img/sample-listing.png?token=AFGZierP-h89-qf-9knaI_RpWG4YTcRqks5ZxjsPwA%3D%3D](Listing)
+[https://raw.githubusercontent.com/gwen001/BBstats/master/img/sample-bounty.png?token=AFGZieM4SIvDbTH-TaqS15nE_pOt62wjks5Zxjt3wA%3D%3D](Bounties)
+[https://raw.githubusercontent.com/gwen001/BBstats/master/img/sample-evolution.png?token=AFGZiULFAYapKK7T_piZ7ts2dicfD_BTks5ZxjuHwA%3D%3D](Evolution)
+[https://raw.githubusercontent.com/gwen001/BBstats/master/img/sample-report-rating.png?token=AFGZiZ8Reh3UQKHZHEWyE1xekcUCEmJMks5ZxjuWwA%3D%3D](Reports rating)
+[https://raw.githubusercontent.com/gwen001/BBstats/master/img/sample-program-repartition.png?token=AFGZiSmh23gopovmHFcnlvBaJyb7qqDpks5ZxjuwwA%3D%3D](Program repartition)
 
-[]()
+<br><br><br><br>
 
-	
 I don't believe in license.  
 You can do want you want with this program.  
