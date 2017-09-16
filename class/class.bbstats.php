@@ -8,8 +8,8 @@
 
 class BBstats
 {
-	CONST short_options = 'a:ef:hn:p:rrrttt';
-	CONST long_options = ['demo'];
+	CONST SHORT_OPTIONS = 'a:ef:hn:p:rrrttt';
+	CONST LONG_OPTIONS = ['demo'];
 
 	
 	private static $_instance = null;

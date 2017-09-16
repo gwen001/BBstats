@@ -217,8 +217,6 @@ class Utils
 	
 	public static function demonize( $t_reports )
 	{
-		$t_random_domain = [ 'test.com', 'example.com', '', 'salesforce', 'uber', 'pornhub', 'yelp', 'imgur', 'github' ];
-		$n_random_domain = count($t_random_domain) - 1;
 		$t_random_program = [ 'google', 'facebook', 'yahoo', 'salesforce', 'uber', 'pornhub', 'yelp', 'imgur', 'github' ];
 		$n_random_program = count($t_random_program) - 1;
 		
@@ -235,11 +233,13 @@ class Utils
 
 			$title = $r->getTitle();
 			$title = preg_replace( '#'.$program.'#i', $r->getProgram(), $title );
-			$title = preg_replace( '#\d{1,3}\.\d{1,3}\.\d{1,3}\.\d{1,3}#', '__IP__', $title );
-			//$title = preg_replace( '##' );
-			$title = preg_replace( '#__IP__#', '192.168.'.rand(0,10).'.'.rand(1,253), $title );
+			$title = preg_replace( '#\d{1,3}\.\d{1,3}\.\d{1,3}\.\d{1,3}#', '192.168.'.rand(0,10).'.'.rand(1,253), $title );
 			$r->setTitle( $title );
 			
+			if( $program == 'trulia' ) {
+				var_dump($r);
+			}
+				
 			$t_bounties = $r->getBounties();
 			foreach( $t_bounties as $b ) {
 				$rating = $r->getRating() ? $r->getRating() : 6;

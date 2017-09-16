@@ -6,14 +6,26 @@
  * - gwen -
  */
 
+
+// DO NOT TOUCH THIS
+function __autoload( $c ) {
+	$f = __DIR__.'/class/class.'.strtolower($c).'.php';
+	if( is_file($f) ) {
+		require_once( __DIR__.'/class/class.'.strtolower($c).'.php' );
+	}
+}
+
 define( 'APP_PATH', __DIR__ );
-define( 'CLASS_PATH', __DIR__.'/class' );
-define( 'INCLUDE_PATH', __DIR__.'/include' );
-define( 'GRAPH_PATH', __DIR__.'/graph' );
-define( 'DATABASE_PATH', __DIR__.'/data' );
+define( 'CLASS_PATH', APP_PATH.'/class' );
+define( 'INCLUDE_PATH', APP_PATH.'/include' );
+define( 'GRAPH_PATH', APP_PATH.'/graph' );
+define( 'DATABASE_PATH', APP_PATH.'/data' );
 define( 'DATABASE_FILE', DATABASE_PATH.'/db.json' );
 
+// don't dig too much the rabbit hole!
 
+
+// to hide a graph, simply comment the corresponding line or set the value to false
 define( 'GRAPH_BOUNTIES', true );
 define( 'GRAPH_BOUNTIES_REPORTS_REPUTATION', true );
 define( 'GRAPH_REPORTS_RATINGS', true );
@@ -24,6 +36,24 @@ define( 'GRAPH_TAGS_PIE', true );
 define( 'GRAPH_TOP_PROGRAMS', true );
 define( 'GRAPH_TOP_TAGS', true );
 
+/*
+initial_rate_value (1>5) => [
+	'tag_name' => [
+		'tag_terms' => [ // regexp used to tag the report
+			'term1',
+			'term2',
+			'term3',
+			'...',
+		],
+		'rate_terms => [ // regexp used to rate the report, added to the initial_rate_value
+			'term1' => 0,
+			'term2' => +1,
+			'term3' => -2,
+			'...',
+		]
+	]
+]
+*/
 
 define( 'AUTO_RATE_TAG', [
 	1 => [
@@ -137,13 +167,3 @@ define( 'AUTO_RATE_TAG', [
 		],
 	],
 ] );
-
-
-function __autoload( $c ) {
-	$f = CLASS_PATH.'/class.'.strtolower($c).'.php';
-	if( is_file($f) ) {
-		require_once( CLASS_PATH.'/class.'.strtolower($c).'.php' );
-	}
-}
-
-// don't dig too much the rabbit hole!

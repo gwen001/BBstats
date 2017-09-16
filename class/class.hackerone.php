@@ -27,6 +27,7 @@ class Hackerone extends Platform
 	
 	public function connect()
 	{
+		return true;
 		$c = curl_init();
 		curl_setopt( $c, CURLOPT_URL, 'https://hackerone.com/bugs.json?subject=user&report_id=0&view=all&substates%5B%5D=new&substates%5B%5D=triaged&substates%5B%5D=needs-more-info&substates%5B%5D=resolved&substates%5B%5D=informative&substates%5B%5D=not-applicable&substates%5B%5D=duplicate&substates%5B%5D=spam&reported_to_team=&text_query=&program_states%5B%5D=2&program_states%5B%5D=3&program_states%5B%5D=4&program_states%5B%5D=5&sort_type=latest_activity&sort_direction=descending&limit=25&page=1' );
 		//curl_setopt( $c, CURLOPT_SSL_VERIFYPEER, false );
@@ -70,10 +71,10 @@ class Hackerone extends Platform
 			//curl_setopt( $c, CURLOPT_COOKIEJAR, $this->cookie_file );
 			//curl_setopt( $c, CURLOPT_COOKIEFILE, $this->cookie_file );
 			curl_setopt( $c, CURLOPT_RETURNTRANSFER, true );
-			$data = curl_exec($c );
-			$t_info = curl_getinfo( $c );
-			file_put_contents( DATABASE_PATH.'/page_'.$page.'.json', $data );
-			//$data = @file_get_contents( 'data/page_'.$page.'.json' );
+			//$data = curl_exec($c );
+			//$t_info = curl_getinfo( $c );
+			//file_put_contents( DATABASE_PATH.'/page_'.$page.'.json', $data );
+			$data = @file_get_contents( 'data/page_'.$page.'.json' );
 			//var_dump( $data );
 			//var_dump( $t_info );
 			
@@ -194,10 +195,10 @@ class Hackerone extends Platform
 		//curl_setopt( $c, CURLOPT_COOKIEJAR, $this->cookie_file );
 		//curl_setopt( $c, CURLOPT_COOKIEFILE, $this->cookie_file );
 		curl_setopt( $c, CURLOPT_RETURNTRANSFER, true );
-		$data = curl_exec($c );
-		$t_info = curl_getinfo( $c );
-		file_put_contents( DATABASE_PATH.'/report_'.$report_id.'.json', $data );
-		//$data = @file_get_contents( 'data/report_'.$report_id.'.json' );
+		//$data = curl_exec($c );
+		//$t_info = curl_getinfo( $c );
+		//file_put_contents( DATABASE_PATH.'/report_'.$report_id.'.json', $data );
+		$data = @file_get_contents( 'data/report_'.$report_id.'.json' );
 		//var_dump( $data );
 		//var_dump( $t_info );
 		
@@ -306,10 +307,10 @@ class Hackerone extends Platform
 			//curl_setopt( $c, CURLOPT_COOKIEJAR, $this->cookie_file );
 			//curl_setopt( $c, CURLOPT_COOKIEFILE, $this->cookie_file );
 			curl_setopt( $c, CURLOPT_RETURNTRANSFER, true );
-			$data = curl_exec($c );
-			$t_info = curl_getinfo( $c );
-			file_put_contents( DATABASE_PATH.'/reput_'.$page.'.html', $data );
-			//$data = @file_get_contents( 'data/reput_'.$page.'.html' );
+			//$data = curl_exec($c );
+			//$t_info = curl_getinfo( $c );
+			//file_put_contents( DATABASE_PATH.'/reput_'.$page.'.html', $data );
+			$data = @file_get_contents( 'data/reput_'.$page.'.html' );
 			//var_dump( $data );
 			//var_dump( $t_info );
 			

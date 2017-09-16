@@ -12,7 +12,7 @@ require_once( 'config.php' );
 // manage options
 {
 	$bbstats = BBstats::getInstance();
-	$t_options = getopt( BBstats::short_options, BBstats::long_options );
+	$t_options = getopt( BBstats::SHORT_OPTIONS, BBstats::LONG_OPTIONS );
 	//var_dump( $t_options );
 	
 	if( !count($t_options) ) {
@@ -24,12 +24,12 @@ require_once( 'config.php' );
 	}
 	
 	if( isset($t_options['demo']) ) {
-		$bbstats->enableDemo();
+		$bbstats->enableDemoMode();
 	}
 	
 	if( isset($t_options['p']) ) {
 		$p = $t_options['p'];
-		$class = APP_PATH.'/class/class.'.$p.'.php';
+		$class = CLASS_PATH.'/class.'.$p.'.php';
 		if( !is_file($class) ) {
 			Utils::help( '"'.$p.'" platform not found!' );
 		}
