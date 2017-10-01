@@ -84,7 +84,7 @@ __graph__
 - graph: reports per status  
 
 __bugs__
-- probbly alot!
+- probably alot!
 
 
 ### Samples
