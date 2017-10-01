@@ -87,6 +87,12 @@ define( 'AUTO_RATE_TAG', [
 			'rate_terms' => [
 			],
 		],
+		'lfd' => [
+			'tag_terms' => [
+				'lfd',
+				'local file disclosure',
+			],
+		],
 		'lfi' => [
 			'tag_terms' => [
 				'lfi',
