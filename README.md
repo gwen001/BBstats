@@ -91,15 +91,17 @@ __bugs__
 <table>
 	<tbody>
 		<tr>
-			<td colspan="2"><img src="https://raw.githubusercontent.com/gwen001/BBstats/master/img/sample-listing.png?token=AFGZiQ1QzpQzuaRU1wrb-na_waJwpECfks5Z2hwnwA%3D%3D" title="Listing" alt="Listing" /></td>
+			<td colspan="2"><img src="https://raw.githubusercontent.com/gwen001/BBstats/master/img/sample-grabber.png" title="Grabber" alt="Grabber" /></td>
+		<tr>
+			<td colspan="2"><img src="https://raw.githubusercontent.com/gwen001/BBstats/master/img/sample-listing.png" title="Listing" alt="Listing" /></td>
 		</tr>
 		<tr>
-			<td><img src="https://raw.githubusercontent.com/gwen001/BBstats/master/img/sample-bounty.png?token=AFGZiRKVkZHW33TbnQJYeY6J9PHYhsxbks5Z2hw5wA%3D%3D" title="Bounties" alt="Bounties" /></td>
-			<td><img src="https://raw.githubusercontent.com/gwen001/BBstats/master/img/sample-evolution.png?token=AFGZiWGXBI2JjWu-xHa1TImHOYGOArpHks5Z2hxJwA%3D%3D" title="Evolution" alt="Evolution" /></td>
+			<td><img src="https://raw.githubusercontent.com/gwen001/BBstats/master/img/sample-bounty.png" title="Bounties" alt="Bounties" /></td>
+			<td><img src="https://raw.githubusercontent.com/gwen001/BBstats/master/img/sample-evolution.png" title="Evolution" alt="Evolution" /></td>
 		</tr>
 		<tr>
-			<td><img src="https://raw.githubusercontent.com/gwen001/BBstats/master/img/sample-report-rating.png?token=AFGZiRqetChmgWor_Kb_LM-Xe2vqfgzYks5Z2hxYwA%3D%3D" title="Reports rating" alt="Reports rating" /></td>
-			<td><img src="https://raw.githubusercontent.com/gwen001/BBstats/master/img/sample-program-repartition.png?token=AFGZiXZL0r6C4C2rp67DFd7q1xg1-65oks5Z2hxmwA%3D%3D" title="Program repartition" alt="Program repartition" /></td>
+			<td><img src="https://raw.githubusercontent.com/gwen001/BBstats/master/img/sample-report-rating.png" title="Reports rating" alt="Reports rating" /></td>
+			<td><img src="https://raw.githubusercontent.com/gwen001/BBstats/master/img/sample-program-repartition.png" title="Program repartition" alt="Program repartition" /></td>
 		</tr>
 	</tbody>
 </table>
