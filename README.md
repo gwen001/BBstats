@@ -83,6 +83,9 @@ __graph__
 - graph: reports per month per platform  
 - graph: reports per status  
 
+__bugs__
+- probbly alot!
+
 
 ### Samples
 <table>
