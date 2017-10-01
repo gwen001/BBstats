@@ -83,6 +83,31 @@ require_once( 'config.php' );
 // ---
 
 
+// someone ordered a rollback here!
+{
+	if( $bbstats->getAction() == 'r' )
+	{
+		$t_backups = glob( DATABASE_PATH.'/db.json.*' );
+		rsort( $t_backups );
+
+		if( !count($t_backups) ) {
+			Utils::printError( 'No history found!' );
+			exit();
+		}
+		
+		$restore = basename( $t_backups['0'] );
+		$r = rename( DATABASE_PATH.'/'.$restore, DATABASE_FILE );
+		if( !$r ) {
+			Utils::printError( 'Cannot restore database!' );
+			exit();
+		}
+		
+		Utils::printSuccess( 'Backup "'.$restore.'" restored.' );
+		exit();
+	}
+}
+
+
 // process
 {
 	$p = $bbstats->getPlatform();

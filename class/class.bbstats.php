@@ -81,6 +81,8 @@ class BBstats
 				break;
 			case 'o':
 				break;
+			case 'r':
+				break;
 			case 'u':
 				$this->allowUpdate();
 				$this->disallowOverwrite();
@@ -88,6 +90,7 @@ class BBstats
 			default:
 				return false;
 		}
+		$this->action = $v;
 		return true;
 	}
 	

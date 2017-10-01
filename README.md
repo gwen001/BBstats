@@ -6,15 +6,20 @@ It's a tool that would be able (in the future) to aggregrate your reports/bounti
 A web server with PHP installed and Curl extension enabled.  
 
 
-### Install
+### Recommended usage
 Put the code at the root of your web server:
 ```
 git clone https://github.com/gwen001/BBstats
 ```
 
-Grab the datas from your favorite platform:
+Grab the datas from your favorite platform for the first time:
 ```
 php data-grabber -p hackerone -a n -rr -tt -e
+```
+
+Or update your current database (once a week for example):
+```
+php data-grabber -p hackerone -a u -r -t -e -n 50
 ```
 
 Enjoy the stats!
@@ -31,6 +36,7 @@ Options:
 		   N: new, add new reports
 		   U: update, add new reports and update the existing ones (title, bounty, state)
 		   O: overwrite, add new reports and overwrite the existing ones
+		   R: rollback, got back the previous last version of the database (not platform dependant)
 	-e	grab reputation as well
 	-f	import from file
 	-h	print this help
@@ -46,6 +52,7 @@ Examples:
 	php data-grabber.php -p hackerone -a u -n 50
 	php data-grabber.php -p hackerone -a o -rr -tt -e
 	php data-grabber.php -p hackerone -f bounties.csv -r -t
+	php data-grabber.php -p hackerone -a r
 ```
 
 
@@ -60,7 +67,7 @@ __grabber__
 - find a better way to connect to Hackerone  
 
 __db__
-- manual bounty edit  
+- 
 
 __web ui__
 - search engine filter: with/without bounty  
@@ -81,15 +88,15 @@ __graph__
 <table>
 	<tbody>
 		<tr>
-			<td colspan="2"><img src="https://raw.githubusercontent.com/gwen001/BBstats/master/img/sample-listing.png?token=AFGZierP-h89-qf-9knaI_RpWG4YTcRqks5ZxjsPwA%3D%3D" title="Listing" alt="Listing" /></td>
+			<td colspan="2"><img src="https://raw.githubusercontent.com/gwen001/BBstats/master/img/sample-listing.png?token=AFGZiQ1QzpQzuaRU1wrb-na_waJwpECfks5Z2hwnwA%3D%3D" title="Listing" alt="Listing" /></td>
 		</tr>
 		<tr>
-			<td><img src="https://raw.githubusercontent.com/gwen001/BBstats/master/img/sample-bounty.png?token=AFGZieM4SIvDbTH-TaqS15nE_pOt62wjks5Zxjt3wA%3D%3D" title="Bounties" alt="Bounties" /></td>
-			<td><img src="https://raw.githubusercontent.com/gwen001/BBstats/master/img/sample-evolution.png?token=AFGZiULFAYapKK7T_piZ7ts2dicfD_BTks5ZxjuHwA%3D%3D" title="Evolution" alt="Evolution" /></td>
+			<td><img src="https://raw.githubusercontent.com/gwen001/BBstats/master/img/sample-bounty.png?token=AFGZiRKVkZHW33TbnQJYeY6J9PHYhsxbks5Z2hw5wA%3D%3D" title="Bounties" alt="Bounties" /></td>
+			<td><img src="https://raw.githubusercontent.com/gwen001/BBstats/master/img/sample-evolution.png?token=AFGZiWGXBI2JjWu-xHa1TImHOYGOArpHks5Z2hxJwA%3D%3D" title="Evolution" alt="Evolution" /></td>
 		</tr>
 		<tr>
-			<td><img src="https://raw.githubusercontent.com/gwen001/BBstats/master/img/sample-report-rating.png?token=AFGZiZ8Reh3UQKHZHEWyE1xekcUCEmJMks5ZxjuWwA%3D%3D" title="Reports rating" alt="Reports rating" /></td>
-			<td><img src="https://raw.githubusercontent.com/gwen001/BBstats/master/img/sample-program-repartition.png?token=AFGZiSmh23gopovmHFcnlvBaJyb7qqDpks5ZxjuwwA%3D%3D" title="Program repartition" alt="Program repartition" /></td>
+			<td><img src="https://raw.githubusercontent.com/gwen001/BBstats/master/img/sample-report-rating.png?token=AFGZiRqetChmgWor_Kb_LM-Xe2vqfgzYks5Z2hxYwA%3D%3D" title="Reports rating" alt="Reports rating" /></td>
+			<td><img src="https://raw.githubusercontent.com/gwen001/BBstats/master/img/sample-program-repartition.png?token=AFGZiXZL0r6C4C2rp67DFd7q1xg1-65oks5Z2hxmwA%3D%3D" title="Program repartition" alt="Program repartition" /></td>
 		</tr>
 	</tbody>
 </table>
