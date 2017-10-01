@@ -60,28 +60,28 @@ if( !$db->load(DATABASE_FILE) ) {
 	        colorByPoint: true,
 	        data: [{
 	            name: 'Unrated',
-	            y: reports_rating_pie_data.p0,
-		        color: '#434348'
+		        color: '#434348',
+	            y: reports_rating_pie_data.p0
 	        }, {
 	            name: 'P1',
-	            y: reports_rating_pie_data.p1,
-		        color: '#d13535'
+		        color: '#d13535',
+	            y: reports_rating_pie_data.p1
 	        }, {
 	            name: 'P2',
-	            y: reports_rating_pie_data.p2,
-		        color: '#ff6900'
+		        color: '#ff6900',
+	            y: reports_rating_pie_data.p2
 	        }, {
 	            name: 'P3',
-	            y: reports_rating_pie_data.p3,
-		        color: '#f0ad4e'
+		        color: '#f0ad4e',
+	            y: reports_rating_pie_data.p3
 	        }, {
 	            name: 'P4',
-	            y: reports_rating_pie_data.p4,
-		        color: '#5eae00'
+		        color: '#5eae00',
+	            y: reports_rating_pie_data.p4
 	        }, {
 	            name: 'P5',
-	            y: reports_rating_pie_data.p5,
-		        color: '#0278b8'
+		        color: '#0278b8',
+	            y: reports_rating_pie_data.p5
 	        }]
 	    }],
 	    mine: [{

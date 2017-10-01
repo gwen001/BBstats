@@ -454,9 +454,9 @@ class Statistics
 			$$var++;
 		}
 
-		if( !$p0 && !$p1 && !$p2 && !$p3 && !$p4 && !$p5 ) {
-			return false;
-		}
+		//if( !$p0 && !$p1 && !$p2 && !$p3 && !$p4 && !$p5 ) {
+		//	return false;
+		//}
 		
 		$t_return = [
 			'total' => $p0+$p1+$p2+$p3+$p4+$p5,

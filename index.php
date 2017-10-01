@@ -131,10 +131,10 @@ $end_date = date( 'd/m/Y' );
         	
         	function reloadReportLine( report_key )
 			{
-	            tr = $('tr[data-key="'+report_key+'"]');
+	            var tr = $('tr[data-key="'+report_key+'"]');
 	            
 	            $.post( 'ajax.php', {'_a':'report-get','key':report_key}, function(data) {
-			        report = jQuery.parseJSON( data );
+			        var report = jQuery.parseJSON( data );
 					
 			        var input_title = tr.find('.report-title');
 		            input_title.html( report.title );

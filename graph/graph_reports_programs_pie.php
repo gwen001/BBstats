@@ -89,7 +89,7 @@ if( !$db->load(DATABASE_FILE) ) {
 	    	reload: function(){
 		    	$.post( 'ajax.php', {'_a':'graph-reload','graph':'reports-program-pie'}, function(data) {
 			        data = jQuery.parseJSON( data );
-			        reports_rating_pie.series[0].setData([
+			        reports_program_pie.series[0].setData([
 						[ data.values[1] ],
 						[ data.values[0] ],
 						[ data.values[2] ],
