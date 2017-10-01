@@ -139,7 +139,7 @@ class Hackerone extends Platform
 			{
 				$report = $this->grabReport( $report_id );
 				
-				if( $report ) {
+				if( $report && $report['reporter']['is_me?'] ) {
 					if( $t_reputation && isset($t_reputation[$report_id]) ) {
 						$report['reputation'] = $t_reputation[$report_id];
 					}
