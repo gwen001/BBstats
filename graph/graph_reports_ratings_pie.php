@@ -49,7 +49,7 @@ if( !$db->load(DATABASE_FILE) ) {
 				point: {
 					events: {
 						click: function () {
-							term = (this.name == 'Unrated') ? 'P0' : this.name;
+							var term = (this.name == 'Unrated') ? 'P0' : this.name;
 							setFilterTerm( term );
 						}
 					}
