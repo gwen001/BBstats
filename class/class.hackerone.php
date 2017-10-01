@@ -42,8 +42,7 @@ class Hackerone extends Platform
 		//var_dump( $data );
 		//var_dump( $t_info );
 		
-		if( !$data || stristr($data,'You need to sign in') || stristr($data,'Sign in to HackerOne') ) {
-		//if( !$data || $t_info['http_code']!=200 || !$t_info['size_download'] ) {
+		if( !$data || $t_info['http_code']!=200 || !$t_info['size_download'] || stristr($data,'You need to sign in') || stristr($data,'Sign in to HackerOne') ) {
 			return false;
 		}
 		
@@ -79,8 +78,7 @@ class Hackerone extends Platform
 			//var_dump( $data );
 			//var_dump( $t_info );
 			
-			if( !$data || stristr($data,'You need to sign in') || stristr($data,'Sign in to HackerOne') ) {
-			//if( !$data || $t_info['http_code']!=200 || !$t_info['size_download'] ) {
+			if( !$data || $t_info['http_code']!=200 || !$t_info['size_download'] || stristr($data,'You need to sign in') || stristr($data,'Sign in to HackerOne') ) {
 				Utils::_print( '.', 'dark_grey' );
 				return false;
 			} else {
@@ -204,8 +202,7 @@ class Hackerone extends Platform
 		//var_dump( $data );
 		//var_dump( $t_info );
 		
-		if( !$data || stristr($data,'You need to sign in') || stristr($data,'Sign in to HackerOne') ) {
-		//if( !$data || $t_info['http_code']!=200 || !$t_info['size_download'] ) {
+		if( !$data || $t_info['http_code']!=200 || !$t_info['size_download'] || stristr($data,'You need to sign in') || stristr($data,'Sign in to HackerOne') ) {
 			Utils::_print( '.', 'dark_grey' );
 			return false;
 		}
@@ -324,8 +321,7 @@ class Hackerone extends Platform
 			//var_dump( $data );
 			//var_dump( $t_info );
 			
-			if( !$data || stristr($data,'You need to sign in') || stristr($data,'Sign in to HackerOne') ) {
-			//if( !$data || $t_info['http_code']!=200 || !$t_info['size_download'] ) {
+			if( !$data || $t_info['http_code']!=200 || !$t_info['size_download'] || stristr($data,'You need to sign in') || stristr($data,'Sign in to HackerOne') ) {
 				return false;
 			}
 			
