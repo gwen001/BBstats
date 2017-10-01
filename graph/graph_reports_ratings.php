@@ -28,7 +28,7 @@ if( !$db->load(DATABASE_FILE) ) {
 	    xAxis: {
 	        categories: reports_rating_data.categories
 	    },
-	    yAxis: {
+	    yAxis: [{
 	        min: 0,
 	        title: {
 	            text: 'n report'
@@ -41,7 +41,12 @@ if( !$db->load(DATABASE_FILE) ) {
 	                color: (Highcharts.theme && Highcharts.theme.textColor) || 'gray'
 	            }
 	        }
-	    },
+	    }, {
+	        title: {
+	            text: 'reputation'
+	        },
+	        opposite: true
+	    }],
 	    tooltip: {
 	        headerFormat: '<table><tr><td><span style="font-size:12px;color:#000;"><b>{point.key}</b></span></td><td align="right"></td></tr><tr><td><span style="font-size:12px;color:#000;">Total:</span></td><td align="right"><span style="font-size:12px;color:#000;"><b>{point.total}</b></span></td></tr>',
 	        pointFormat: '<tr><td style="font-size:12px;color:{series.color};padding:0;">{series.name}: </td>' + '<td style="font-size:12px;padding:0;" align="right"><b>{point.y}</b></td></tr>',
@@ -59,7 +64,11 @@ if( !$db->load(DATABASE_FILE) ) {
 	        },
 			series: {
 				cursor: 'pointer',
-				point: {
+				marker: {
+					//enabled: false,
+                    radius: 2
+                },
+                point: {
 					events: {
 						click: function () {
 							c = this.category.split('/');
@@ -116,6 +125,18 @@ if( !$db->load(DATABASE_FILE) ) {
 	            lineColor: Highcharts.getOptions().colors[3],
 	            fillColor: 'white'*/
 	        }
+	    }, {
+	        yAxis: 1,
+	        type: 'spline',
+	        name: 'Reputation',
+	        data: reports_rating_data.reputation,
+	        color: Highcharts.getOptions().colors[2],
+	        marker: {
+	            enabled: false/*,
+	            lineWidth: 2,
+	            lineColor: Highcharts.getOptions().colors[3],
+	            fillColor: 'white'*/
+	        }
 	    }],
 	    mine: [{
 	    	reload: function(){
@@ -129,6 +150,7 @@ if( !$db->load(DATABASE_FILE) ) {
         			reports_rating.series[5].setData( data.p5 );
         			reports_rating.series[6].setData( data.average_report );
         			reports_rating.series[7].setData( data.average_rate );
+        			reports_rating.series[8].setData( data.reputation );
         		});
 		    }
 	    }]

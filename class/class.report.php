@@ -184,10 +184,9 @@ class Report
 	}
 	
 	
-	
-	public static function generateKey( $program_name, $report_id )
+	public static function generateKey( $platform, $program, $report_id )
 	{
-		return md5( $program_name.'.'.$report_id );
+		return md5( $platform.'.'.$program.'.'.$report_id );
 	}
 	
 	

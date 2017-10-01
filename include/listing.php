@@ -15,6 +15,7 @@
         		if( $t_reports ) {
         			foreach( $t_reports as $key=>$r ) {
         				$m = date( 'n', $r->getCreatedAt() );
+        				$reput = $r->getTotalReputation();
         				if( $m != $cm ) { $tr_class='new-month';$cm=$m; } else { $tr_class=''; }
         				?>
                         <tr class="<?php //echo $tr_class; ?>" data-key="<?php echo $key; ?>">
@@ -34,6 +35,13 @@
                             <td>
                             	<span class="report-rating">P<?php echo $r->getRating(); ?></span>
                             	<a href="javascript:;" class="report-edit rating_<?php echo $r->getRating(); ?>"><span class="report-title"><?php echo $r->getTitle(); ?></span></a>
+                            	<?php  if( $reput > 0 ) { ?>
+                            	<span class="report-reputation reputation-positive"><?php echo '+'.$reput; ?></span>
+                            	<?php } elseif( $reput < 0 ) { ?>
+                            	<span class="report-reputation reputation-negative"><?php echo $reput; ?></span>
+                            	<?php } elseif( $reput === 0 ) { ?>
+                            	<span class="report-reputation reputation-zero">0</span>
+                            	<?php } ?> 
                             </td>
                             <td>
                             	<span class="report-program search-term"><?php echo ucwords($r->getProgram()); ?></span>

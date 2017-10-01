@@ -41,13 +41,13 @@
             e.preventDefault();
             $('#modalTagAdd').modal();
             
-            tr = $(this).parents('tr');
-            form = $('#formTagAdd');
+            var tr = $(this).parents('tr');
+            var form = $('#formTagAdd');
             form[0].reset();
             
-            input_key = form.find('input[name="key"]');
-            input_id = form.find('input[name="id"]');
-            input_tag = form.find('input[name="tag"]');
+            var input_key = form.find('input[name="key"]');
+            var input_id = form.find('input[name="id"]');
+            var input_tag = form.find('input[name="tag"]');
 
             input_key.val( tr.find('.report-key').val().trim() );
             input_id.val( tr.find('.report-id').text().trim() );
@@ -57,7 +57,7 @@
         
         $('#modalTagAdd').on('click','#confirm-save',function(e){
             e.preventDefault();
-            form = $('#formTagAdd');
+            var form = $('#formTagAdd');
             $.post( form.attr('action'), form.serialize(), function(data) {
 	            form[0].reset();
                 $('#modalTadAdd').find('.close').click();

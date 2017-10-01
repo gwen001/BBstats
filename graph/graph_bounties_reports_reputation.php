@@ -86,6 +86,7 @@ if( !$db->load(DATABASE_FILE) ) {
 			        data = jQuery.parseJSON( data );
         			bounties_reports.series[0].setData( data.n_bounties );
         			bounties_reports.series[1].setData( data.n_reports );
+        			bounties_reports.series[2].setData( data.n_reputation );
         		});
 		    }
 	    }]

@@ -28,11 +28,16 @@ if( !$db->load(DATABASE_FILE) ) {
 	    xAxis: {
 	        categories: bounties_data.categories
 	    },
-	    yAxis: {
+	    yAxis: [{
 	        title: {
 	            text: '$$$'
 	        }
-	    },
+	    }, {
+	        title: {
+	            text: 'reputation'
+	        },
+	        opposite: true
+	    }],
 	    tooltip: {
 	        shared: true,
 	        valueSuffix: ' $'
@@ -50,8 +55,8 @@ if( !$db->load(DATABASE_FILE) ) {
 				point: {
 					events: {
 						click: function () {
-							c = this.category.split('/');
-							d = '20' + c[1] + '/' + c[0];
+							var c = this.category.split('/');
+							var d = '20' + c[1] + '/' + c[0];
 							setFilterTerm( d );
 						}
 					}
@@ -75,6 +80,18 @@ if( !$db->load(DATABASE_FILE) ) {
 	            //lineWidth: 2,
 	            //fillColor: 'white'
 	        }
+	    }, {
+	        yAxis: 1,
+	        type: 'spline',
+	        name: 'Reputation',
+	        data: bounties_data.reputation,
+	        color: Highcharts.getOptions().colors[2],
+	        marker: {
+	            enabled: false/*,
+	            lineWidth: 2,
+	            lineColor: Highcharts.getOptions().colors[3],
+	            fillColor: 'white'*/
+	        }
 	    }],
 	    mine: [{
 	    	reload: function(){
@@ -83,6 +100,7 @@ if( !$db->load(DATABASE_FILE) ) {
         			bounties.series[0].setData( data.report_creation_date );
         			bounties.series[1].setData( data.payday );
         			bounties.series[2].setData( data.report_creation_date_average );
+        			bounties.series[3].setData( data.reputation );
         		});
 		    }
 	    }]

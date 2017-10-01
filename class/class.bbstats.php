@@ -8,8 +8,9 @@
 
 class BBstats
 {
-	CONST SHORT_OPTIONS = 'a:ef:hn:p:rrrttt';
-	CONST LONG_OPTIONS = ['demo'];
+	const SHORT_OPTIONS = 'a:ef:hn:p:rrrttt';
+	const LONG_OPTIONS = ['demo'];
+	const TOP_LIMIT = 10;
 
 	
 	private static $_instance = null;

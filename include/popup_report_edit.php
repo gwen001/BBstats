@@ -121,51 +121,64 @@
             e.preventDefault();
             $('#modalReportEdit').modal();
         
-	        form = $('#formReportEdit');
+	        var form = $('#formReportEdit');
             form[0].reset();
             
-            tr = $(this).parents('tr');
-            report_key = tr.attr( 'data-key' );
+            var tr = $(this).parents('tr');
+            var report_key = tr.attr( 'data-key' );
             
             $.post( 'ajax.php', {'_a':'report-get','key':report_key}, function(data) {
-		        report = jQuery.parseJSON( data );
+		        var report = jQuery.parseJSON( data );
 
 	            if( report.rating ) {
-		            input_rating = form.find('input[name="rating"][value="'+report.rating+'"]');
+		            var input_rating = form.find('input[name="rating"][value="'+report.rating+'"]');
 		            input_rating.prop( 'checked', 'checked' );
 	            }
 	            
-   	            input_key = form.find('input[name="key"]');
+   	            var input_key = form.find('input[name="key"]');
 	            input_key.val( report_key );
 
-	            input_title = form.find('input[name="title"]');
+	            var input_title = form.find('input[name="title"]');
 	            input_title.val( report.title );
 
-	            input_tags = form.find('input[name="tags"]');
+	            var input_tags = form.find('input[name="tags"]');
 	            if( report.str_tags != '' ) {
 		            input_tags.val( report.str_tags+', ' );	
 	            }
 	            
-	            input_program = form.find('input[name="program"]');
+	            var input_program = form.find('input[name="program"]');
 	            input_program.val( report.program );
 
-	            input_bounty = form.find('input[name="bounty"]');
+	            var input_bounty = form.find('input[name="bounty"]');
 	            input_bounty.val( report.total_bounty );
 
-	            input_created_at = form.find('input[name="created_at"]');
+	            var input_created_at = form.find('input[name="created_at"]');
 	            input_created_at.val( report.created_at );
 	            
-	            input_id = form.find('input[name="id"]');
-	            input_platform = form.find('input[name="platform"]');
+	            var input_id = form.find('input[name="id"]');
+	            input_id.val( report.id );
+
+	            var input_platform = form.find('input[name="platform"]');
+	            input_platform.val( report.platform );
 	            
 	            if( report.manual ) {
-	            	input_id.parents('.col-md-12').show();
-		            input_id.val( report.id );
-	            	input_platform.parents('.col-md-12').show();
-		            input_platform.val( report.platform );
+	            	input_id.removeAttr( 'disabled' );
+	            	input_platform.removeAttr( 'disabled' );
+	            	input_title.removeAttr( 'disabled' );
+	            	input_program.removeAttr( 'disabled' );
+	            	input_bounty.removeAttr( 'disabled' );
+	            	input_created_at.removeAttr( 'disabled' );
+	            	//input_id.parents('.col-md-12').show();
+	            	//input_platform.parents('.col-md-12').show();
 	            } else {
-	            	input_id.parents('.col-md-12').hide();
-	            	input_platform.parents('.col-md-12').hide();
+	            	input_id.attr( 'disabled', 'disabled' );
+	            	input_platform.attr( 'disabled', 'disabled' );
+	            	input_title.attr( 'disabled', 'disabled' );
+	            	input_program.attr( 'disabled', 'disabled' );
+	            	input_bounty.attr( 'disabled', 'disabled' );
+	            	input_created_at.attr( 'disabled', 'disabled' );
+	            	//input_id.parents('.col-md-12').hide();
+	            	//input_platform.parents('.col-md-12').hide();
 	            }
 	            
 	            window.setTimeout( function(){input_tags.focus();}, 500 );
@@ -174,8 +187,8 @@
         
         $('#modalReportEdit').on('click','#confirm-save',function(e){
             e.preventDefault();
-            form = $('#formReportEdit');
-            input_key = form.find('input[name="key"]');
+            var form = $('#formReportEdit');
+            var input_key = form.find('input[name="key"]');
             $.post( form.attr('action'), form.serialize(), function(data) {
 	            form[0].reset();
                 $('#modalReportEdit').find('.close').click();
@@ -186,8 +199,8 @@
         
         $('#modalReportEdit').on('click','#confirm-delete',function(e){
             e.preventDefault();
-            form = $('#formReportEdit');
-            input_key = form.find('input[name="key"]');
+            var form = $('#formReportEdit');
+            var input_key = form.find('input[name="key"]');
             $.post( 'ajax.php', {'_a':'report-delete','key':input_key.val()}, function(data) {
 	            form[0].reset();
                 $('#modalReportEdit').find('.close').click();

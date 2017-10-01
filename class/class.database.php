@@ -143,8 +143,15 @@ class Database
 	{
 		if( !$this->loaded || $force )
 		{
+			$dir = dirname( $source );
 			$this->datas = new stdClass();
 			$this->db_file = $source;
+			
+			if( !is_dir($dir) ) {
+				if( !mkdir($dir,0777,true) ) {
+					return false;
+				}
+			}
 			
 			if( !is_file($source) ) {
 				$a = file_put_contents( $source, '' );
@@ -221,7 +228,7 @@ class Database
 				$r->setBounties( $report->getBounties() );
 				$r->setState( $report->getState() );
 				if( $reputation ) {
-					$r->setReputation( $report->getReputation() ); // we DON'T want to keep the old reputation, overwrite
+					$r->setReputations( $report->getReputations() ); // we DON'T want to keep the old reputation, overwrite
 				}
 				if( $autotag == 1 ) {
 					//if( count($r->getTags()) == 0 ) {
@@ -271,7 +278,13 @@ class Database
 		$this->setTotalBounty( $total_bounty );
 		$this->setTotalReputation( $total_reputation );
 		
-		return file_put_contents( $this->db_file, json_encode($this->datas) );
+		$r = file_put_contents( $this->db_file, json_encode($this->datas) );
+		if( $r === false ) {
+			return false;
+		}
+		
+		chmod( $this->db_file, 0777 );
+		return true;
 	}
 
 	

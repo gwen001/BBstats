@@ -89,12 +89,12 @@ if( !$db->load(DATABASE_FILE) ) {
 		    	$.post( 'ajax.php', {'_a':'graph-reload','graph':'reports-rating-pie'}, function(data) {
 			        data = jQuery.parseJSON( data );
 			        reports_rating_pie.series[0].setData([
-						[data.p0],
-						[data.p1],
-						[data.p2],
-						[data.p3],
-						[data.p4],
-						[data.p5]
+						[ data.p0 ],
+						[ data.p1 ],
+						[ data.p2 ],
+						[ data.p3 ],
+						[ data.p4 ],
+						[ data.p5 ]
 					]);
         		});
 		    }

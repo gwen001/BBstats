@@ -8,6 +8,76 @@
 
 class Statistics
 {
+	public static function top_program_html( $db )
+	{
+		$limit = BBstats::TOP_LIMIT;
+		$t_top = self::top_program( $db );
+
+		ob_start();
+		echo '<table class="table">
+			<thead>
+				<tr><th colspan="100">by report ('.$t_top['t_total']['n_report'].')</th></tr>
+			</thead>
+			<tbody>';
+				for( $i=1; $i<=$limit && list($program,$data)=each($t_top['t_n_report']) ; $i++ ) {
+					echo '<tr class="top_'.$i.'">
+						<td>'.$i.'</td>
+						<td><span class="search-term">'.ucwords($program).'</span></td>
+						<td class="text-right">'.$data['n_report'].'</td>
+						<td class="text-right">'.$data['n_report_p'].' %</td>
+					</tr>';
+				}
+		echo '</tbody>
+		</table>';
+		$n_report = ob_get_contents();
+		ob_end_clean();
+		
+		ob_start();
+		echo '<table class="table">
+			<thead>
+				<tr>
+					<th colspan="100">by bounty ('.$t_top['t_total']['bounty'].' $)</th>
+				</tr>
+			</thead>
+			<tbody>';
+				for( $i=1; $i<=$limit && list($program,$data)=each($t_top['t_bounty']) ; $i++ ) {
+					echo '<tr class="top_'.$i.'">
+						<td>'.$i.'</td>
+						<td><span class="search-term">'.ucwords($program).'</span></td>
+						<td class="text-right">'.$data['bounty'].' $</td>
+						<td class="text-right">'.$data['bounty_p'].' %</td>
+					</tr>';
+				}
+		echo '</tbody>
+		</table>';
+		$bounty = ob_get_contents();
+		ob_end_clean();
+		
+		ob_start();
+		echo '<table class="table">
+			<thead>
+				<tr>
+					<th colspan="100">by reputation ('.$t_top['t_total']['reputation'].')</th>
+				</tr>
+			</thead>
+			<tbody>';
+				for( $i=1; $i<=$limit && list($program,$data)=each($t_top['t_reputation']) ; $i++ ) {
+					echo '<tr class="top_'.$i.'">
+						<td>'.$i.'</td>
+						<td><span class="search-term">'.ucwords($program).'</span></td>
+						<td class="text-right">'.$data['reputation'].'</td>
+						<td class="text-right">'.$data['reputation_p'].' %</td>
+					</tr>';
+				}
+		echo '</tbody>
+		</table>';
+		$reputation = ob_get_contents();
+		ob_end_clean();
+		
+		return ['n_report'=>$n_report, 'bounty'=>$bounty, 'reputation'=>$reputation];
+	}
+	
+	
 	public static function top_program( $db )
 	{
 		$t_programs = [];
@@ -53,6 +123,78 @@ class Statistics
 		];
 		
 		return $t_top;
+	}
+	
+	
+	public static function top_tags_html( $db )
+	{
+		$limit = BBstats::TOP_LIMIT;
+		$t_top = self::top_tags( $db );
+
+		ob_start();
+		echo '<table class="table">
+			<thead>
+				<tr>
+					<th colspan="100">by report ('.$t_top['t_total']['n_report'].')</th>
+				</tr>
+			</thead>
+			<tbody>';
+				for( $i=1; $i<=$limit && list($tag,$data)=each($t_top['t_n_report']) ; $i++ ) {
+					echo '<tr class="top_'.$i.'">
+						<td>'.$i.'</td>
+						<td><span class="search-term">'.ucwords($tag).'</span></td>
+						<td class="text-right">'.$data['n_report'].'</td>
+						<td class="text-right">'.$data['n_report_p'].' %</td>
+					</tr>';
+				}
+		echo '</tbody>
+		</table>';
+		$n_report = ob_get_contents();
+		ob_end_clean();
+		
+		ob_start();
+		echo '<table class="table">
+			<thead>
+				<tr>
+					<th colspan="100">by bounty ('.$t_top['t_total']['bounty'].' $)</th>
+				</tr>
+			</thead>
+			<tbody>';
+				for( $i=1; $i<=$limit && list($tag,$data)=each($t_top['t_bounty']) ; $i++ ) {
+					echo '<tr class="top_'.$i.'">
+						<td>'.$i.'</td>
+						<td><span class="search-term">'.ucwords($tag).'</span></td>
+						<td class="text-right">'.$data['bounty'].' $</td>
+						<td class="text-right">'.$data['bounty_p'].' %</td>
+					</tr>';
+				}
+		echo '</tbody>
+		</table>';
+		$bounty = ob_get_contents();
+		ob_end_clean();
+		
+		ob_start();
+		echo '<table class="table">
+			<thead>
+				<tr>
+					<th colspan="100">by reputation ('.$t_top['t_total']['reputation'].')</th>
+				</tr>
+			</thead>
+			<tbody>';
+				for( $i=1; $i<=$limit && list($tag,$data)=each($t_top['t_reputation']) ; $i++ ) {
+					echo '<tr class="top_'.$i.'">
+						<td>'.$i.'</td>
+						<td><span class="search-term">'.ucwords($tag).'</span></td>
+						<td class="text-right">'.$data['reputation'].'</td>
+						<td class="text-right">'.$data['reputation_p'].' %</td>
+					</tr>';
+				}
+		echo '</tbody>
+		</table>';
+		$reputation = ob_get_contents();
+		ob_end_clean();
+		
+		return ['n_report'=>$n_report, 'bounty'=>$bounty, 'reputation'=>$reputation];
 	}
 	
 	
@@ -241,6 +383,7 @@ class Statistics
 		$t_p5 = [];
 		$t_total = [];
 		$t_average = [];
+		$t_reputation = [];
 		$n = 0;
 		
 		foreach( $db->getReports() as $report )
@@ -251,6 +394,11 @@ class Statistics
 			}
 			$t_total[ $d ]++;
 			
+			if( !isset($t_reputation[$d]) ) {
+				$t_reputation[ $d ] = 0;
+			}
+			$t_reputation[$d] += $report->getTotalReputation();
+
 			$tab = 't_p'.(int)$report->getRating();
 			if( !isset($$tab[$d]) ) {
 				$$tab[ $d ] = 0;
@@ -263,6 +411,7 @@ class Statistics
 		$average_rate = array_sum($t_p1)*5 + array_sum($t_p2)*4 + array_sum($t_p3)*3 + array_sum($t_p4)*2 + array_sum($t_p5)*1;
 		$average_rate = (float)sprintf( '%.02f', $average_rate / (array_sum($t_total)-array_sum($t_p0)) );
 		
+		$t_reputation = self::createTimeline( $t_reputation, $db->getFirstReportDate() );
 		$t_p0 = self::createTimeline( $t_p0, $db->getFirstReportDate() );
 		$t_p1 = self::createTimeline( $t_p1, $db->getFirstReportDate() );
 		$t_p2 = self::createTimeline( $t_p2, $db->getFirstReportDate() );
@@ -288,6 +437,7 @@ class Statistics
 		$t_return['total'] = array_values( $t_total );
 		$t_return['average_report'] = array_values( $t_average_report );
 		$t_return['average_rate'] = array_values( $t_average_rate );
+		$t_return['reputation'] = array_values( $t_reputation );
 		$t_return['categories'] = array_keys( $t_total );
 		
 		return json_encode( $t_return );
@@ -328,11 +478,17 @@ class Statistics
 		$t_datas_pd = [];
 		$t_average_rcd = [];
 		$t_average_pd = [];
+		$t_reputation = [];
 		
 		foreach( $db->getReports() as $report )
 		{
 			$dr = date( 'm/y', $report->getCreatedAt() );
 			
+			if( !isset($t_reputation[$dr]) ) {
+				$t_reputation[ $dr ] = 0;
+			}
+			$t_reputation[$dr] += $report->getTotalReputation();
+
 			foreach( $report->getBounties() as $bounty )
 			{
 				if( !isset($t_datas_rcd[$dr]) ) {
@@ -350,6 +506,7 @@ class Statistics
 			}
 		}
 		
+		$t_reputation = self::createTimeline( $t_reputation, $db->getFirstReportDate() );
 		$t_datas_rcd = self::createTimeline( $t_datas_rcd, $db->getFirstReportDate() );
 		$t_datas_pd = self::createTimeline( $t_datas_pd, $db->getFirstReportDate() );
 		$average_rcd = (float)sprintf( '%.02f', array_sum( $t_datas_rcd ) / count($t_datas_rcd) );
@@ -361,6 +518,7 @@ class Statistics
 		}
 		
 		$t_return = [];
+		$t_return['reputation'] = array_values( $t_reputation );
 		$t_return['categories'] = array_keys( $t_datas_rcd );
 		$t_return['report_creation_date'] = array_values( $t_datas_rcd );
 		$t_return['payday'] = array_values( $t_datas_pd );

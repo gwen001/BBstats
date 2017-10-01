@@ -27,9 +27,10 @@ class Hackerone extends Platform
 	
 	public function connect()
 	{
-		return true;
+		//return true;
 		$c = curl_init();
 		curl_setopt( $c, CURLOPT_URL, 'https://hackerone.com/bugs.json?subject=user&report_id=0&view=all&substates%5B%5D=new&substates%5B%5D=triaged&substates%5B%5D=needs-more-info&substates%5B%5D=resolved&substates%5B%5D=informative&substates%5B%5D=not-applicable&substates%5B%5D=duplicate&substates%5B%5D=spam&reported_to_team=&text_query=&program_states%5B%5D=2&program_states%5B%5D=3&program_states%5B%5D=4&program_states%5B%5D=5&sort_type=latest_activity&sort_direction=descending&limit=25&page=1' );
+		curl_setopt( $c, CURLOPT_USERAGENT, 'Mozilla/5.0 (X11; Ubuntu; Linux x86_64; rv:55.0) Gecko/20100101 Firefox/55.0' );
 		//curl_setopt( $c, CURLOPT_SSL_VERIFYPEER, false );
 		curl_setopt( $c, CURLOPT_TIMEOUT, 15 );
 		curl_setopt( $c, CURLOPT_FOLLOWLOCATION, true );
@@ -64,6 +65,7 @@ class Hackerone extends Platform
 		{
 			$c = curl_init();
 			curl_setopt( $c, CURLOPT_URL, 'https://hackerone.com/bugs.json?subject=user&report_id=0&view=all&substates%5B%5D=new&substates%5B%5D=triaged&substates%5B%5D=needs-more-info&substates%5B%5D=resolved&substates%5B%5D=informative&substates%5B%5D=not-applicable&substates%5B%5D=duplicate&substates%5B%5D=spam&reported_to_team=&text_query=&program_states%5B%5D=2&program_states%5B%5D=3&program_states%5B%5D=4&program_states%5B%5D=5&sort_type=latest_activity&sort_direction=descending&limit='.self::REPORT_PAGE_LIMIT.'&page='.$page );
+			curl_setopt( $c, CURLOPT_USERAGENT, 'Mozilla/5.0 (X11; Ubuntu; Linux x86_64; rv:55.0) Gecko/20100101 Firefox/55.0' );
 			//curl_setopt( $c, CURLOPT_SSL_VERIFYPEER, false );
 			curl_setopt( $c, CURLOPT_TIMEOUT, 15 );
 			curl_setopt( $c, CURLOPT_FOLLOWLOCATION, true );
@@ -71,10 +73,10 @@ class Hackerone extends Platform
 			//curl_setopt( $c, CURLOPT_COOKIEJAR, $this->cookie_file );
 			//curl_setopt( $c, CURLOPT_COOKIEFILE, $this->cookie_file );
 			curl_setopt( $c, CURLOPT_RETURNTRANSFER, true );
-			//$data = curl_exec($c );
-			//$t_info = curl_getinfo( $c );
-			//file_put_contents( DATABASE_PATH.'/page_'.$page.'.json', $data );
-			$data = @file_get_contents( 'data/page_'.$page.'.json' );
+			$data = curl_exec($c );
+			$t_info = curl_getinfo( $c );
+			file_put_contents( DATABASE_PATH.'/page_'.$page.'.json', $data );
+			//$data = @file_get_contents( 'data/page_'.$page.'.json' );
 			//var_dump( $data );
 			//var_dump( $t_info );
 			
@@ -134,7 +136,7 @@ class Hackerone extends Platform
 		for( $n=0 ; $n<$quantity && list($k,$bug)=each($this->t_bugs) ; $n++ )
 		{
 			$report_id = $bug['id'];
-			$key = Report::generateKey( $this->getName(), $report_id );
+			$key = Report::generateKey( $this->getName(), $bug['team']['handle'], $report_id );
 
 			if( !$db->exists($key) || $bbstats->updateAllowed() || $bbstats->overwriteAllowed() )
 			{
@@ -163,7 +165,7 @@ class Hackerone extends Platform
 		for( $n=0 ; $n<$quantity && list($k,$bug)=each($this->t_bugs) ; $n++ )
 		{
 			$report_id = $bug['id'];
-			$key = Report::generateKey( $this->getName(), $report_id );
+			$key = Report::generateKey( $this->getName(), $bug['team']['handle'], $report_id );
 
 			if( !$db->exists($key) || $bbstats->updateAllowed() || $bbstats->overwriteAllowed() )
 			{
@@ -188,6 +190,7 @@ class Hackerone extends Platform
 	{
 		$c = curl_init();
 		curl_setopt( $c, CURLOPT_URL, 'https://hackerone.com/reports/'.$report_id.'.json' );
+		curl_setopt( $c, CURLOPT_USERAGENT, 'Mozilla/5.0 (X11; Ubuntu; Linux x86_64; rv:55.0) Gecko/20100101 Firefox/55.0' );
 		//curl_setopt( $c, CURLOPT_SSL_VERIFYPEER, false );
 		curl_setopt( $c, CURLOPT_TIMEOUT, 15 );
 		curl_setopt( $c, CURLOPT_FOLLOWLOCATION, true );
@@ -195,10 +198,10 @@ class Hackerone extends Platform
 		//curl_setopt( $c, CURLOPT_COOKIEJAR, $this->cookie_file );
 		//curl_setopt( $c, CURLOPT_COOKIEFILE, $this->cookie_file );
 		curl_setopt( $c, CURLOPT_RETURNTRANSFER, true );
-		//$data = curl_exec($c );
-		//$t_info = curl_getinfo( $c );
-		//file_put_contents( DATABASE_PATH.'/report_'.$report_id.'.json', $data );
-		$data = @file_get_contents( 'data/report_'.$report_id.'.json' );
+		$data = curl_exec($c );
+		$t_info = curl_getinfo( $c );
+		file_put_contents( DATABASE_PATH.'/report_'.$report_id.'.json', $data );
+		//$data = @file_get_contents( 'data/report_'.$report_id.'.json' );
 		//var_dump( $data );
 		//var_dump( $t_info );
 		
@@ -292,25 +295,33 @@ class Hackerone extends Platform
 		if( $bbstats->isImport() ) {
 			return false;
 		}
-				
+			
 		$page = 1;
 		$t_reput = [];
+		$t_headers = [
+			'Accept: application/json, text/javascript, */*; q=0.01',
+			'Accept-Language: en-US,en;q=0.5',
+			'X-Requested-With: XMLHttpRequest',
+			'Referer: https://hackerone.com/settings/reputation/log',
+		];
 		
 		do
 		{
 			$c = curl_init();
 			curl_setopt( $c, CURLOPT_URL, 'https://hackerone.com/settings/reputation/log?page='.$page );
+			curl_setopt( $c, CURLOPT_USERAGENT, 'Mozilla/5.0 (X11; Ubuntu; Linux x86_64; rv:55.0) Gecko/20100101 Firefox/55.0' );
 			//curl_setopt( $c, CURLOPT_SSL_VERIFYPEER, false );
+			curl_setopt( $c, CURLOPT_HTTPHEADER, $t_headers );
 			curl_setopt( $c, CURLOPT_TIMEOUT, 15 );
 			curl_setopt( $c, CURLOPT_FOLLOWLOCATION, true );
 			curl_setopt( $c, CURLOPT_COOKIE, $this->cookies );
 			//curl_setopt( $c, CURLOPT_COOKIEJAR, $this->cookie_file );
 			//curl_setopt( $c, CURLOPT_COOKIEFILE, $this->cookie_file );
 			curl_setopt( $c, CURLOPT_RETURNTRANSFER, true );
-			//$data = curl_exec($c );
-			//$t_info = curl_getinfo( $c );
-			//file_put_contents( DATABASE_PATH.'/reput_'.$page.'.html', $data );
-			$data = @file_get_contents( 'data/reput_'.$page.'.html' );
+			$data = curl_exec($c );
+			$t_info = curl_getinfo( $c );
+			file_put_contents( DATABASE_PATH.'/reput_'.$page.'.json', $data );
+			//$data = @file_get_contents( 'data/reput_'.$page.'.html' );
 			//var_dump( $data );
 			//var_dump( $t_info );
 			
@@ -318,14 +329,15 @@ class Hackerone extends Platform
 			//if( !$data || $t_info['http_code']!=200 || !$t_info['size_download'] ) {
 				return false;
 			}
-	
+			
 			echo '.';
 			$page++;
 			
-			$t_reput = array_merge( $t_reput, $this->extractReputation($data) );
+			$t_reput = array_merge( $t_reput, $this->extractReputationJson($data) );
 			//var_dump( $t_reput );
 			
-			$grab = preg_match( '#audit-log-item#', $data );
+			$grab = !preg_match( '#user_joined#', $data );
+			//$grab = preg_match( '#audit-log-item#', $data );
 		}
 		while( $grab );
 		
@@ -385,6 +397,28 @@ class Hackerone extends Platform
 			}
 		}
 		
+		return $t_reput;
+	}
+	
+	
+	protected function extractReputationJson( $data )
+	{
+		$data = json_decode( $data, true );
+		$t_reput = [];
+		
+		foreach( $data['reputations'] as $item )
+		{
+			if( $item['type'] == 'user_joined' ) {
+				continue;
+			}
+			
+	        $ts = strtotime( $item['created_at'] );
+	        $report_id = $item['report']['id'];
+	        $points = $item['change'];
+
+	        $t_reput[] = [ 'report_id'=>$report_id, 'created_at'=>$ts, 'points'=>$points ];
+		}
+
 		return $t_reput;
 	}
 }

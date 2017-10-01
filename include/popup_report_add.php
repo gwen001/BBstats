@@ -119,16 +119,16 @@
             e.preventDefault();
             $('#modalReportAdd').modal();
         
-	        form = $('#formReportAdd');
+	        var form = $('#formReportAdd');
             form[0].reset();
-            input_id = form.find('input[name="id"]');
+            var input_id = form.find('input[name="id"]');
             
             window.setTimeout( function(){input_id.focus();}, 500 );
         });
         
         $('#modalReportAdd').on('click','#confirm-save',function(e){
             e.preventDefault();
-            form = $('#formReportAdd');
+            var form = $('#formReportAdd');
             $.post( form.attr('action'), form.serialize(), function(data) {
 	            form[0].reset();
                 $('#modalReportAdd').find('.close').click();

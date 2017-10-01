@@ -35,6 +35,25 @@ input {
 .btn {
 	line-height: 11px;
 }
+.report-reputation {
+	border: 1px solid;
+	border-radius: 3px;
+	float: right;
+	font-size: 10px;
+	padding: 1px 3px 0px 3px;
+}
+.reputation-zero {
+	border-color: #aaa;
+	color: #000;
+}
+.reputation-positive {
+	border-color: #72BC42;
+	color: #72BC42;
+}
+.reputation-negative {
+	border-color: #CD3A3A;
+	color: #CD3A3A;
+}
 .report-state {
 	border-left: 4px solid !important;
 }

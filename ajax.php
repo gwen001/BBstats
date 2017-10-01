@@ -46,6 +46,18 @@ if( $_POST['_a'] == 'graph-reload' && isset($_POST['graph']) )
 		case 'reports-rating-pie':
 			$datas = Statistics::reports_rating_pie( $db );
 			break;
+		case 'top-programs':
+			$datas = Statistics::top_program( $db );
+			break;
+		case 'top-tags':
+			$datas = Statistics::top_tags( $db );
+			break;
+		case 'top-programs-html':
+			$datas = json_encode( Statistics::top_program_html($db) );
+			break;
+		case 'top-tags-html':
+			$datas = json_encode( Statistics::top_tags_html($db) );
+			break;
 	}
 	
 	if( !is_null($datas) ) {
@@ -111,7 +123,7 @@ if( $_POST['_a'] == 'report-add' )
 		}
 	}
 	
-	$key = Report::generateKey( $report->getProgram(), $report->getId() );
+	$key = Report::generateKey( $report->getPlatform(), $report->getProgram(), $report->getId() );
 	
 	$db->setReport( $key, $report );
 	$db->save();
@@ -139,13 +151,13 @@ if( $_POST['_a'] == 'report-edit' )
 	if( isset($_POST['rating']) ) {
 		$report->setRating( trim($_POST['rating']) );
 	}
-	if( isset($_POST['title']) ) {
+	if( isset($_POST['title']) && $report->getManual() ) {
 		$report->setTitle( trim($_POST['title']) );
 	}
-	if( isset($_POST['program']) ) {
+	if( isset($_POST['program']) && $report->getManual() ) {
 		$report->setProgram( trim($_POST['program']) );
 	}
-	if( isset($_POST['bounty']) ) {
+	if( isset($_POST['bounty']) && $report->getManual() ) {
 		$b = (int)$_POST['bounty'];
 		if( $b != $report->getTotalBounty() ) {
 			$report->setManualBounty( $b );
@@ -158,7 +170,7 @@ if( $_POST['_a'] == 'report-edit' )
 			$report->setTags( explode(',',trim($_POST['tags'],', ')) );
 		}
 	}
-	if( isset($_POST['created_at']) ) {
+	if( isset($_POST['created_at']) && $report->getManual() ) {
 		$report->setCreatedAt( strtotime(trim($_POST['created_at'])) );
 	}
 	

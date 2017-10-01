@@ -43,6 +43,7 @@ $end_date = date( 'd/m/Y' );
 	
 	<body>
 		<?php include( 'include/popup_about.php' ); ?>
+		<?php include( 'include/popup_more.php' ); ?>
 		<?php include( 'include/popup_report_add.php' ); ?>
 		<?php include( 'include/popup_report_edit.php' ); ?>
 		<?php include( 'include/popup_tag_add.php' ); ?>
@@ -70,7 +71,7 @@ $end_date = date( 'd/m/Y' );
 						<?php if( defined('GRAPH_BOUNTIES') && GRAPH_BOUNTIES ) { include( 'graph/graph_bounties.php' ); } ?>
 					</div>
 					<div class="row">
-						<?php if( defined('GRAPH_BOUNTIES_REPORTS_REPUTATION') && GRAPH_BOUNTIES_REPORTS_REPUTATION ) { include( 'graph/graph_bounties_reports.php' ); } ?>
+						<?php if( defined('GRAPH_BOUNTIES_REPORTS_REPUTATION') && GRAPH_BOUNTIES_REPORTS_REPUTATION ) { include( 'graph/graph_bounties_reports_reputation.php' ); } ?>
 					</div>
 					<div class="row">
 						<?php if( defined('GRAPH_REPORTS_RATINGS') && GRAPH_REPORTS_RATINGS ) { include( 'graph/graph_reports_ratings.php' ); } ?>
@@ -99,9 +100,33 @@ $end_date = date( 'd/m/Y' );
         <script type="text/javascript">
         	function reloadGraph()
         	{
-        		for( i=0 ; i<Highcharts.charts.length ; i++ ) {
+        		for( var i=0 ; i<Highcharts.charts.length ; i++ ) {
         			Highcharts.charts[i].userOptions.mine[0].reload();
         		}
+        		
+            	if( $('#top-programs').length ) {
+			    	$.post( 'ajax.php', {'_a':'graph-reload','graph':'top-programs-html'}, function(data) {
+				        var data = jQuery.parseJSON( data );
+		            	$.each(data,function(k,v){
+		            		var tab = $('#top-programs').find('.'+k);
+		            		if( tab.length ) {
+		            			tab.html( v );
+		            		}
+		            	})
+		            });
+            	}
+            	
+            	if( $('#top-tags').length ) {
+			    	$.post( 'ajax.php', {'_a':'graph-reload','graph':'top-tags-html'}, function(data) {
+				        var data = jQuery.parseJSON( data );
+		            	$.each(data,function(k,v){
+		            		var tab = $('#top-tags').find('.'+k);
+		            		if( tab.length ) {
+		            			tab.html( v );
+		            		}
+		            	})
+		            });
+            	}
         	}
         	
         	function reloadReportLine( report_key )
@@ -111,23 +136,23 @@ $end_date = date( 'd/m/Y' );
 	            $.post( 'ajax.php', {'_a':'report-get','key':report_key}, function(data) {
 			        report = jQuery.parseJSON( data );
 					
-			        input_title = tr.find('.report-title');
+			        var input_title = tr.find('.report-title');
 		            input_title.html( report.title );
 
-		            input_program = tr.find('.report-program');
+		            var input_program = tr.find('.report-program');
 			        input_program.html( report.program );
 
-			        input_bounty = tr.find('.report-bounty');
+			        var input_bounty = tr.find('.report-bounty');
 		            input_bounty.html( report.total_bounty );
 		            
-			        input_created_at = tr.find('.report-created_at');
+			        var input_created_at = tr.find('.report-created_at');
 		            input_created_at.html( report.created_at );
 			        
-	            	a = input_title.parent();
+	            	var a = input_title.parent();
 	            	a.removeClass( 'rating_0 rating_1 rating_2 rating_3 rating_4 rating_5' );
 	            	a.addClass( 'rating_'+report.rating );
 	            	
-		            input_tags = tr.find('.report-tags');
+		            var input_tags = tr.find('.report-tags');
 		            input_tags.html( '' );
 	            	jQuery.each( report.tags, function(k,v){
 		            	input_tags.append( '<span class="report-tag">'+v+'</span> ' );

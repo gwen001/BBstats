@@ -235,10 +235,6 @@ class Utils
 			$title = preg_replace( '#'.$program.'#i', $r->getProgram(), $title );
 			$title = preg_replace( '#\d{1,3}\.\d{1,3}\.\d{1,3}\.\d{1,3}#', '192.168.'.rand(0,10).'.'.rand(1,253), $title );
 			$r->setTitle( $title );
-			
-			if( $program == 'trulia' ) {
-				var_dump($r);
-			}
 				
 			$t_bounties = $r->getBounties();
 			foreach( $t_bounties as $b ) {
