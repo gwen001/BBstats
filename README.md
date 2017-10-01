@@ -5,13 +5,13 @@ It's a tool that would be able (in the future) to aggregrate your reports/bounti
 ### Requirements
 A web server with PHP installed and Curl extension enabled.  
 
-
-### Recommended usage
 Put the code at the root of your web server:
 ```
 git clone https://github.com/gwen001/BBstats
 ```
 
+
+### Recommended usage
 Grab the datas from your favorite platform for the first time:
 ```
 php data-grabber.php -p hackerone -a n -rr -tt -e
