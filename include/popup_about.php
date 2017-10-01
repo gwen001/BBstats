@@ -9,6 +9,7 @@
                 <b>Platform</b>
                 <p>
                 	For the moment only Hackerone is supported, but I'm waiting for your help to implement other platforms.
+                	<br />Any ideas are welcome: <a href="https://github.com/gwen001/BBstats" target="_blank">https://github.com/gwen001/BBstats</a>
                 </p>
                 <b>Recommendation</b>
                 <p>
@@ -19,7 +20,7 @@
                 <p>
                 	This program performs only read actions.
                 	It doesn't store any sensitive details of the reports. Only the following datas are used:
-                	creation date, title, bounties, state.
+                	id, program, title, reputation, bounties, state, creation date.
                 </p>
                 <b>Copyright</b>
                 <p>
