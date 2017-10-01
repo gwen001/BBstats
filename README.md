@@ -67,7 +67,7 @@ __grabber__
 - find a better way to connect to Hackerone  
 
 __db__
-- 
+- azertyuiop
 
 __web ui__
 - search engine filter: with/without bounty  
