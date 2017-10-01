@@ -14,12 +14,12 @@ git clone https://github.com/gwen001/BBstats
 
 Grab the datas from your favorite platform for the first time:
 ```
-php data-grabber -p hackerone -a n -rr -tt -e
+php data-grabber.php -p hackerone -a n -rr -tt -e
 ```
 
 Or update your current database (once a week for example):
 ```
-php data-grabber -p hackerone -a u -r -t -e -n 50
+php data-grabber.php -p hackerone -a u -r -t -e -n 50
 ```
 
 Enjoy the stats!
