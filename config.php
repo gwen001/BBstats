@@ -75,8 +75,8 @@ define( 'AUTO_RATE_TAG', [
 			],
 			'rate_terms' => [
 				'read' => 0,
-				'write' => +1,
-				'possible' => -1,
+				'write' => -1,
+				'possible' => +1,
 			],
 		],
 		'ssrf' => [

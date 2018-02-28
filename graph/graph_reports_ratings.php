@@ -71,8 +71,8 @@ if( !$db->load(DATABASE_FILE) ) {
                 point: {
 					events: {
 						click: function () {
-							c = this.category.split('/');
-							d = '20' + c[1] + '/' + c[0];
+							var c = this.category.split('/');
+							var d = '20' + c[1] + '/' + c[0];
 							setFilterTerm( d );
 						}
 					}

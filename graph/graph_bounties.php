@@ -84,6 +84,9 @@ if( !$db->load(DATABASE_FILE) ) {
 	        yAxis: 1,
 	        type: 'spline',
 	        name: 'Reputation',
+	        tooltip: {
+            	valueSuffix: ''
+        	},
 	        data: bounties_data.reputation,
 	        color: Highcharts.getOptions().colors[2],
 	        marker: {
