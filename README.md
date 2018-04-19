@@ -11,6 +11,11 @@ git clone https://github.com/gwen001/BBstats
 ```
 
 
+### Auth
+
+Set environment variable `HACKERONE_USERNAME` and `HACKERONE_PASSWORD`
+
+
 ### Recommended usage
 Grab the datas from your favorite platform for the first time:
 ```
