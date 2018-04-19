@@ -10,7 +10,11 @@ class Hackerone extends Platform
 {
 	CONST REPORT_PAGE_LIMIT = 100;
 	
+	private $username = '';
+	private $password = '';
+	private $csrf_token = '';
 	private $cookies = '';
+	private $cookie_file = '';
 	
 	
 	public function __construct() {
@@ -20,29 +24,96 @@ class Hackerone extends Platform
 	
 	public function login()
 	{
-		echo "Copy here your Hackerone cookie after you login: \n";
-		$this->cookies = trim( fgets(STDIN) );
+		$this->username = getenv( 'HACKERONE_USERNAME' );
+		//var_dump( $this->username );
+		$this->password = getenv( 'HACKERONE_PASSWORD' );
+		
+		if( !$this->username || !$this->password ) {
+			return false;
+		}
+
+		//echo "Copy here your Hackerone cookie after you login: \n";
+		//$this->cookies = trim( fgets(STDIN) );
+		
+		return true;
 	}
 	
 	
 	public function connect()
 	{
+		$this->cookie_file = tempnam( '/tmp', 'cook_' );
+
 		$c = curl_init();
-		curl_setopt( $c, CURLOPT_URL, 'https://hackerone.com/bugs.json?subject=user&report_id=0&view=all&substates%5B%5D=new&substates%5B%5D=triaged&substates%5B%5D=needs-more-info&substates%5B%5D=resolved&substates%5B%5D=informative&substates%5B%5D=not-applicable&substates%5B%5D=duplicate&substates%5B%5D=spam&reported_to_team=&text_query=&program_states%5B%5D=2&program_states%5B%5D=3&program_states%5B%5D=4&program_states%5B%5D=5&sort_type=latest_activity&sort_direction=descending&limit=25&page=1' );
-		curl_setopt( $c, CURLOPT_USERAGENT, 'Mozilla/5.0 (X11; Ubuntu; Linux x86_64; rv:55.0) Gecko/20100101 Firefox/55.0' );
-		//curl_setopt( $c, CURLOPT_SSL_VERIFYPEER, false );
+		curl_setopt( $c, CURLOPT_URL, 'https://hackerone.com/current_user' );
+		curl_setopt( $c, CURLOPT_USERAGENT, 'User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:56.0) Gecko/20100101 Firefox/56.0' );
 		curl_setopt( $c, CURLOPT_TIMEOUT, 15 );
-		curl_setopt( $c, CURLOPT_FOLLOWLOCATION, true );
-		curl_setopt( $c, CURLOPT_COOKIE, $this->cookies );
-		//curl_setopt( $c, CURLOPT_COOKIEJAR, $this->cookie_file );
-		//curl_setopt( $c, CURLOPT_COOKIEFILE, $this->cookie_file );
+		curl_setopt( $c, CURLOPT_FOLLOWLOCATION, false );
+		curl_setopt( $c, CURLOPT_COOKIEJAR, $this->cookie_file );
+		curl_setopt( $c, CURLOPT_COOKIEFILE, $this->cookie_file );
 		curl_setopt( $c, CURLOPT_RETURNTRANSFER, true );
 		$data = curl_exec($c );
 		$t_info = curl_getinfo( $c );
 		//var_dump( $data );
 		//var_dump( $t_info );
 		
-		if( !$data || $t_info['http_code']!=200 || !$t_info['size_download'] || stristr($data,'You need to sign in') || stristr($data,'Sign in to HackerOne') ) {
+		if( !$data || $t_info['http_code']!=200 ) {
+			return false;
+		}
+		
+		$t_data = json_decode( $data, true );
+		if( !isset($t_data['csrf_token']) ) {
+			return false;
+		}
+		
+		$this->csrf_token = $t_data['csrf_token'];
+		//var_dump( $this->csrf_token );
+
+		$c = curl_init();
+		curl_setopt( $c, CURLOPT_URL, 'https://hackerone.com/sessions' );
+		curl_setopt( $c, CURLOPT_USERAGENT, 'User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:56.0) Gecko/20100101 Firefox/56.0' );
+		curl_setopt( $c, CURLOPT_TIMEOUT, 15 );
+		curl_setopt( $c, CURLOPT_FOLLOWLOCATION, false );
+		curl_setopt( $c, CURLOPT_COOKIEJAR, $this->cookie_file );
+		curl_setopt( $c, CURLOPT_COOKIEFILE, $this->cookie_file );
+		curl_setopt( $c, CURLOPT_RETURNTRANSFER, true );
+		curl_setopt( $c, CURLOPT_POST, true );
+		curl_setopt( $c, CURLOPT_HTTPHEADER, ['X-CSRF-Token: '.$this->csrf_token,'Accept: */*'] );
+		curl_setopt( $c, CURLOPT_POSTFIELDS, 'email='.urlencode($this->username).'&password='.urlencode($this->password) );
+		$data = curl_exec($c );
+		$t_info = curl_getinfo( $c );
+		//var_dump( $data );
+		//var_dump( $t_info );
+		
+		if( $t_info['http_code']!=200 ) {
+			return false;
+		}
+		
+		$t_data = json_decode( $data, true );
+		if( !isset($t_data['result_code']) || $t_data['result_code'] != 'valid-credentials' ) {
+			return false;
+		}
+
+		$c = curl_init();
+		curl_setopt( $c, CURLOPT_URL, 'https://hackerone.com/users/sign_in' );
+		curl_setopt( $c, CURLOPT_USERAGENT, 'User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:56.0) Gecko/20100101 Firefox/56.0' );
+		curl_setopt( $c, CURLOPT_TIMEOUT, 15 );
+		curl_setopt( $c, CURLOPT_FOLLOWLOCATION, false );
+		curl_setopt( $c, CURLOPT_COOKIEJAR, $this->cookie_file );
+		curl_setopt( $c, CURLOPT_COOKIEFILE, $this->cookie_file );
+		curl_setopt( $c, CURLOPT_RETURNTRANSFER, true );
+		curl_setopt( $c, CURLOPT_POST, true );
+		curl_setopt( $c, CURLOPT_HTTPHEADER, ['X-CSRF-Token: '.$this->csrf_token,'Accept: */*'] );
+		curl_setopt( $c, CURLOPT_POSTFIELDS, 'authenticity_token='.urlencode($this->csrf_token).'&user%5Bemail%5D='.urlencode($this->username).'&user%5Bpassword%5D='.urlencode($this->password) );
+		$data = curl_exec($c );
+		$t_info = curl_getinfo( $c );
+		//var_dump( $data );
+		//var_dump( $t_info );
+		
+		if( !$data || $t_info['http_code']!=302 ) {
+			return false;
+		}
+		
+		if( $data != '<html><body>You are being <a href="https://hackerone.com/10d/setup_guide">redirected</a>.</body></html>' ) {
 			return false;
 		}
 		
@@ -63,13 +134,13 @@ class Hackerone extends Platform
 		{
 			$c = curl_init();
 			curl_setopt( $c, CURLOPT_URL, 'https://hackerone.com/bugs.json?subject=user&report_id=0&view=all&substates%5B%5D=new&substates%5B%5D=triaged&substates%5B%5D=needs-more-info&substates%5B%5D=resolved&substates%5B%5D=informative&substates%5B%5D=not-applicable&substates%5B%5D=duplicate&substates%5B%5D=spam&reported_to_team=&text_query=&program_states%5B%5D=2&program_states%5B%5D=3&program_states%5B%5D=4&program_states%5B%5D=5&sort_type=latest_activity&sort_direction=descending&limit='.self::REPORT_PAGE_LIMIT.'&page='.$page );
-			curl_setopt( $c, CURLOPT_USERAGENT, 'Mozilla/5.0 (X11; Ubuntu; Linux x86_64; rv:55.0) Gecko/20100101 Firefox/55.0' );
+			curl_setopt( $c, CURLOPT_USERAGENT, 'User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:56.0) Gecko/20100101 Firefox/56.0' );
 			//curl_setopt( $c, CURLOPT_SSL_VERIFYPEER, false );
 			curl_setopt( $c, CURLOPT_TIMEOUT, 15 );
 			curl_setopt( $c, CURLOPT_FOLLOWLOCATION, true );
-			curl_setopt( $c, CURLOPT_COOKIE, $this->cookies );
-			//curl_setopt( $c, CURLOPT_COOKIEJAR, $this->cookie_file );
-			//curl_setopt( $c, CURLOPT_COOKIEFILE, $this->cookie_file );
+			//curl_setopt( $c, CURLOPT_COOKIE, $this->cookies );
+			curl_setopt( $c, CURLOPT_COOKIEJAR, $this->cookie_file );
+			curl_setopt( $c, CURLOPT_COOKIEFILE, $this->cookie_file );
 			curl_setopt( $c, CURLOPT_RETURNTRANSFER, true );
 			$data = curl_exec($c );
 			$t_info = curl_getinfo( $c );
@@ -187,13 +258,13 @@ class Hackerone extends Platform
 	{
 		$c = curl_init();
 		curl_setopt( $c, CURLOPT_URL, 'https://hackerone.com/reports/'.$report_id.'.json' );
-		curl_setopt( $c, CURLOPT_USERAGENT, 'Mozilla/5.0 (X11; Ubuntu; Linux x86_64; rv:55.0) Gecko/20100101 Firefox/55.0' );
+		curl_setopt( $c, CURLOPT_USERAGENT, 'User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:56.0) Gecko/20100101 Firefox/56.0' );
 		//curl_setopt( $c, CURLOPT_SSL_VERIFYPEER, false );
 		curl_setopt( $c, CURLOPT_TIMEOUT, 15 );
 		curl_setopt( $c, CURLOPT_FOLLOWLOCATION, true );
-		curl_setopt( $c, CURLOPT_COOKIE, $this->cookies );
-		//curl_setopt( $c, CURLOPT_COOKIEJAR, $this->cookie_file );
-		//curl_setopt( $c, CURLOPT_COOKIEFILE, $this->cookie_file );
+		//curl_setopt( $c, CURLOPT_COOKIE, $this->cookies );
+		curl_setopt( $c, CURLOPT_COOKIEJAR, $this->cookie_file );
+		curl_setopt( $c, CURLOPT_COOKIEFILE, $this->cookie_file );
 		curl_setopt( $c, CURLOPT_RETURNTRANSFER, true );
 		$data = curl_exec($c );
 		$t_info = curl_getinfo( $c );
@@ -305,14 +376,14 @@ class Hackerone extends Platform
 		{
 			$c = curl_init();
 			curl_setopt( $c, CURLOPT_URL, 'https://hackerone.com/settings/reputation/log?page='.$page );
-			curl_setopt( $c, CURLOPT_USERAGENT, 'Mozilla/5.0 (X11; Ubuntu; Linux x86_64; rv:55.0) Gecko/20100101 Firefox/55.0' );
+			curl_setopt( $c, CURLOPT_USERAGENT, 'User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:56.0) Gecko/20100101 Firefox/56.0' );
 			//curl_setopt( $c, CURLOPT_SSL_VERIFYPEER, false );
 			curl_setopt( $c, CURLOPT_HTTPHEADER, $t_headers );
 			curl_setopt( $c, CURLOPT_TIMEOUT, 15 );
 			curl_setopt( $c, CURLOPT_FOLLOWLOCATION, true );
-			curl_setopt( $c, CURLOPT_COOKIE, $this->cookies );
-			//curl_setopt( $c, CURLOPT_COOKIEJAR, $this->cookie_file );
-			//curl_setopt( $c, CURLOPT_COOKIEFILE, $this->cookie_file );
+			//curl_setopt( $c, CURLOPT_COOKIE, $this->cookies );
+			curl_setopt( $c, CURLOPT_COOKIEJAR, $this->cookie_file );
+			curl_setopt( $c, CURLOPT_COOKIEFILE, $this->cookie_file );
 			curl_setopt( $c, CURLOPT_RETURNTRANSFER, true );
 			$data = curl_exec($c );
 			$t_info = curl_getinfo( $c );
