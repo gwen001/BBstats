@@ -116,7 +116,7 @@ require_once( 'config.php' );
 	if( !$bbstats->isImport() )
 	{
 		$grabber->login();
-		echo "\n";
+		//echo "\n";
 		
 		Utils::printInfo( 'Trying to connect.' );
 		if( !$grabber->connect() ) {

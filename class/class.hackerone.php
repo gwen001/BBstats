@@ -29,6 +29,7 @@ class Hackerone extends Platform
 		$this->password = getenv( 'HACKERONE_PASSWORD' );
 		
 		if( !$this->username || !$this->password ) {
+			Utils::printError( 'Credentials not found!' );
 			return false;
 		}
 
