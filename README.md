@@ -69,10 +69,9 @@ You create your own autotag and autorate configuration in `config.php`.
 ### Todo
 __grabber__
 - add more platform (Bugcrowd, Cobalt)  
-- find a better way to connect to Hackerone  
 
 __db__
-- azertyuiop
+- ?
 
 __web ui__
 - search engine filter: with/without bounty  
