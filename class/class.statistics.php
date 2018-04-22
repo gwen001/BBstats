@@ -472,6 +472,31 @@ class Statistics
 	}
 	
 	
+	public static function reports_state_pie( $db )
+	{
+		$t_state = [ 'new'=>0,'triaged'=>0,'duplicate'=>0,'informative'=>0,'not-applicable'=>0,'resolved'=>0,'spam'=>0 ];
+		
+		foreach( $db->getReports() as $report )
+		{
+			$s = strtolower( $report->getState() );
+			$t_state[$s]++;
+		}
+
+		$t_return = [
+			'total' => $t_state['new']+$t_state['triaged']+$t_state['duplicate']+$t_state['informative']+$t_state['not-applicable']+$t_state['resolved']+$t_state['spam'],
+			's_new' => $t_state['new'],
+			's_triaged' => $t_state['triaged'],
+			's_duplicate' => $t_state['duplicate'],
+			's_informative' => $t_state['informative'],
+			's_not_applicable' => $t_state['not-applicable'],
+			's_resolved' => $t_state['resolved'],
+			's_spam' => $t_state['spam'],
+		];
+		
+		return json_encode( $t_return );
+	}
+	
+	
 	public static function bounties( $db )
 	{
 		$t_datas_rcd = [];

@@ -33,7 +33,8 @@
                             	</span>
                             </td>
                             <td>
-                            	<span class="report-rating">P<?php echo $r->getRating(); ?></span>
+                            	<span class="report-sstate">s:<?php echo $r->getState(); ?></span>
+                            	<span class="report-rrating">r:p<?php echo $r->getRating(); ?></span>
                             	<a href="javascript:;" class="report-edit rating_<?php echo $r->getRating(); ?>"><span class="report-title"><?php echo $r->getTitle(); ?></span></a>
                             	<?php  if( $reput > 0 ) { ?>
                             	<span class="report-reputation reputation-positive"><?php echo '+'.$reput; ?></span>

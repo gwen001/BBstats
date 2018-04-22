@@ -60,7 +60,10 @@ input {
 .report-platform {
 	display: none;
 }
-.report-rating {
+.report-rrating {
+	display: none;
+}
+.report-sstate {
 	display: none;
 }
 .report-untaged {

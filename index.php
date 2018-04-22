@@ -67,28 +67,47 @@ $end_date = date( 'd/m/Y' );
 				</div>
 				<?php if( $t_reports ) { ?>
 				<div class="col-md-6">
+					<?php if( defined('GRAPH_BOUNTIES') && GRAPH_BOUNTIES ) { ?>
 					<div class="row">
-						<?php if( defined('GRAPH_BOUNTIES') && GRAPH_BOUNTIES ) { include( 'graph/graph_bounties.php' ); } ?>
+						<?php include( 'graph/graph_bounties.php' ); ?>
 					</div>
+					<?php } ?>
+					<?php if( defined('GRAPH_BOUNTIES_REPORTS_REPUTATION') && GRAPH_BOUNTIES_REPORTS_REPUTATION ) { ?>
 					<div class="row">
-						<?php if( defined('GRAPH_BOUNTIES_REPORTS_REPUTATION') && GRAPH_BOUNTIES_REPORTS_REPUTATION ) { include( 'graph/graph_bounties_reports_reputation.php' ); } ?>
+						<?php include( 'graph/graph_bounties_reports_reputation.php' ); ?>
 					</div>
+					<?php } ?>
+					<?php if( defined('GRAPH_REPORTS_RATINGS') && GRAPH_REPORTS_RATINGS ) { ?>
 					<div class="row">
-						<?php if( defined('GRAPH_REPORTS_RATINGS') && GRAPH_REPORTS_RATINGS ) { include( 'graph/graph_reports_ratings.php' ); } ?>
+						<?php include( 'graph/graph_reports_ratings.php' ); ?>
 					</div>
+					<?php } ?>
 					<div class="row">
+						<?php if( defined('GRAPH_RATINGS_PIE') && GRAPH_RATINGS_PIE ) { ?>
 						<div class="col-md-6">
-							<?php if( defined('GRAPH_RATINGS_PIE') && GRAPH_RATINGS_PIE ) { include( 'graph/graph_reports_ratings_pie.php' ); } ?>
+							<?php include( 'graph/graph_reports_ratings_pie.php' ); ?>
 						</div>
+						<?php } ?>
+						<?php if( defined('GRAPH_PROGRAMS_PIE') && GRAPH_PROGRAMS_PIE ) { ?>
 						<div class="col-md-6">
-							<?php if( defined('GRAPH_PROGRAMS_PIE') && GRAPH_PROGRAMS_PIE ) { include( 'graph/graph_reports_programs_pie.php' ); } ?>
+							<?php include( 'graph/graph_reports_programs_pie.php' ); ?>
 						</div>
+						<?php } ?>
+						<?php if( defined('GRAPH_PLATFORMS_PIE') && GRAPH_PLATFORMS_PIE ) { ?>
 						<div class="col-md-6">
-							<?php if( defined('GRAPH_PLATFORMS_PIE') && GRAPH_PLATFORMS_PIE ) { include( 'graph/graph_reports_platforms_pie.php' ); } ?>
+							 <?php include( 'graph/graph_reports_platforms_pie.php' ); ?>
 						</div>
+						<?php } ?>
+						<?php if( defined('GRAPH_STATE_PIE') && GRAPH_STATE_PIE ) { ?>
 						<div class="col-md-6">
-							<?php if( defined('GRAPH_TAGS_PIE') && GRAPH_TAGS_PIE ) { include( 'graph/graph_reports_tags_pie.php' ); } ?>
+							<?php include( 'graph/graph_reports_state_pie.php' ); ?>
 						</div>
+						<?php } ?>
+						<?php if( defined('GRAPH_TAGS_PIE') && GRAPH_TAGS_PIE ) { ?>
+						<div class="col-md-6">
+							<?php include( 'graph/graph_reports_tags_pie.php' ); ?>
+						</div>
+						<?php } ?>
 					</div>
 					<?php if( defined('GRAPH_TOP_PROGRAMS') && GRAPH_TOP_PROGRAMS ) { include( 'graph/top_programs.php' ); } ?>
 					<?php if( defined('GRAPH_TOP_TAGS') && GRAPH_TOP_TAGS ) { include( 'graph/top_tags.php' ); } ?>

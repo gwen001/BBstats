@@ -31,7 +31,8 @@ define( 'GRAPH_BOUNTIES_REPORTS_REPUTATION', true );
 define( 'GRAPH_REPORTS_RATINGS', true );
 define( 'GRAPH_RATINGS_PIE', true );
 define( 'GRAPH_PROGRAMS_PIE', true );
-define( 'GRAPH_PLATFORMS_PIE', true );
+define( 'GRAPH_PLATFORMS_PIE', false );
+define( 'GRAPH_STATE_PIE', true );
 define( 'GRAPH_TAGS_PIE', true );
 define( 'GRAPH_TOP_PROGRAMS', true );
 define( 'GRAPH_TOP_TAGS', true );
@@ -141,6 +142,9 @@ define( 'AUTO_RATE_TAG', [
 		'ratel' => [
 			'tag_terms' => [
 				'rate limit',
+				'ratelimit',
+				'brute force',
+				'bruteforce',
 			],
 		],
 		'subto' => [

@@ -50,7 +50,7 @@ if( !$db->load(DATABASE_FILE) ) {
 					events: {
 						click: function () {
 							var term = (this.name == 'Unrated') ? 'P0' : this.name;
-							setFilterTerm( term );
+							setFilterTerm( 'r:'+term );
 						}
 					}
 				}
