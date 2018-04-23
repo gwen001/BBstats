@@ -164,6 +164,10 @@ table.table-bordered.dataTable {
 #listing .new-month {
 	border-bottom: 2px solid #aaa !important;
 }
+#listing .ignored {
+	opacity: 0.3;
+	filter: alpha(opacity=30);
+}
 #listing .report-tag {
 	background-color: #777;
 	border-radius: 2px;

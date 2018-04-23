@@ -84,6 +84,10 @@ class Statistics
 		
 		foreach( $db->getReports() as $key=>$report )
 		{
+			if( $report->getIgnore() ) {
+				continue;
+			}
+
 			$program = $report->getProgram();
 			
 			if( !isset($t_programs[$program]) ) {
@@ -204,6 +208,10 @@ class Statistics
 		
 		foreach( $db->getReports() as $key=>$report )
 		{
+			if( $report->getIgnore() ) {
+				continue;
+			}
+
 			$r_tags = $report->getTags();
 			
 			foreach( $r_tags as $tag ) {
@@ -255,6 +263,10 @@ class Statistics
 		
 		foreach( $db->getReports() as $report )
 		{
+			if( $report->getIgnore() ) {
+				continue;
+			}
+
 			if( !isset($t_platform[$report->getPlatform()]) ) {
 				$t_platform[ $report->getPlatform() ] = 0;
 			}
@@ -291,6 +303,10 @@ class Statistics
 		
 		foreach( $db->getReports() as $report )
 		{
+			if( $report->getIgnore() ) {
+				continue;
+			}
+
 			if( !isset($t_program[$report->getProgram()]) ) {
 				$t_program[ $report->getProgram() ] = 0;
 			}
@@ -329,6 +345,10 @@ class Statistics
 		
 		foreach( $db->getReports() as $report )
 		{
+			if( $report->getIgnore() ) {
+				continue;
+			}
+
 			$r_tags = $report->getTags();
 			
 			if( $r_tags && is_array($r_tags) && count($r_tags) )
@@ -388,6 +408,10 @@ class Statistics
 		
 		foreach( $db->getReports() as $report )
 		{
+			if( $report->getIgnore() ) {
+				continue;
+			}
+
 			$d = date( 'm/y', $report->getCreatedAt() );
 			if( !isset($t_total[$d]) ) {
 				$t_total[ $d ] = 0;
@@ -450,14 +474,14 @@ class Statistics
 		
 		foreach( $db->getReports() as $report )
 		{
+			if( $report->getIgnore() ) {
+				continue;
+			}
+
 			$var = 'p'.$report->getRating();
 			$$var++;
 		}
 
-		//if( !$p0 && !$p1 && !$p2 && !$p3 && !$p4 && !$p5 ) {
-		//	return false;
-		//}
-		
 		$t_return = [
 			'total' => $p0+$p1+$p2+$p3+$p4+$p5,
 			'p0' => $p0,
@@ -478,6 +502,10 @@ class Statistics
 		
 		foreach( $db->getReports() as $report )
 		{
+			if( $report->getIgnore() ) {
+				continue;
+			}
+			
 			$s = strtolower( $report->getState() );
 			$t_state[$s]++;
 		}
@@ -507,6 +535,10 @@ class Statistics
 		
 		foreach( $db->getReports() as $report )
 		{
+			if( $report->getIgnore() ) {
+				continue;
+			}
+
 			$dr = date( 'm/y', $report->getCreatedAt() );
 			
 			if( !isset($t_reputation[$dr]) ) {
@@ -562,6 +594,10 @@ class Statistics
 		
 		foreach( $db->getReports() as $report )
 		{
+			if( $report->getIgnore() ) {
+				continue;
+			}
+
 			$d = date( 'm/y', $report->getCreatedAt() );
 
 			if( !isset($t_reports[$d]) ) {

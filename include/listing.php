@@ -16,9 +16,10 @@
         			foreach( $t_reports as $key=>$r ) {
         				$m = date( 'n', $r->getCreatedAt() );
         				$reput = $r->getTotalReputation();
-        				if( $m != $cm ) { $tr_class='new-month';$cm=$m; } else { $tr_class=''; }
+        				//if( $m != $cm ) { $tr_class='new-month';$cm=$m; } else { $tr_class=''; }
+        				if( $r->getIgnore() ) { $tr_class='ignored'; } else { $tr_class=''; }
         				?>
-                        <tr class="<?php //echo $tr_class; ?>" data-key="<?php echo $key; ?>">
+                        <tr class="<?php echo $tr_class; ?>" data-key="<?php echo $key; ?>">
                             <td align="center" class="report-state state_<?php echo $r->getState(); ?>">
                             	<span class="report-platform"><?php echo $r->getPlatform(); ?></span>
                             	<?php $link=$r->getLink(); $p_icon='img/'.$r->getPlatform().'.png'; if( !is_file($p_icon) ) { $p_icon='img/unknown.png'; } ?>

@@ -62,6 +62,11 @@ class Database
 		$t_reports[ $key ] = $report;
 		$this->setReports( $t_reports );
 		return true;
+	}
+	public function addReport( $key, $report ) {
+		$this->setReport( $key, $report );
+		$this->setTotalReport( $this->getTotalReport()+1 );
+		return true;
 	} // this is not a hole...
 	public function deleteReport( $key ) {
 		if( !$this->getReport($key) ) {
@@ -70,6 +75,7 @@ class Database
 		$t_reports = $this->getReports();
 		unset( $t_reports[$key] );
 		$this->setReports( $t_reports );
+		$this->setTotalReport( $this->getTotalReport()-1 );
 		return true;
 	}
 	
@@ -78,7 +84,6 @@ class Database
 	}
 	private function setReports( $t_reports ) {
 		$this->setData( 'reports', $t_reports );
-		$this->setData( 'total_report', count($t_reports) );
 		return true;
 	}
 	
@@ -266,7 +271,10 @@ class Database
 				$first_report_date = $report->getCreatedAt();
 			}
 
-			$total_report++;
+			if( !$report->getIgnore() ) {
+				$total_report++;
+			}
+			
 			$total_bounty += $report->getTotalBounty();
 			$total_reputation += $report->getTotalReputation();
 		}

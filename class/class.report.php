@@ -19,6 +19,7 @@ class Report
 	public $rating = 0;
 	public $tags = [];
 	public $manual = 0;
+	public $ignore = 0;
 	
 	
 	public function getId() {
@@ -26,6 +27,23 @@ class Report
 	}
 	public function setId( $v ) {
 		$this->id = $v;
+	}
+	
+	
+	public function getIgnore() {
+		return $this->ignore;
+	}
+	public function setIgnore( $v ) {
+		$this->ignore = (int)$v;
+		return true;
+	}
+	public function ignore() {
+		$this->setIgnore( 1 );
+		return true;
+	}
+	public function unignore() {
+		$this->setIgnore( 0 );
+		return true;
 	}
 	
 	

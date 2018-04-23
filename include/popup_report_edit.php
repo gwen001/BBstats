@@ -102,10 +102,14 @@
 				</div>
 	            <div class="modal-footer">
 					<div class="row">
-						<div class="col-md-6 text-left">
+						<div class="col-md-4 text-left">
 			                <input type="submit" class="btn btn-primary" id="confirm-save" value="Save">
 						</div>
-						<div class="col-md-6">
+						<div class="col-md-4 text-center">
+			                <input type="button" class="btn btn-warning" id="confirm-ignore" value="Ignore">
+			                <input type="button" class="btn btn-warning" id="confirm-unignore" value="Unignore">
+						</div>
+						<div class="col-md-4">
 			                <button type="button" class="btn btn-danger" id="confirm-delete">Delete</button>
 						</div>
 					</div>
@@ -130,6 +134,16 @@
             $.post( 'ajax.php', {'_a':'report-get','key':report_key}, function(data) {
 		        var report = jQuery.parseJSON( data );
 
+	            var input_ignore = form.find('input[id="confirm-ignore"]');
+	            var input_unignore = form.find('input[id="confirm-unignore"]');
+	            if( report.ignore ) {
+	            	input_ignore.hide();
+	            	input_unignore.show();
+	            } else {
+	            	input_ignore.show();
+	            	input_unignore.hide();
+	            }
+	            
 	            if( report.rating ) {
 		            var input_rating = form.find('input[name="rating"][value="'+report.rating+'"]');
 		            input_rating.prop( 'checked', 'checked' );
@@ -194,6 +208,28 @@
                 $('#modalReportEdit').find('.close').click();
                 //location.reload();
                 reloadReportLine( input_key.val() );
+            });
+        });
+        
+        $('#modalReportEdit').on('click','#confirm-unignore',function(e){
+            e.preventDefault();
+            var form = $('#formReportEdit');
+            var input_key = form.find('input[name="key"]');
+            $.post( 'ajax.php', {'_a':'report-unignore','key':input_key.val()}, function(data) {
+	            form[0].reset();
+                $('#modalReportEdit').find('.close').click();
+                location.reload();
+            });
+        });
+        
+        $('#modalReportEdit').on('click','#confirm-ignore',function(e){
+            e.preventDefault();
+            var form = $('#formReportEdit');
+            var input_key = form.find('input[name="key"]');
+            $.post( 'ajax.php', {'_a':'report-ignore','key':input_key.val()}, function(data) {
+	            form[0].reset();
+                $('#modalReportEdit').find('.close').click();
+                location.reload();
             });
         });
         

@@ -125,7 +125,7 @@ if( $_POST['_a'] == 'report-add' )
 	
 	$key = Report::generateKey( $report->getPlatform(), $report->getProgram(), $report->getId() );
 	
-	$db->setReport( $key, $report );
+	$db->addReport( $key, $report );
 	$db->save();
 	exit();
 }
@@ -173,6 +173,45 @@ if( $_POST['_a'] == 'report-edit' )
 	if( isset($_POST['created_at']) && $report->getManual() ) {
 		$report->setCreatedAt( strtotime(trim($_POST['created_at'])) );
 	}
+	
+	$db->setReport( $key, $report );
+	$db->save();
+	exit();
+}
+
+
+if( $_POST['_a'] == 'report-unignore' )
+{
+	if( !isset($_POST['key']) || ($key=trim($_POST['key']))=='' ) {
+		exit();
+	}
+	
+	$report = $db->getReport( $key );
+	if( !$report ) {
+		exit();
+	}
+
+	$report->unignore();
+	
+	$db->setReport( $key, $report );
+	$db->save();
+	exit();
+}
+
+
+if( $_POST['_a'] == 'report-ignore' )
+{
+	if( !isset($_POST['key']) || ($key=trim($_POST['key']))=='' ) {
+		exit();
+	}
+	
+	$report = $db->getReport( $key );
+	if( !$report ) {
+		exit();
+	}
+
+	$report->ignore();
+	//var_dump($report);
 	
 	$db->setReport( $key, $report );
 	$db->save();
