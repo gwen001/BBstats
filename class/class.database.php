@@ -286,7 +286,7 @@ class Database
 		$this->setTotalBounty( $total_bounty );
 		$this->setTotalReputation( $total_reputation );
 		
-		$r = file_put_contents( $this->db_file, json_encode($this->datas) );
+		$r = file_put_contents( $this->db_file, json_encode($this->datas,JSON_PRETTY_PRINT) );
 		if( $r === false ) {
 			return false;
 		}
