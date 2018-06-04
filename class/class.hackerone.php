@@ -114,9 +114,9 @@ class Hackerone extends Platform
 			return -5;
 		}
 		
-		if( $data != '<html><body>You are being <a href="https://hackerone.com/10d/setup_guide">redirected</a>.</body></html>' ) {
+		/*if( $data != '<html><body>You are being <a href="https://hackerone.com/10d/setup_guide">redirected</a>.</body></html>' ) {
 			return -6;
-		}
+		}*/
 		
 		return true;
 	}
