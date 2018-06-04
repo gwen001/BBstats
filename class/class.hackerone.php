@@ -58,12 +58,12 @@ class Hackerone extends Platform
 		//var_dump( $t_info );
 		
 		if( !$data || $t_info['http_code']!=200 ) {
-			return false;
+			return -1;
 		}
 		
 		$t_data = json_decode( $data, true );
 		if( !isset($t_data['csrf_token']) ) {
-			return false;
+			return -2;
 		}
 		
 		$this->csrf_token = $t_data['csrf_token'];
@@ -86,12 +86,12 @@ class Hackerone extends Platform
 		//var_dump( $t_info );
 		
 		if( $t_info['http_code']!=200 ) {
-			return false;
+			return -3;
 		}
 		
 		$t_data = json_decode( $data, true );
 		if( !isset($t_data['result_code']) || $t_data['result_code'] != 'valid-credentials' ) {
-			return false;
+			return -4;
 		}
 
 		$c = curl_init();
@@ -111,11 +111,11 @@ class Hackerone extends Platform
 		//var_dump( $t_info );
 		
 		if( !$data || $t_info['http_code']!=302 ) {
-			return false;
+			return -5;
 		}
 		
 		if( $data != '<html><body>You are being <a href="https://hackerone.com/10d/setup_guide">redirected</a>.</body></html>' ) {
-			return false;
+			return -6;
 		}
 		
 		return true;

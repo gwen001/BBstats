@@ -119,8 +119,8 @@ require_once( 'config.php' );
 		//echo "\n";
 		
 		Utils::printInfo( 'Trying to connect.' );
-		if( !$grabber->connect() ) {
-			Utils::printError( 'Cannot connect to '.$grabber->getName().'!' );
+		if( ($c=$grabber->connect()) <= 0 ) {
+			Utils::printError( 'Cannot connect to '.$grabber->getName().'! ('.$c.')' );
 			exit();
 		}
 		Utils::printSuccess( 'Connected to '.$grabber->getName().'.' );
