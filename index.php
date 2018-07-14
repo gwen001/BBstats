@@ -155,6 +155,9 @@ $end_date = date( 'd/m/Y' );
 	            $.post( 'ajax.php', {'_a':'report-get','key':report_key}, function(data) {
 			        var report = jQuery.parseJSON( data );
 					
+			        var td_state = tr.find('.report-state');
+		            td_state.attr( 'class', 'report-state state_'+report.state );
+
 			        var input_title = tr.find('.report-title');
 		            input_title.html( report.title );
 

@@ -58,6 +58,18 @@
 							</div>
 							<div class="col-md-12">
 								<div class="form-group">
+	                                <label class="col-sm-3 control-label required" for="state">State</label>
+	                                <div class="col-sm-9">
+	                                    <select name="state" required="required" class="form-control">
+	                                    	<?php foreach( Report::T_STATE as $state ) { ?>
+	                                    		<option value="<?php echo $state; ?>"><?php echo $state; ?></option>
+	                                    	<?php } ?>
+	                                    </select>
+	                                </div>
+	                            </div>
+							</div>
+							<div class="col-md-12">
+								<div class="form-group">
 	                                <label class="col-sm-3 control-label required" for="title">Title</label>
 	                                <div class="col-sm-9">
 	                                    <input type="text" name="title" required="required" class="form-control" placeholder="title..." value="">

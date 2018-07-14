@@ -8,6 +8,8 @@
 
 class Report
 {
+	public const T_STATE = ['new','triaged','resolved','informative','duplicate','not-applicable'];
+
 	public $id = 0;
 	public $platform = '';
 	public $created_at = '';

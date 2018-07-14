@@ -103,6 +103,9 @@ if( $_POST['_a'] == 'report-add' )
 	if( isset($_POST['rating']) ) {
 		$report->setRating( trim($_POST['rating']) );
 	}
+	if( isset($_POST['state']) && in_array($_POST['state'],Report::T_STATE) ) {
+		$report->setState( $_POST['state'] );
+	}
 	if( isset($_POST['title']) ) {
 		$report->setTitle( trim($_POST['title']) );
 	}
@@ -150,6 +153,9 @@ if( $_POST['_a'] == 'report-edit' )
 	}
 	if( isset($_POST['rating']) ) {
 		$report->setRating( trim($_POST['rating']) );
+	}
+	if( isset($_POST['state']) && in_array($_POST['state'],Report::T_STATE) && $report->getManual() ) {
+		$report->setState( $_POST['state'] );
 	}
 	if( isset($_POST['title']) && $report->getManual() ) {
 		$report->setTitle( trim($_POST['title']) );

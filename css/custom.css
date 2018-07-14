@@ -32,6 +32,9 @@ input {
 	height: 35px;
 	padding: 6px 8px !important;
 }
+select.form-control, select.form-control option {
+	font-size: 12px !important;
+}
 .btn {
 	line-height: 11px;
 }
@@ -74,6 +77,9 @@ input {
 }
 .state_more_info {
 	border-left-color: #559cf5 !important;
+}
+.state_open {
+	border-left-color: #f5ca61 !important;
 }
 .state_new {
 	border-left-color: #8e44ad !important;

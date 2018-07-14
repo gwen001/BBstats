@@ -57,6 +57,18 @@
 							</div>
 							<div class="col-md-12">
 								<div class="form-group">
+	                                <label class="col-sm-3 control-label required" for="state">State</label>
+	                                <div class="col-sm-9">
+	                                    <select name="state" required="required" class="form-control">
+	                                    	<?php foreach( Report::T_STATE as $state ) { ?>
+	                                    		<option value="<?php echo $state; ?>"><?php echo $state; ?></option>
+	                                    	<?php } ?>
+	                                    </select>
+	                                </div>
+	                            </div>
+							</div>
+							<div class="col-md-12">
+								<div class="form-group">
 	                                <label class="col-sm-3 control-label required" for="title">Title</label>
 	                                <div class="col-sm-9">
 	                                    <input type="text" name="title" required="required" class="form-control" placeholder="title..." value="">
@@ -152,6 +164,9 @@
    	            var input_key = form.find('input[name="key"]');
 	            input_key.val( report_key );
 
+	            var input_state = form.find('select[name="state"]');
+	            input_state.val( report.state );
+
 	            var input_title = form.find('input[name="title"]');
 	            input_title.val( report.title );
 
@@ -178,6 +193,7 @@
 	            if( report.manual ) {
 	            	input_id.removeAttr( 'disabled' );
 	            	input_platform.removeAttr( 'disabled' );
+	            	input_state.removeAttr( 'disabled' );
 	            	input_title.removeAttr( 'disabled' );
 	            	input_program.removeAttr( 'disabled' );
 	            	input_bounty.removeAttr( 'disabled' );
@@ -187,6 +203,7 @@
 	            } else {
 	            	input_id.attr( 'disabled', 'disabled' );
 	            	input_platform.attr( 'disabled', 'disabled' );
+	            	input_state.attr( 'disabled', 'disabled' );
 	            	input_title.attr( 'disabled', 'disabled' );
 	            	input_program.attr( 'disabled', 'disabled' );
 	            	input_bounty.attr( 'disabled', 'disabled' );
@@ -204,10 +221,11 @@
             var form = $('#formReportEdit');
             var input_key = form.find('input[name="key"]');
             $.post( form.attr('action'), form.serialize(), function(data) {
+            	key = input_key.val();
 	            form[0].reset();
                 $('#modalReportEdit').find('.close').click();
                 //location.reload();
-                reloadReportLine( input_key.val() );
+                reloadReportLine( key );
             });
         });
         
