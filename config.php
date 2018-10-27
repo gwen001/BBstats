@@ -6,6 +6,8 @@
  * - gwen -
  */
 
+//ini_set( 'display_errors', false );
+//error_reporting( 0 );
 
 // DO NOT TOUCH THIS
 function __autoload( $c ) {
@@ -15,12 +17,14 @@ function __autoload( $c ) {
 	}
 }
 
+$demo = (isset($_GET) && isset($_GET['demo'])) ? '.demo' : '';
+
 define( 'APP_PATH', __DIR__ );
 define( 'CLASS_PATH', APP_PATH.'/class' );
 define( 'INCLUDE_PATH', APP_PATH.'/include' );
 define( 'GRAPH_PATH', APP_PATH.'/graph' );
 define( 'DATABASE_PATH', APP_PATH.'/data' );
-define( 'DATABASE_FILE', DATABASE_PATH.'/db.json' );
+define( 'DATABASE_FILE', DATABASE_PATH.'/db.json'.$demo );
 
 // don't dig too much the rabbit hole!
 
@@ -36,6 +40,7 @@ define( 'GRAPH_STATE_PIE', true );
 define( 'GRAPH_TAGS_PIE', true );
 define( 'GRAPH_TOP_PROGRAMS', true );
 define( 'GRAPH_TOP_TAGS', true );
+define( 'GRAPH_TAGS_EVOLUTION', true );
 
 /*
 initial_rate_value (1>5) => [
@@ -112,6 +117,7 @@ define( 'AUTO_RATE_TAG', [
 			'tag_terms' => [
 				'xss',
 				'cross site scripting',
+				'Cross-Site Scripting',
 			],
 		],
 		'csrf' => [

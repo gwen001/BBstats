@@ -33,6 +33,7 @@ firefox http://127.0.0.1/BBstats/
 ```
 
 ### Grabber
+<!-- help -->
 ```
 Usage: php data-grabber.php -p <platform> [OPTIONS]
 
@@ -44,6 +45,7 @@ Options:
 		   R: rollback, got back the previous last version of the database (not platform dependant)
 	-e	grab reputation as well
 	-f	import from file
+	-g	import program datas
 	-h	print this help
 	-n	update/overwrite the last n reports (default=all, only recommended for the first init)
 	-p	platform to grab datas (available: hackerone)
@@ -59,7 +61,7 @@ Examples:
 	php data-grabber.php -p hackerone -f bounties.csv -r -t
 	php data-grabber.php -p hackerone -a r
 ```
-
+<!-- /help -->
 
 ### Web
 You can choose which graph you want to display in `config.php`.  

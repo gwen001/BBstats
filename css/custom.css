@@ -66,6 +66,9 @@ select.form-control, select.form-control option {
 .report-rrating {
 	display: none;
 }
+.report-rrating {
+	display: none;
+}
 .report-sstate {
 	display: none;
 }
@@ -135,6 +138,21 @@ a.rating_0, a.rating_0:hover, a.rating_0:visited, a.rating_0:active {
 }
 .radio-5 input[type="radio"] + label::after {
 	background-color: #0278b8;
+}
+a.rating_none, a.rating_none:hover, a.rating_none:visited, a.rating_none:active {
+	color: #0278b8;
+}
+a.rating_low, a.rating_low:hover, a.rating_low:visited, a.rating_low:active {
+	color: #5eae00;
+}
+.rating_medium, a.rating_medium:hover, a.rating_medium:visited, a.rating_medium:active {
+	color: #f0ad4e;
+}
+.rating_high, a.rating_high:hover, a.rating_high:visited, a.rating_high:active {
+	color: #ff6900;
+}
+.rating_critical, a.rating_critical:hover, a.rating_critical:visited, a.rating_critical:active {
+	color: #d13535;
 }
 #modalReportAdd .radio, #modalReportEdit .radio {
 	margin-right: 30px;
@@ -227,6 +245,7 @@ ul.pagination {
 
 h4 {
 	margin-bottom: 20px;
+	text-align: center;
 }
 div.spacer {
 	border-bottom: 1px solid #000;
@@ -271,4 +290,74 @@ div.datop > .table > tbody > tr:last-child {
 }
 #filter-reset {
 	margin-left: 5px;
+}
+
+
+#program-container #severity-legend {
+	background-color: rgba(245, 245, 245, 0.8);
+	border: 1px solid rgb(212, 24, 24);
+	border-radius: 2px;
+	box-shadow: 2px 2px 2px #AAA;
+	left: 170px;
+	padding: 8px;
+	position: absolute;
+	top: 20px;
+}
+#program-container .severity-none {
+	color: #0278b8;
+}
+#program-container .severity-low {
+	color: #5eae00;
+}
+#program-container .severity-medium {
+	color: #f0ad4e;
+}
+#program-container .severity-high {
+	color: #ff6900;
+}
+#program-container .severity-critical {
+	color: #d13535;
+}
+#program-container #program-infos {
+	border-bottom: 1px solid #000;
+	display: table;
+	font-size: 1.2em;
+	margin-left: 25px;
+	margin-bottom: 50px;
+	padding-bottom: 50px;
+	width: 100%;
+}
+#program-container #program-infos h3 {
+	margin: 0px;
+	padding: 0px;
+	text-align: left;
+}
+#program-container #program-infos a {
+	color: #000 ;
+}
+#program-container #program-infos a:hover {
+	text-decoration: none;
+}
+#program-container #program-infos .program-logo {
+	width: 100px;
+}
+#program-container #program-infos [class*="col-"] {
+	display: table-cell;
+}
+#program-container #program-profile-picture {
+	border: 1px solid #000;
+	border-radius: 3px;
+}
+
+#program-container .p_positive {
+	color: #5eae00;
+	font-weight: bold;
+}
+#program-container .p_negative {
+	color: #d13535;
+	font-weight: bold;
+}
+#program-container .p_null {
+	color: #AAA;
+	font-weight: bold;
 }

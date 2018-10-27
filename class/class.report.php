@@ -12,9 +12,11 @@ class Report
 
 	public $id = 0;
 	public $platform = '';
+	public $reporter = '';
 	public $created_at = '';
 	public $title = '';
 	public $program = '';
+	public $severity = '';
 	public $bounties = [];
 	public $reputations = [];
 	public $state = '';
@@ -22,6 +24,9 @@ class Report
 	public $tags = [];
 	public $manual = 0;
 	public $ignore = 0;
+	public $first_response_date = null;
+	public $first_bounty_date = null;
+	public $resolution_date = null;
 	
 	
 	public function getId() {
@@ -29,6 +34,7 @@ class Report
 	}
 	public function setId( $v ) {
 		$this->id = $v;
+		return true;
 	}
 	
 	
@@ -54,6 +60,7 @@ class Report
 	}
 	public function setManual( $v ) {
 		$this->manual = (int)$v;
+		return true;
 	}
 	
 	
@@ -61,7 +68,17 @@ class Report
 		return $this->platform;
 	}
 	public function setPlatform( $v ) {
-		$this->platform = $v;
+		$this->platform = trim( $v );
+		return true;
+	}
+	
+
+	public function getReporter() {
+		return $this->reporter;
+	}
+	public function setReporter( $v ) {
+		$this->reporter = trim( $v );
+		return true;
 	}
 	
 	
@@ -78,7 +95,7 @@ class Report
 		return $this->title;
 	}
 	public function setTitle( $v ) {
-		$this->title = $v;
+		$this->title = trim( $v );
 		return true;
 	}
 	
@@ -87,10 +104,19 @@ class Report
 		return $this->program;
 	}
 	public function setProgram( $v ) {
-		$this->program = $v;
+		$this->program = trim( $v );
 		return true;
 	}
 	
+	
+    public function getSeverity() {
+        return $this->severity;
+    }
+    public function setSeverity( $v ) {
+        $this->severity = trim( $v );
+        return true;
+    }
+
 
 	public function addReputation( $created_at, $points ) {
 		$reputation = new stdClass();
@@ -154,7 +180,7 @@ class Report
 		return $this->state;
 	}
 	public function setState( $v ) {
-		$this->state = $v;
+		$this->state = trim( $v );
 		return true;
 	}
 	
@@ -201,6 +227,45 @@ class Report
 		} else {
 			return false;
 		}
+	}
+	
+
+	public function getFirstResponseDate() {
+		return $this->first_response_date;
+	}
+	public function setFirstResponseDate( $v ) {
+		$this->first_response_date = $v;
+		return true;
+	}
+	public function getFirstResponseTime() {
+		$scd = Utils::datetimeDiff( $this->getCreatedAt(), $this->getFirstResponseDate() )->total_day;
+		return $scd;
+	}
+
+	
+	public function getFirstBountyDate() {
+		return $this->first_bounty_date;
+	}
+	public function setFirstBountyDate( $v ) {
+		$this->first_bounty_date = $v;
+		return true;
+	}
+	public function getFirstBountyTime() {
+		$scd = Utils::datetimeDiff( $this->getCreatedAt(), $this->getFirstBountyDate() )->total_day;
+		return $scd;
+	}
+	
+	
+	public function getResolutionDate() {
+		return $this->resolution_date;
+	}
+	public function setResolutionDate( $v ) {
+		$this->resolution_date = $v;
+		return true;
+	}
+	public function getResolutionTime() {
+		$scd = Utils::datetimeDiff( $this->getCreatedAt(), $this->getResolutionDate() )->total_day;
+		return $scd;
 	}
 	
 	

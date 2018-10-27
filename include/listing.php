@@ -2,8 +2,8 @@
 	<table id="listing" class="table table-bordered table-striped datatable">
         <thead>
         <tr>
-            <th width="20"></th>
-            <th>Title</th>
+			<th width="20"></th>
+	        <th>Title</th>
             <th>Program</th>
             <th>Bounty</th>
             <th>Tags</th>
@@ -32,7 +32,7 @@
                             		</a>
 	                            	<?php } ?>
                             	</span>
-                            </td>
+							</td>
                             <td>
                             	<span class="report-sstate">s:<?php echo $r->getState(); ?></span>
                             	<span class="report-rrating">r:p<?php echo $r->getRating(); ?></span>

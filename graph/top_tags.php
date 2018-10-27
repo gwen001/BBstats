@@ -14,7 +14,7 @@ $t_top = Statistics::top_tags_html( $db );
 
 <div class="row">
 	<div class="col-md-12 text-center">
-		<h4>Top <?php echo BBstats::TOP_LIMIT; ?> Tags</h4>
+		<h4>Top <?php echo Statistics::TOP_LIMIT; ?> Tags</h4>
 	</div>
 </div>
 <div id="top-tags" class="row">

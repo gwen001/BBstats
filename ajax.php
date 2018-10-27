@@ -40,6 +40,9 @@ if( $_POST['_a'] == 'graph-reload' && isset($_POST['graph']) )
 		case 'reports-platform-pie':
 			$datas = Statistics::reports_platform_pie( $db );
 			break;
+		case 'reports-state-pie':
+			$datas = Statistics::reports_state_pie( $db );
+			break;
 		case 'reports-rating':
 			$datas = Statistics::reports_rating( $db );
 			break;

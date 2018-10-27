@@ -25,9 +25,8 @@ class Hackerone extends Platform
 	public function login()
 	{
 		$this->username = getenv( 'HACKERONE_USERNAME' );
-		//var_dump( $this->username );
 		$this->password = getenv( 'HACKERONE_PASSWORD' );
-		
+
 		if( !$this->username || !$this->password ) {
 			Utils::printError( 'Credentials not found!' );
 			return false;
@@ -268,6 +267,7 @@ class Hackerone extends Platform
 		curl_setopt( $c, CURLOPT_COOKIEFILE, $this->cookie_file );
 		curl_setopt( $c, CURLOPT_RETURNTRANSFER, true );
 		$data = curl_exec($c );
+		//var_dump($data);
 		$t_info = curl_getinfo( $c );
 		//file_put_contents( DATABASE_PATH.'/report_'.$report_id.'.json', $data );
 		//$data = @file_get_contents( 'data/report_'.$report_id.'.json' );
@@ -320,6 +320,7 @@ class Hackerone extends Platform
 			$r = new Report();
 			$r->setPlatform( $this->getName() );
 			$r->setId( $report['id'] );
+			$r->setReporter( $report['reporter']['username'] );
 			$r->setTitle( $report['title'] );
 			$r->setCreatedAt( strtotime($report['created_at']) );
 			$r->setProgram( $report['team']['handle'] );
@@ -333,6 +334,20 @@ class Hackerone extends Platform
 			
 			foreach( $report['activities'] as $activity )
 			{
+				if( !$r->getFirstResponseDate() && $activity['automated_response'] === false ) {
+					$a = isset($activity['actor']['username']) ? $activity['actor']['username'] : '';
+					$c = isset($activity['collaborator']['username']) ? $activity['collaborator']['username'] : '';
+					if( $a != $report['reporter']['username'] && $c != $report['reporter']['username'] ) {
+						$r->setFirstResponseDate( strtotime($activity['created_at']) );
+					}
+				}				
+				if( !$r->getFirstBountyDate() && (isset($activity['bonus_amount']) || isset($activity['bounty_amount'])) ) {
+					$r->setFirstBountyDate( strtotime($activity['created_at']) );
+				}
+				if( !$r->getResolutionDate() && $activity['type'] == 'Activities::BugResolved' ) {
+					$r->setResolutionDate( strtotime($activity['created_at']) );
+				}				
+
 				$bounty_amount = 0;
 				
 				if( isset($activity['bonus_amount']) ) {
@@ -487,5 +502,114 @@ class Hackerone extends Platform
 		}
 
 		return $t_reput;
+	}
+
+
+	public function getProgramInfos( $program )
+	{
+		//$data = @file_get_contents( 'data/h_'.$program.'.json' );
+		//return $data;
+
+		$c = curl_init();
+		curl_setopt( $c, CURLOPT_URL, 'https://hackerone.com/'.$program );
+		curl_setopt( $c, CURLOPT_USERAGENT, 'User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:56.0) Gecko/20100101 Firefox/56.0' );
+		//curl_setopt( $c, CURLOPT_SSL_VERIFYPEER, false );
+		curl_setopt( $c, CURLOPT_TIMEOUT, 15 );
+		curl_setopt( $c, CURLOPT_FOLLOWLOCATION, true );
+		//curl_setopt( $c, CURLOPT_COOKIE, $this->cookies );
+		curl_setopt( $c, CURLOPT_COOKIEJAR, $this->cookie_file );
+		curl_setopt( $c, CURLOPT_COOKIEFILE, $this->cookie_file );
+		curl_setopt( $c, CURLOPT_RETURNTRANSFER, true );
+		curl_setopt( $c, CURLOPT_HTTPHEADER, ['Accept: application/json, text/javascript, */*; q=0.01','Content-Type: application/json','X-Requested-With: XMLHttpRequest'] );
+		$data = curl_exec($c );
+		$t_info = curl_getinfo( $c );
+		//file_put_contents( DATABASE_PATH.'/h_'.$program.'.json', $data );
+		
+		if( !$data || $t_info['http_code']!=200 || !$t_info['size_download'] || stristr($data,'You need to sign in') || stristr($data,'Sign in to HackerOne') || stristr($data,'It looks like your JavaScript is disabled') ) {
+			return false;
+		}
+		
+		return $data;
+	}
+
+
+	public function grabProgramHacktivity( $program, &$t_reports )
+	{
+		$page = 1;
+		$n_page = 0;
+		$t_reports = [];
+
+		do
+		{
+			//echo "grabbing hacktivity page ".$page."\n";
+			$url = 'https://hackerone.com/hacktivity?sort_type=latest_disclosable_activity_at&page='.$page.'&filter=type%3Aall%20to%3A'.$program;
+			//echo $url."\n";
+
+			$c = curl_init();
+			curl_setopt( $c, CURLOPT_URL, $url );
+			curl_setopt( $c, CURLOPT_USERAGENT, 'User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:56.0) Gecko/20100101 Firefox/56.0' );
+			//curl_setopt( $c, CURLOPT_SSL_VERIFYPEER, false );
+			curl_setopt( $c, CURLOPT_TIMEOUT, 15 );
+			curl_setopt( $c, CURLOPT_FOLLOWLOCATION, true );
+			//curl_setopt( $c, CURLOPT_COOKIE, $this->cookies );
+			curl_setopt( $c, CURLOPT_COOKIEJAR, $this->cookie_file );
+			curl_setopt( $c, CURLOPT_COOKIEFILE, $this->cookie_file );
+			curl_setopt( $c, CURLOPT_RETURNTRANSFER, true );
+			curl_setopt( $c, CURLOPT_HTTPHEADER, ['Accept: application/json, text/javascript, */*; q=0.01','Content-Type: application/json','X-Requested-With: XMLHttpRequest'] );
+			$data = curl_exec($c );
+			$t_info = curl_getinfo( $c );
+			file_put_contents( DATABASE_PATH.'/'.$program.'_'.$page.'.json', $data );
+			/*if( !file_exists('data/'.$program.'_'.$page.'.json') ) {
+				return false;
+			}
+			$data = @file_get_contents( 'data/'.$program.'_'.$page.'.json' );*/
+			//var_dump( $data );
+			//var_dump( $t_info );
+			
+			if( !$data || $t_info['http_code']!=200 || !$t_info['size_download'] || stristr($data,'You need to sign in') || stristr($data,'Sign in to HackerOne') || stristr($data,'It looks like your JavaScript is disabled') ) {
+				echo "errr\n";
+				return false;
+			}
+
+			$t_data = json_decode( $data, true );
+			$n_page = $t_data['pages'];
+			//echo "n_page: ".$n_page."\n";
+			$page++;
+			
+			if( isset($t_data['reports']) ) {
+				$t_reports = array_merge( $t_reports, $t_data['reports'] );
+			}
+
+			Utils::_print( '.', 'white' );
+		}
+		while( $page <= $n_page );
+
+		$this->t_bugs = $t_reports;
+		/*
+		foreach( $t_reports as $k=>$v ) {
+			$t_reports[ $v['id'] ] = $v;
+			unset( $t_reports[$k] );
+		}
+		*/
+		return true;
+	}
+
+	public function grabProgramReports()
+	{
+		for( $n=0 ; /*$n<10 &&*/ list($k,$bug)=each($this->t_bugs) ; $n++ )
+		{
+			if( isset($bug['title']) ) {
+				$report = $this->grabReport( $bug['id'] );
+				$key = Report::generateKey( $this->getName(), $bug['team']['handle'], $bug['id'] );
+
+				if( $report ) {
+					$this->t_reports[$key] = $report;
+				}
+			}
+		}
+		
+		echo "\n";
+
+		return count($this->t_reports);
 	}
 }

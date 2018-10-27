@@ -8,11 +8,9 @@
 
 class BBstats
 {
-	const SHORT_OPTIONS = 'a:ef:hn:p:rrrttt';
+	const SHORT_OPTIONS = 'a:ef:g:hk:n:p:rrrttt';
 	const LONG_OPTIONS = ['demo'];
-	const TOP_LIMIT = 10;
 
-	
 	private static $_instance = null;
 
 	private function __construct() {
@@ -44,6 +42,17 @@ class BBstats
 	}
 	public function setPlatform( $v ) {
 		$this->platform = trim( $v );
+		return true;
+	}
+	
+	
+	private $program = '';
+	
+	public function getProgram() {
+		return $this->program;
+	}
+	public function setProgram( $v ) {
+		$this->program = trim( $v );
 		return true;
 	}
 	

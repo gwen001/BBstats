@@ -8,9 +8,11 @@
 
 class Statistics
 {
+	const TOP_LIMIT = 10;
+
 	public static function top_program_html( $db )
 	{
-		$limit = BBstats::TOP_LIMIT;
+		$limit = self::TOP_LIMIT;
 		$t_top = self::top_program( $db );
 
 		ob_start();
@@ -132,7 +134,7 @@ class Statistics
 	
 	public static function top_tags_html( $db )
 	{
-		$limit = BBstats::TOP_LIMIT;
+		$limit = self::TOP_LIMIT;
 		$t_top = self::top_tags( $db );
 
 		ob_start();
@@ -495,6 +497,33 @@ class Statistics
 		return json_encode( $t_return );
 	}
 	
+
+	public static function reports_severity_pie( $db )
+	{
+		$none = $low = $medium = $high = $critical = 0;
+		
+		foreach( $db->getReports() as $report )
+		{
+			if( $report->getIgnore() ) {
+				continue;
+			}
+
+			$var = $report->getSeverity();
+			$$var++;
+		}
+
+		$t_return = [
+			'total' => $none+$low+$medium+$high+$critical,
+			'none' => $none,
+			'low' => $low,
+			'medium' => $medium,
+			'high' => $high,
+			'critical' => $critical,
+		];
+		
+		return json_encode( $t_return );
+	}
+	
 	
 	public static function reports_state_pie( $db )
 	{
@@ -619,8 +648,7 @@ class Statistics
 				$t_reputation[ $d ] += $reput->points;
 			}
 		}
-		
-		
+				
 		$t_reports = self::createTimeline( $t_reports, $db->getFirstReportDate() );
 		$t_bounties = self::createTimeline( $t_bounties, $db->getFirstReportDate() );
 		$t_reputation = self::createTimeline( $t_reputation, $db->getFirstReportDate() );
@@ -653,6 +681,384 @@ class Statistics
 	}
 	
 	
+	public static function program_evolution( $db )
+	{
+		$t_p0 = [];
+		$t_p1 = [];
+		$t_p2 = [];
+		$t_p3 = [];
+		$t_p4 = [];
+		$t_p5 = [];
+		$t_none      = [];
+		$t_low      = [];
+		$t_medium   = [];
+		$t_high     = [];
+		$t_critical = [];
+		$t_total    = [];
+		$t_bounties = [];
+		$t_average_bounties  = [];
+		$t_cnt = [ 'none'=>0, 'low'=>0, 'medium'=>0, 'high'=>0, 'critical'=>0 ];
+		$first_report_date = null;
+		
+		foreach( $db->getReports() as $report )
+		{
+			/*if( $report->getIgnore() ) {
+				continue;
+			}*/
+
+			$d = date( 'm/y', $report->getCreatedAt() );
+
+			if( is_null($first_report_date) || $report->getCreatedAt() < $first_report_date ) {
+				$first_report_date = $report->getCreatedAt();
+			}
+
+			if( !isset($t_total[$d]) ) {
+				$t_total[ $d ] = 0;
+			}
+			$t_total[ $d ]++;
+			
+			if( !isset($t_bounties[$d]) ) {
+				$t_bounties[ $d ] = 0;
+			}
+			$t_bounties[ $d ] += $report->getTotalBounty();
+
+			$tab = 't_'.$report->getSeverity();
+			if( !isset($$tab[$d]) ) {
+				$$tab[ $d ] = 0;
+			}
+			$$tab[ $d ]++;
+
+			$tab = 't_p'.(int)$report->getRating();
+			if( !isset($$tab[$d]) ) {
+				$$tab[ $d ] = 0;
+			}
+			$$tab[ $d ]++;
+
+			$t_cnt[ $report->getSeverity() ]++;
+		}
+
+		$t_total = self::createTimeline( $t_total, $first_report_date );
+		$t_bounties = self::createTimeline( $t_bounties, $first_report_date );
+		$t_none = self::createTimeline( $t_none, $first_report_date );
+		$t_low = self::createTimeline( $t_low, $first_report_date );
+		$t_medium = self::createTimeline( $t_medium, $first_report_date );
+		$t_high = self::createTimeline( $t_high, $first_report_date );
+		$t_critical = self::createTimeline( $t_critical, $first_report_date );
+		$t_p0 = self::createTimeline( $t_p0, $db->getFirstReportDate() );
+		$t_p1 = self::createTimeline( $t_p1, $db->getFirstReportDate() );
+		$t_p2 = self::createTimeline( $t_p2, $db->getFirstReportDate() );
+		$t_p3 = self::createTimeline( $t_p3, $db->getFirstReportDate() );
+		$t_p4 = self::createTimeline( $t_p4, $db->getFirstReportDate() );
+		$t_p5 = self::createTimeline( $t_p5, $db->getFirstReportDate() );
+			
+		foreach( $t_total as $d=>$n ) {
+			if( $t_total[$d] == 0 || $t_bounties[$d] == 0 ) {
+				$t_average_bounties[$d] = 0;
+			} else {
+				$t_average_bounties[$d] = (int)($t_bounties[$d]/$t_total[$d]);
+			}
+			if( $t_p0[$d] || $t_p1[$d] || $t_p2[$d] || $t_p3[$d] || $t_p4[$d] || $t_p5[$d] ) {
+				$t_total[$d] = 0;
+			}
+		}
+		
+		$t_return = [];
+		$t_return['p0'] = array_values( $t_p0 );
+		$t_return['p1'] = array_values( $t_p1 );
+		$t_return['p2'] = array_values( $t_p2 );
+		$t_return['p3'] = array_values( $t_p3 );
+		$t_return['p4'] = array_values( $t_p4 );
+		$t_return['p5'] = array_values( $t_p5 );
+		$t_return['none'] = array_values( $t_none );
+		$t_return['low'] = array_values( $t_low );
+		$t_return['medium'] = array_values( $t_medium );
+		$t_return['high'] = array_values( $t_high );
+		$t_return['critical'] = array_values( $t_critical );
+		$t_return['categories'] = array_keys( $t_total );
+		$t_return['total'] = array_values( $t_total );
+		$t_return['bounties'] = array_values( $t_bounties );
+		$t_return['average_bounties'] = array_values( $t_average_bounties );
+		$t_return['cnt'] = $t_cnt;
+		
+		return json_encode( $t_return );
+	}
+
+
+	public static function program_bounty( $db )
+	{
+		$t_p0 = [];
+		$t_p1 = [];
+		$t_p2 = [];
+		$t_p3 = [];
+		$t_p4 = [];
+		$t_p5 = [];
+		$t_none      = [];
+		$t_low      = [];
+		$t_medium   = [];
+		$t_high     = [];
+		$t_critical = [];
+		$t_total    = [];
+		$t_bounties = [];
+		$t_average_bounties  = [];
+		$t_cnt = [ 'none'=>0, 'low'=>0, 'medium'=>0, 'high'=>0, 'critical'=>0 ];
+		$first_report_date = null;
+		
+		foreach( $db->getReports() as $report )
+		{
+			/*if( $report->getIgnore() ) {
+				continue;
+			}*/
+
+			$d = date( 'm/y', $report->getCreatedAt() );
+
+			if( is_null($first_report_date) || $report->getCreatedAt() < $first_report_date ) {
+				$first_report_date = $report->getCreatedAt();
+			}
+
+			if( !isset($t_total[$d]) ) {
+				$t_total[ $d ] = 0;
+			}
+			$t_total[ $d ]++;
+			
+			if( !isset($t_bounties[$d]) ) {
+				$t_bounties[ $d ] = 0;
+			}
+			$t_bounties[ $d ] += $report->getTotalBounty();
+
+			$tab = 't_'.$report->getSeverity();
+			if( !isset($$tab[$d]) ) {
+				$$tab[ $d ] = 0;
+			}
+			$$tab[ $d ]++;
+
+			$tab = 't_p'.(int)$report->getRating();
+			if( !isset($$tab[$d]) ) {
+				$$tab[ $d ] = 0;
+			}
+			$$tab[ $d ]++;
+
+			$t_cnt[ $report->getSeverity() ]++;
+		}
+
+		$t_total = self::createTimeline( $t_total, $first_report_date );
+		$t_bounties = self::createTimeline( $t_bounties, $first_report_date );
+		$t_none = self::createTimeline( $t_none, $first_report_date );
+		$t_low = self::createTimeline( $t_low, $first_report_date );
+		$t_medium = self::createTimeline( $t_medium, $first_report_date );
+		$t_high = self::createTimeline( $t_high, $first_report_date );
+		$t_critical = self::createTimeline( $t_critical, $first_report_date );
+		$t_p0 = self::createTimeline( $t_p0, $db->getFirstReportDate() );
+		$t_p1 = self::createTimeline( $t_p1, $db->getFirstReportDate() );
+		$t_p2 = self::createTimeline( $t_p2, $db->getFirstReportDate() );
+		$t_p3 = self::createTimeline( $t_p3, $db->getFirstReportDate() );
+		$t_p4 = self::createTimeline( $t_p4, $db->getFirstReportDate() );
+		$t_p5 = self::createTimeline( $t_p5, $db->getFirstReportDate() );
+			
+		foreach( $t_total as $d=>$n ) {
+			if( $t_total[$d] == 0 || $t_bounties[$d] == 0 ) {
+				$t_average_bounties[$d] = 0;
+			} else {
+				$t_average_bounties[$d] = (int)($t_bounties[$d]/$t_total[$d]);
+			}
+			if( $t_p0[$d] || $t_p1[$d] || $t_p2[$d] || $t_p3[$d] || $t_p4[$d] || $t_p5[$d] ) {
+				$t_total[$d] = 0;
+			}
+		}
+		
+		$t_return = [];
+		$t_return['p0'] = array_values( $t_p0 );
+		$t_return['p1'] = array_values( $t_p1 );
+		$t_return['p2'] = array_values( $t_p2 );
+		$t_return['p3'] = array_values( $t_p3 );
+		$t_return['p4'] = array_values( $t_p4 );
+		$t_return['p5'] = array_values( $t_p5 );
+		$t_return['none'] = array_values( $t_none );
+		$t_return['low'] = array_values( $t_low );
+		$t_return['medium'] = array_values( $t_medium );
+		$t_return['high'] = array_values( $t_high );
+		$t_return['critical'] = array_values( $t_critical );
+		$t_return['categories'] = array_keys( $t_total );
+		$t_return['total'] = array_values( $t_total );
+		$t_return['bounties'] = array_values( $t_bounties );
+		$t_return['average_bounties'] = array_values( $t_average_bounties );
+		$t_return['cnt'] = $t_cnt;
+		
+		return json_encode( $t_return );
+	}
+
+
+	public static function program_times( $db )
+	{
+		$t_first_response = [];
+		$t_first_bounty = [];
+		$t_resolution = [];
+		$t_created_at = [ 'fr'=>[], 'fb'=>[], 'r'=>[] ];
+		$first_report_date = null;
+
+		foreach( $db->getReports() as $r )
+		{
+			/*if( $r->getIgnore() ) {
+				continue;
+			}*/
+
+			$d = date( 'm/y', $r->getCreatedAt() );
+		
+			if( is_null($first_report_date) || $r->getCreatedAt() < $first_report_date ) {
+				$first_report_date = $r->getCreatedAt();
+			}
+
+			if( !isset($t_first_response[$d]) ) {
+				$t_first_response[ $d ] = [];
+			}
+			if( $r->getFirstResponseDate() ) {
+				//$t_created_at['fr'][] = $r->getCreatedAt();
+				$t_first_response[$d][] = $r->getFirstResponseTime();
+			}
+
+			if( !isset($t_first_bounty[$d]) ) {
+				$t_first_bounty[ $d ] = [];
+			}
+			if( $r->getFirstBountyDate() ) {
+				//$t_created_at['fr'][] = $r->getCreatedAt();
+				$t_first_bounty[$d][] = $r->getFirstBountyTime();
+			}
+
+			if( !isset($t_resolution[$d]) ) {
+				$t_resolution[ $d ] = [];
+			}
+			if( $r->getResolutionDate() ) {
+				//$t_created_at['fr'][] = $r->getCreatedAt();
+				$t_resolution[$d][] = $r->getResolutionTime();
+			}
+			/*
+			if( $r->getFirstResponseDate() ) {
+				$t_created_at['fb'][] = $r->getCreatedAt();
+				$t_first_response[] = [ 
+					(int)($r->getCreatedAt().'000'), 
+					$r->getFirstResponseTime(), 
+				];
+			}
+
+			if( $r->getFirstBountyDate() ) {
+				$t_created_at['fb'][] = $r->getCreatedAt();
+				$t_first_bounty[] = [ 
+					(int)($r->getCreatedAt().'000'), 
+					$r->getFirstBountyTime(), 
+				];
+			}
+
+			if( $r->getResolutionDate() ) {
+				$t_created_at['r'][] = $r->getCreatedAt();
+				$t_resolution[] = [ 
+					(int)($r->getCreatedAt().'000'), 
+					$r->getResolutionTime(), 
+				];
+			}
+			*/
+		}
+
+		//var_dump($t_first_response);
+		foreach( $t_first_response as $d=>$v ) {
+			if( count($v)==0 || array_sum($v)==0 ) {
+				$t_first_response[$d] = 0;
+			} else {
+				$t_first_response[$d] = (float)sprintf( "%.02f", @(array_sum($v) / count($v)) );
+			}
+		}
+		//var_dump($t_first_response);
+		foreach( $t_first_bounty as $d=>$v ) {
+			if( count($v)==0 || array_sum($v)==0 ) {
+				$t_first_bounty[$d] = 0;
+			} else {
+				$t_first_bounty[$d] = (float)sprintf( "%.02f", @(array_sum($v) / count($v)) );
+			}
+		}
+		foreach( $t_resolution as $d=>$v ) {
+			if( count($v)==0 || array_sum($v)==0 ) {
+				$t_resolution[$d] = 0;
+			} else {
+				$t_resolution[$d] = (float)sprintf( "%.02f", @(array_sum($v) / count($v)) );
+			}
+		}
+		
+		ksort( $t_first_response );
+		ksort( $t_first_bounty );
+		ksort( $t_resolution );
+
+		$t_first_response = self::createTimeline( $t_first_response, $first_report_date );
+		$t_first_bounty = self::createTimeline( $t_first_bounty, $first_report_date );
+		$t_resolution = self::createTimeline( $t_resolution, $first_report_date );
+
+		//exit();
+
+		//var_dump($t_return);
+		//array_multisort( $t_created_at['fr'], SORT_ASC, $t_first_response );
+		//array_multisort( $t_created_at['fb'], SORT_ASC, $t_first_bounty );
+		//array_multisort( $t_created_at['r'], SORT_ASC, $t_resolution );
+		//var_dump($t_return);
+
+		$t_return = [];
+		$t_return['categories'] = array_keys( $t_first_response );
+		$t_return['first_response'] = array_values( $t_first_response );
+		$t_return['first_bounty'] = array_values( $t_first_bounty );
+		$t_return['resolution'] = array_values( $t_resolution );
+		//var_dump( $t_return );
+
+		return json_encode( $t_return );
+	}
+
+
+	public static function tags_evolution( $db )
+	{
+		$limit = self::TOP_LIMIT;
+		$t_top = self::top_tags( $db );
+
+		$t_tags = [];
+		
+		foreach( $db->getReports() as $report )
+		{
+			if( $report->getIgnore() ) {
+				continue;
+			}
+
+			$d = date( 'm/y', $report->getCreatedAt() );
+
+			foreach( $report->getTags() as $tag )
+			{
+				if( !isset($t_tags[$tag]) ) {
+					$t_tags[$tag] = [];
+				}
+
+				if( !isset($t_tags[$tag][$d]) ) {
+					$t_tags[$tag][ $d ] = 0;
+				}
+				$t_tags[$tag][ $d ]++;
+			}
+		}
+		
+		foreach( $t_tags as $k=>$t ) {
+			$t_tags[$k] = self::createTimeline( $t, $db->getFirstReportDate() );
+		}
+
+		$t_top_datas = [];
+
+		foreach( $t_top['t_n_report'] as $tag=>$datas ) {
+			$t_top_datas[] = array_values( $t_tags[$tag] );
+		}
+
+		$t_return = [];
+		$t_return['categories'] = array_keys( $t_tags[key($t_tags)] );
+		$t_return['tags'] = array_keys( $t_top['t_n_report'] );
+		$t_return['top_datas'] = $t_top_datas;
+		//var_dump( $t_return );
+		
+		return json_encode( $t_return );
+
+		
+
+	}
+
+
 	public static function createTimeline( $t_datas, $start_date, $end_date=null )
 	{
 		if( is_null($end_date) ) {

@@ -14,11 +14,8 @@ if( !$db->load(DATABASE_FILE) ) {
 }
 
 $t_reports = $db->getReports();
-//$t_reports = array_reverse( $t_reports );
-//var_dump( $t_reports );
-
-$start_date = date( 'd/m/Y', $db->getFirstReportDate() );
-$end_date = date( 'd/m/Y' );
+//$start_date = date( 'd/m/Y', $db->getFirstReportDate() );
+//$end_date = date( 'd/m/Y' );
 
 ?>
 
@@ -111,6 +108,7 @@ $end_date = date( 'd/m/Y' );
 					</div>
 					<?php if( defined('GRAPH_TOP_PROGRAMS') && GRAPH_TOP_PROGRAMS ) { include( 'graph/top_programs.php' ); } ?>
 					<?php if( defined('GRAPH_TOP_TAGS') && GRAPH_TOP_TAGS ) { include( 'graph/top_tags.php' ); } ?>
+					<?php if( defined('GRAPH_TAGS_EVOLUTION') && GRAPH_TAGS_EVOLUTION ) { include( 'graph/graph_tags_evolution.php' ); } ?>
 				</div>
 				<?php } ?>
 			</div>

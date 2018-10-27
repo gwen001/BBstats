@@ -109,23 +109,17 @@ if( !$db->load(DATABASE_FILE) ) {
 	        data: reports_rating_data.average_report,
 	        color: '#c124bf',
 	        marker: {
-	            enabled: false/*,
-	            lineWidth: 2,
-	            lineColor: Highcharts.getOptions().colors[3],
-	            fillColor: 'white'*/
+	            enabled: false
 	        }
-	    }, {
+		}/*, {
 	        type: 'spline',
 	        name: 'Average rate',
 	        data: reports_rating_data.average_rate,
 	        color: '#f659ee',
 	        marker: {
-	            enabled: false/*,
-	            lineWidth: 2,
-	            lineColor: Highcharts.getOptions().colors[3],
-	            fillColor: 'white'*/
+	            enabled: false
 	        }
-	    }, {
+	    }*/, {
 	        yAxis: 1,
 	        type: 'spline',
 	        name: 'Reputation',

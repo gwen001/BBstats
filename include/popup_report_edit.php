@@ -57,7 +57,7 @@
 							</div>
 							<div class="col-md-12">
 								<div class="form-group">
-	                                <label class="col-sm-3 control-label required" for="state">State</label>
+	                                <label class="col-sm-3 control-label required" for="state">Status</label>
 	                                <div class="col-sm-9">
 	                                    <select name="state" required="required" class="form-control">
 	                                    	<?php foreach( Report::T_STATE as $state ) { ?>

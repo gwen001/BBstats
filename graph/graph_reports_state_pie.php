@@ -2,9 +2,15 @@
 
 require_once( 'config.php' );
 
-$db = Database::getInstance();
-if( !$db->load(DATABASE_FILE) ) {
-	exit( 'Cannot load database, you should run the grabber first!' );
+if( isset($_GET['program']) ) {
+    if( !$db=Program::load($_GET['program']) ) {
+        exit( 'Cannot load program, you should run the grabber first!' );
+    }
+} else {
+	$db = Database::getInstance();
+	if( !$db->load(DATABASE_FILE) ) {
+		exit( 'Cannot load database, you should run the grabber first!' );
+	}
 }
 
 ?>
