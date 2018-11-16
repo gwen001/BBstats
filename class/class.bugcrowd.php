@@ -97,7 +97,7 @@ class Bugcrowd extends Platform
 		//echo $data;
 		//var_dump( $t_info['http_code'] );
 		//file_put_contents( 'data/bc_submission.html', $data );
-		$data = file_get_contents( 'data/bc_submission.html' );
+		//$data = file_get_contents( 'data/bc_submission.html' );
 
 		if( !$data || $t_info['http_code']!=200 ) {
 			return false;
@@ -106,7 +106,6 @@ class Bugcrowd extends Platform
 		$m = preg_match( '#<div data-react-class="ResearcherSubmissionsApp" data-react-props="(.*)" data-reducer="researcherSubmissionsApp" class="react-component react-component-researcher-submissions-app "></div>#', $data, $t_match );
 		//var_dump( $t_match );
 		$t_data = json_decode( html_entity_decode( urldecode( $t_match[1] ) ), true );
-		//var_dump( $t_submission );
 
 		// deal with page
 		{
@@ -137,7 +136,6 @@ class Bugcrowd extends Platform
 			if( !$db->exists($key) || $bbstats->updateAllowed() || $bbstats->overwriteAllowed() )
 			{
 				$report = array_merge( $bug, $this->grabReport($report_id) );
-				//$report['reputation'] = $bug['points'];
 				$this->t_reports[$key] = $report;
 			}
 		}
