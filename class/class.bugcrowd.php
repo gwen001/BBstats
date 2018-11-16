@@ -107,7 +107,7 @@ class Bugcrowd extends Platform
 		//var_dump( $t_match );
 		$t_data = json_decode( html_entity_decode( urldecode( $t_match[1] ) ), true );
 
-		// deal with page
+		// deal with pages
 		{
 			$this->t_bugs = array_merge( $this->t_bugs, $t_data['submissions'] );
 			Utils::_print( '.', 'white' );
