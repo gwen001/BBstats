@@ -2,19 +2,22 @@
 
 require_once( 'config.php' );
 
-$db = Database::getInstance();
-if( !$db->load(DATABASE_FILE) ) {
-	exit( 'Cannot load database, you should run the grabber first!' );
+if( isset($_GET['program']) ) {
+    if( !$db=Program::load($_GET['program']) ) {
+        exit( 'Cannot load program, you should run the grabber first!' );
+    }
+} else {
+    exit( 'Cannot load program, you should run the grabber first!' );
 }
 
-$t_top = Statistics::top_program_html( $db );
+$t_top = Statistics::top_program_best_hackers_html( $db );
 //var_dump( $t_top );
 
 ?>
 
 <div class="row">
 	<div class="col-md-12 text-center">
-		<h4>Top <?php echo Statistics::TOP_LIMIT; ?> programs</h4>
+		<h4>Top <?php echo Statistics::TOP_LIMIT; ?> hackers</h4>
 	</div>
 </div>
 <div id="top-programs" class="row">

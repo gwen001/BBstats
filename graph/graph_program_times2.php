@@ -13,13 +13,13 @@ if( isset($_GET['program']) ) {
 ?>
 
 <div class="col-md-12">
-	<div id="program-times"></div>
+	<div id="program-times2"></div>
 </div>
 
 
 <script>
-	var program_times_data = <?php echo Statistics::program_times( $db ) ?>;
-	var program_times = Highcharts.chart('program-times', {
+	var program_times_data2 = <?php echo Statistics::program_times2( $db ) ?>;
+	var program_times2 = Highcharts.chart('program-times2', {
 	    credits: {
 	        enabled: false
 	    },
@@ -30,7 +30,7 @@ if( isset($_GET['program']) ) {
 	        text: 'Reactivity'
 	    },
 	    xAxis: {
-			categories: program_times_data.categories
+			categories: program_times_data2.categories
 	    },
 	    yAxis: [{
             min: 0,
@@ -78,24 +78,24 @@ if( isset($_GET['program']) ) {
 	    series: [{
 	        type: 'area',
             name: 'Average time to 1st response',
-            data: program_times_data.first_response,
+            data: program_times_data2.datas.t_first_response.all,
 		},{
 	        type: 'area',
             name: 'Average time to 1st bounty',
-            data: program_times_data.first_bounty,
+            data: program_times_data2.datas.t_first_bounty.all,
 		},{
 	        type: 'area',
             name: 'Average resolution time',
-            data: program_times_data.resolution,
+            data: program_times_data2.datas.t_resolution.all,
 		},{
 	        type: 'area',
             name: 'Average triage time',
-            data: program_times_data.triage,
+            data: program_times_data2.datas.t_triage.all,
 		}]
 	});
 
     $(document).ready(function() {
-        var chart = $('#program-times').highcharts();
+        var chart = $('#program-times2').highcharts();
         /*chart.xAxis[0].setExtremes(
             '01/18',
             '05/18'

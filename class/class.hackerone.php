@@ -344,6 +344,9 @@ class Hackerone extends Platform
 				if( !$r->getFirstBountyDate() && (isset($activity['bonus_amount']) || isset($activity['bounty_amount'])) ) {
 					$r->setFirstBountyDate( strtotime($activity['created_at']) );
 				}
+				if( !$r->getTriageDate() && $activity['type'] == 'Activities::BugTriaged' ) {
+					$r->setTriageDate( strtotime($activity['created_at']) );
+				}				
 				if( !$r->getResolutionDate() && $activity['type'] == 'Activities::BugResolved' ) {
 					$r->setResolutionDate( strtotime($activity['created_at']) );
 				}				

@@ -60,7 +60,15 @@ $t_reports = $db->getReports();
             </div>
             <div class="row">
                 <div class="col-md-12">
-					<?php include( 'graph/graph_program_times.php' ); ?>
+					<?php include( 'graph/graph_program_times2.php' ); ?>
+                </div>
+            </div>
+            <div class="row">
+            <div class="col-md-6">
+                    <?php include( 'graph/graph_program_times_triage.php' ); ?>
+                </div>
+                <div class="col-md-6">
+                    <?php include( 'graph/graph_program_times_resolution.php' ); ?>
                 </div>
             </div>
             <div class="row">
@@ -76,20 +84,33 @@ $t_reports = $db->getReports();
                         <div class="col-md-6">
                             <?php include( 'graph/graph_reports_tags_pie.php' ); ?>
                         </div>
+                    </div>
+                    <div class="row">
                         <div class="col-md-6">
                             <?php include( 'graph/graph_reports_state_pie.php' ); ?>
+                        </div>
+                    </div>
+                    <div class="row">
+                        <div class="col-md-12">
+                            <?php include( 'graph/top_program_best_hackers.php' ); ?>
+                        </div>
+                    </div>
+                    <div class="row">
+                        <div class="col-md-12">
+                            <?php include( 'graph/top_program_best_spammers.php' ); ?>
                         </div>
                     </div>
                 </div>
             </div>
         </div>
 
+
         <script type="text/javascript">
             function setFilterTerm( term )
             {
 				var input_search = $('input[type="search"]');
 				input_search.val( term );
-				$("html, body").animate({scrollTop: 1500}, 100);
+				$("html, body").animate({scrollTop: 2000}, 100);
 				input_search.keyup();
             }
             

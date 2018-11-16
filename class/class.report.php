@@ -26,6 +26,7 @@ class Report
 	public $ignore = 0;
 	public $first_response_date = null;
 	public $first_bounty_date = null;
+	public $triage_date = null;
 	public $resolution_date = null;
 	
 	
@@ -238,7 +239,7 @@ class Report
 		return true;
 	}
 	public function getFirstResponseTime() {
-		$scd = Utils::datetimeDiff( $this->getCreatedAt(), $this->getFirstResponseDate() )->total_day;
+		$scd = Utils::datetimeDiff( $this->getCreatedAt(), $this->getFirstResponseDate() )->total_sec / 3600 / 24;
 		return $scd;
 	}
 
@@ -251,11 +252,24 @@ class Report
 		return true;
 	}
 	public function getFirstBountyTime() {
-		$scd = Utils::datetimeDiff( $this->getCreatedAt(), $this->getFirstBountyDate() )->total_day;
+		$scd = Utils::datetimeDiff( $this->getCreatedAt(), $this->getFirstBountyDate() )->total_sec / 3600 / 24;
 		return $scd;
 	}
 	
 	
+	public function getTriageDate() {
+		return $this->triage_date;
+	}
+	public function setTriageDate( $v ) {
+		$this->triage_date = $v;
+		return true;
+	}
+	public function getTriageTime() {
+		$scd = Utils::datetimeDiff( $this->getCreatedAt(), $this->getTriageDate() )->total_sec / 3600 / 24;
+		return $scd;
+	}
+	
+
 	public function getResolutionDate() {
 		return $this->resolution_date;
 	}
@@ -264,7 +278,7 @@ class Report
 		return true;
 	}
 	public function getResolutionTime() {
-		$scd = Utils::datetimeDiff( $this->getCreatedAt(), $this->getResolutionDate() )->total_day;
+		$scd = Utils::datetimeDiff( $this->getCreatedAt(), $this->getResolutionDate() )->total_sec / 3600 / 24;
 		return $scd;
 	}
 	

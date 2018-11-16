@@ -891,6 +891,7 @@ class Statistics
 	{
 		$t_first_response = [];
 		$t_first_bounty = [];
+		$t_triage = [];
 		$t_resolution = [];
 		$t_created_at = [ 'fr'=>[], 'fb'=>[], 'r'=>[] ];
 		$first_report_date = null;
@@ -921,6 +922,14 @@ class Statistics
 			if( $r->getFirstBountyDate() ) {
 				//$t_created_at['fr'][] = $r->getCreatedAt();
 				$t_first_bounty[$d][] = $r->getFirstBountyTime();
+			}
+
+			if( !isset($t_triage[$d]) ) {
+				$t_triage[ $d ] = [];
+			}
+			if( $r->getTriageDate() ) {
+				//$t_created_at['fr'][] = $r->getCreatedAt();
+				$t_triage[$d][] = $r->getTriageTime();
 			}
 
 			if( !isset($t_resolution[$d]) ) {
@@ -973,6 +982,13 @@ class Statistics
 				$t_first_bounty[$d] = (float)sprintf( "%.02f", @(array_sum($v) / count($v)) );
 			}
 		}
+		foreach( $t_triage as $d=>$v ) {
+			if( count($v)==0 || array_sum($v)==0 ) {
+				$t_triage[$d] = 0;
+			} else {
+				$t_triage[$d] = (float)sprintf( "%.02f", @(array_sum($v) / count($v)) );
+			}
+		}
 		foreach( $t_resolution as $d=>$v ) {
 			if( count($v)==0 || array_sum($v)==0 ) {
 				$t_resolution[$d] = 0;
@@ -983,10 +999,12 @@ class Statistics
 		
 		ksort( $t_first_response );
 		ksort( $t_first_bounty );
+		ksort( $t_triage );
 		ksort( $t_resolution );
 
 		$t_first_response = self::createTimeline( $t_first_response, $first_report_date );
 		$t_first_bounty = self::createTimeline( $t_first_bounty, $first_report_date );
+		$t_triage = self::createTimeline( $t_triage, $first_report_date );
 		$t_resolution = self::createTimeline( $t_resolution, $first_report_date );
 
 		//exit();
@@ -1001,8 +1019,100 @@ class Statistics
 		$t_return['categories'] = array_keys( $t_first_response );
 		$t_return['first_response'] = array_values( $t_first_response );
 		$t_return['first_bounty'] = array_values( $t_first_bounty );
+		$t_return['triage'] = array_values( $t_triage );
 		$t_return['resolution'] = array_values( $t_resolution );
 		//var_dump( $t_return );
+
+		return json_encode( $t_return );
+	}
+
+
+	public static function program_times2( $db, $start_date=null, $end_date=null )
+	{
+		if( is_null($start_date) ) {
+			$start_date = $db->getFirstReportDate();
+		}
+		if( is_null($end_date) ) {
+			$end_date = time();
+		}
+
+		$t_bigone = [
+			't_first_response' => [],
+			't_first_bounty' => [],
+			't_triage' => [],
+			't_resolution' => [],
+		];
+		$t_severity = [ 'all', 'none', 'low', 'medium', 'high', 'critical' ];
+		$first_report_date = $start_date;
+
+		foreach( $t_bigone as &$t ) {
+			$t = [];
+			foreach( $t_severity as $s ) {
+				$t[$s] = [];
+			}
+		}
+
+		foreach( $db->getReports() as $r )
+		{
+			//$t = $tt = null;
+			$d = date( 'm/y', $r->getCreatedAt() );
+		
+			foreach( $t_bigone as &$t ) {
+				foreach( $t as &$tt ) {
+					if( !isset($tt[$d]) ) {
+						$tt[ $d ] = [];
+					}
+				}
+			}
+
+			if( $r->getFirstResponseDate() ) {
+				$time = $r->getFirstResponseTime();
+				$t_bigone['t_first_response']['all'][$d][] = $time;
+				$t_bigone['t_first_response'][$r->getSeverity()][$d][] = $time;
+			}	
+
+			if( $r->getFirstBountyDate() ) {
+				$time = $r->getFirstBountyTime();
+				$t_bigone['t_first_bounty']['all'][$d][] = $time;
+				$t_bigone['t_first_bounty'][$r->getSeverity()][$d][] = $time;
+			}
+
+			if( $r->getTriageDate() ) {
+				$time = $r->getTriageTime();
+				$t_bigone['t_triage']['all'][$d][] = $time;
+				$t_bigone['t_triage'][$r->getSeverity()][$d][] = $time;
+			}
+
+			if( $r->getResolutionDate() ) {
+				$time = $r->getResolutionTime();
+				$t_bigone['t_resolution']['all'][$d][] = $time;
+				$t_bigone['t_resolution'][$r->getSeverity()][$d][] = $time;
+			}
+		}
+
+		$t_return = [];
+
+		foreach( $t_bigone as $metric=>$data1 )
+		{
+			foreach( $data1 as $severity=>$data2 )
+			{
+				foreach( $data2 as $d=>$v ) {
+					if( count($v)==0 || array_sum($v)==0 ) {
+						$t_bigone[$metric][$severity][$d] = 0;
+					} else {
+						$t_bigone[$metric][$severity][$d] = (float)sprintf( "%.02f", @(array_sum($v) / count($v)) );
+					}		
+				}
+			
+				ksort( $t_bigone[$metric][$severity] );
+				$r = self::createTimeline( $t_bigone[$metric][$severity], $first_report_date );
+				$t_bigone[$metric][$severity] = array_values( $r );
+			
+				$t_return['categories'] = array_keys( $r );
+			}
+		}
+
+		$t_return['datas'] = $t_bigone;
 
 		return json_encode( $t_return );
 	}
@@ -1053,9 +1163,277 @@ class Statistics
 		//var_dump( $t_return );
 		
 		return json_encode( $t_return );
+	}
 
+
+	public static function top_program_best_hackers_html( $db )
+	{
+		$limit = self::TOP_LIMIT;
+		$t_top = self::top_program_best_hackers( $db );
+
+		ob_start();
+		echo '<table class="table">
+			<thead>
+				<tr><th colspan="100">last 6 months</th></tr>
+			</thead>
+			<tbody>';
+				for( $i=1; $i<=$limit && list($hacker,$data)=each($t_top['m6']['datas']) ; $i++ ) {
+					echo '<tr class="top_'.$i.'">
+						<td>'.$i.'</td>
+						<td><span class="search-term">'.ucwords($hacker).'</span></td>
+						<td class="text-right">'.$data['n_report'].'</td>
+						<td class="text-right">'.$data['bounty'].' $</td>
+					</tr>';
+				}
+		echo '</tbody>
+		</table>';
+		$n_report = ob_get_contents();
+		ob_end_clean();
 		
+		ob_start();
+		echo '<table class="table">
+			<thead>
+				<tr>
+					<th colspan="100">last year</th>
+				</tr>
+			</thead>
+			<tbody>';
+				for( $i=1; $i<=$limit && list($hacker,$data)=each($t_top['y1']['datas']) ; $i++ ) {
+					echo '<tr class="top_'.$i.'">
+						<td>'.$i.'</td>
+						<td><span class="search-term">'.ucwords($hacker).'</span></td>
+						<td class="text-right">'.$data['n_report'].'</td>
+						<td class="text-right">'.$data['bounty'].' $</td>
+					</tr>';
+				}
+		echo '</tbody>
+		</table>';
+		$bounty = ob_get_contents();
+		ob_end_clean();
+		
+		ob_start();
+		echo '<table class="table">
+			<thead>
+				<tr>
+					<th colspan="100">all time</th>
+				</tr>
+			</thead>
+			<tbody>';
+				for( $i=1; $i<=$limit && list($hacker,$data)=each($t_top['overall']['datas']) ; $i++ ) {
+					echo '<tr class="top_'.$i.'">
+						<td>'.$i.'</td>
+						<td><span class="search-term">'.ucwords($hacker).'</span></td>
+						<td class="text-right">'.$data['n_report'].'</td>
+						<td class="text-right">'.$data['bounty'].' $</td>
+					</tr>';
+				}
+		echo '</tbody>
+		</table>';
+		$reputation = ob_get_contents();
+		ob_end_clean();
+		
+		return ['n_report'=>$n_report, 'bounty'=>$bounty, 'reputation'=>$reputation];
+	}
+	
+	
+	public static function top_program_best_hackers( $db )
+	{
+		$m6_start = mktime( 0, 0, 0, date('m')-6, date('d'), date('Y') );
+		$m6_end = time();
+		$y1_start = mktime( 0, 0, 0, 1, 1, date('Y')-1 );
+		$y1_end = mktime( 0, 0, 0, 1, 1, date('Y') );
+		$o_start = $db->getFirstReportDate();
+		$o_end = time();
 
+		$data = [
+			'm6' => [
+				'start_date' => mktime( 0, 0, 0, date('m')-6, date('d'), date('Y') ),
+				'end_date' => time(),
+				'datas' => [],
+			],
+			'y1' => [
+				'start_date' => mktime( 0, 0, 0, 1, 1, date('Y')-1 ),
+				'end_date' => mktime( 0, 0, 0, 1, 1, date('Y') ),
+				'datas' => [],
+			],
+			'overall' => [
+				'start_date' => $db->getFirstReportDate(),
+				'end_date' => time(),
+				'datas' => [],
+			],
+		];
+
+		foreach( $db->getReports() as $report )
+		{
+			foreach( $data as $p=>$period )
+			{
+				if( $report->getCreatedAt() >= $period['start_date'] && $report->getCreatedAt() < $period['end_date'] )
+				{
+					$hacker = $report->getReporter();
+					if( !isset($data[$p]['datas'][$hacker]) ) {
+						$data[$p]['datas'][$hacker] = [ 'hacker'=>$hacker, 'n_report'=>0, 'bounty'=>0, 'average'=>0 ];
+					}
+
+					$data[$p]['datas'][$hacker]['n_report']++;
+					$data[$p]['datas'][$hacker]['bounty'] += $report->getTotalBounty();
+				}
+			}
+		}
+
+		foreach( $data as $p=>$period )
+		{
+			$tmp = [ 'hacker'=>[], 'n_report'=>[], 'bounty'=>[], 'average'=>[] ];
+
+			foreach( $period['datas'] as $h=>$hacker )
+			{
+				$data[$p]['datas'][$h]['average'] = @(int)($data[$p]['datas'][$h]['bounty'] / $data[$p]['datas'][$h]['n_report']);
+
+				$tmp['hacker'][] = $data[$p]['datas'][$h]['hacker'];
+				$tmp['n_report'][] = $data[$p]['datas'][$h]['n_report'];
+				$tmp['bounty'][] = $data[$p]['datas'][$h]['bounty'];
+				$tmp['average'][] = $data[$p]['datas'][$h]['average'];
+			}
+
+			array_multisort( $tmp['bounty'], SORT_DESC, $tmp['n_report'], SORT_ASC, SORT_NUMERIC, $data[$p]['datas'] );		
+		
+		}
+
+		return $data;
+	}
+
+	public static function top_program_best_spammers_html( $db )
+	{
+		$limit = self::TOP_LIMIT;
+		$t_top = self::top_program_best_spammers( $db );
+
+		ob_start();
+		echo '<table class="table">
+			<thead>
+				<tr><th colspan="100">last 6 months</th></tr>
+			</thead>
+			<tbody>';
+				for( $i=1; $i<=$limit && list($hacker,$data)=each($t_top['m6']['datas']) ; $i++ ) {
+					echo '<tr class="top_'.$i.'">
+						<td>'.$i.'</td>
+						<td><span class="search-term">'.ucwords($hacker).'</span></td>
+						<td class="text-right">'.$data['n_report'].'</td>
+						<td class="text-right">'.$data['bounty'].' $</td>
+					</tr>';
+				}
+		echo '</tbody>
+		</table>';
+		$n_report = ob_get_contents();
+		ob_end_clean();
+		
+		ob_start();
+		echo '<table class="table">
+			<thead>
+				<tr>
+					<th colspan="100">last year</th>
+				</tr>
+			</thead>
+			<tbody>';
+				for( $i=1; $i<=$limit && list($hacker,$data)=each($t_top['y1']['datas']) ; $i++ ) {
+					echo '<tr class="top_'.$i.'">
+						<td>'.$i.'</td>
+						<td><span class="search-term">'.ucwords($hacker).'</span></td>
+						<td class="text-right">'.$data['n_report'].'</td>
+						<td class="text-right">'.$data['bounty'].' $</td>
+					</tr>';
+				}
+		echo '</tbody>
+		</table>';
+		$bounty = ob_get_contents();
+		ob_end_clean();
+		
+		ob_start();
+		echo '<table class="table">
+			<thead>
+				<tr>
+					<th colspan="100">all time</th>
+				</tr>
+			</thead>
+			<tbody>';
+				for( $i=1; $i<=$limit && list($hacker,$data)=each($t_top['overall']['datas']) ; $i++ ) {
+					echo '<tr class="top_'.$i.'">
+						<td>'.$i.'</td>
+						<td><span class="search-term">'.ucwords($hacker).'</span></td>
+						<td class="text-right">'.$data['n_report'].'</td>
+						<td class="text-right">'.$data['bounty'].'('.$data['average'].') $</td>
+					</tr>';
+				}
+		echo '</tbody>
+		</table>';
+		$reputation = ob_get_contents();
+		ob_end_clean();
+		
+		return ['n_report'=>$n_report, 'bounty'=>$bounty, 'reputation'=>$reputation];
+	}
+	
+	
+	public static function top_program_best_spammers( $db )
+	{
+		$m6_start = mktime( 0, 0, 0, date('m')-6, date('d'), date('Y') );
+		$m6_end = time();
+		$y1_start = mktime( 0, 0, 0, 1, 1, date('Y')-1 );
+		$y1_end = mktime( 0, 0, 0, 1, 1, date('Y') );
+		$o_start = $db->getFirstReportDate();
+		$o_end = time();
+
+		$data = [
+			'm6' => [
+				'start_date' => mktime( 0, 0, 0, date('m')-6, date('d'), date('Y') ),
+				'end_date' => time(),
+				'datas' => [],
+			],
+			'y1' => [
+				'start_date' => mktime( 0, 0, 0, 1, 1, date('Y')-1 ),
+				'end_date' => mktime( 0, 0, 0, 1, 1, date('Y') ),
+				'datas' => [],
+			],
+			'overall' => [
+				'start_date' => $db->getFirstReportDate(),
+				'end_date' => time(),
+				'datas' => [],
+			],
+		];
+
+		foreach( $db->getReports() as $report )
+		{
+			foreach( $data as $p=>$period )
+			{
+				if( $report->getCreatedAt() >= $period['start_date'] && $report->getCreatedAt() < $period['end_date'] )
+				{
+					$hacker = $report->getReporter();
+					if( !isset($data[$p]['datas'][$hacker]) ) {
+						$data[$p]['datas'][$hacker] = [ 'hacker'=>$hacker, 'n_report'=>0, 'bounty'=>0, 'average'=>0 ];
+					}
+
+					$data[$p]['datas'][$hacker]['n_report']++;
+					$data[$p]['datas'][$hacker]['bounty'] += $report->getTotalBounty();
+				}
+			}
+		}
+
+		foreach( $data as $p=>$period )
+		{
+			$tmp = [ 'hacker'=>[], 'n_report'=>[], 'bounty'=>[], 'average'=>[] ];
+
+			foreach( $period['datas'] as $h=>$hacker )
+			{
+				$data[$p]['datas'][$h]['average'] = @(int)($data[$p]['datas'][$h]['bounty'] / $data[$p]['datas'][$h]['n_report']);
+
+				$tmp['hacker'][] = $data[$p]['datas'][$h]['hacker'];
+				$tmp['n_report'][] = $data[$p]['datas'][$h]['n_report'];
+				$tmp['bounty'][] = $data[$p]['datas'][$h]['bounty'];
+				$tmp['average'][] = $data[$p]['datas'][$h]['average'];
+			}
+
+			array_multisort( $tmp['bounty'], SORT_ASC, $tmp['n_report'], SORT_DESC, SORT_NUMERIC, $data[$p]['datas'] );		
+		
+		}
+
+		return $data;
 	}
 
 

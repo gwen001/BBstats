@@ -84,6 +84,7 @@ if( isset($_GET['program']) ) {
 	            enabled: false
 	        }
 	    }, {
+			type: 'spline',
 	        name: 'Average bounties',
 	        data: program_bounty_data.average_bounties,
 	        color: '#f659ee',
