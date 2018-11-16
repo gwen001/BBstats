@@ -10,11 +10,7 @@ class Hackerone extends Platform
 {
 	CONST REPORT_PAGE_LIMIT = 100;
 	
-	private $username = '';
-	private $password = '';
 	private $csrf_token = '';
-	private $cookies = '';
-	private $cookie_file = '';
 	
 	
 	public function __construct() {
@@ -32,9 +28,6 @@ class Hackerone extends Platform
 			return false;
 		}
 
-		//echo "Copy here your Hackerone cookie after you login: \n";
-		//$this->cookies = trim( fgets(STDIN) );
-		
 		return true;
 	}
 	

@@ -8,6 +8,10 @@
 
 abstract class Platform
 {
+	protected $username = '';
+	protected $password = '';
+	protected $cookie_file = '';
+
 	protected $t_bugs = []; // array of reports from the platform, untouched
 	protected $t_reports = []; // array of reports but only needed informations
 	

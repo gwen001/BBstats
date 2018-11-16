@@ -527,7 +527,7 @@ class Statistics
 	
 	public static function reports_state_pie( $db )
 	{
-		$t_state = [ 'new'=>0,'triaged'=>0,'duplicate'=>0,'informative'=>0,'not-applicable'=>0,'resolved'=>0,'spam'=>0 ];
+		$t_state = [ 'new'=>0,'triaged'=>0,'duplicate'=>0,'informative'=>0,'not-applicable'=>0,'resolved'=>0,'spam'=>0, 'wont_fix'=>0, 'not_applicable'=>0, 'unresolved'=>0 ];
 		
 		foreach( $db->getReports() as $report )
 		{

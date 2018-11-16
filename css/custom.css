@@ -105,6 +105,16 @@ select.form-control, select.form-control option {
 .state_spam {
 	border-left-color: #555 !important;
 }
+/* bugcrowd */
+.state_not_applicable {
+	border-left-color: #ce3f4b !important;
+}
+.state_wont_fix {
+	border-left-color: #ccc !important;
+}
+.state_unresolved {
+	border-left-color: #e67e22 !important;
+}
 /* the rabbit is not here */
 a.rating_0, a.rating_0:hover, a.rating_0:visited, a.rating_0:active {
 	color: #000;
