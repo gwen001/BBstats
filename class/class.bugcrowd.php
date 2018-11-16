@@ -30,7 +30,6 @@ class Bugcrowd extends Platform
 	
 	public function connect()
 	{
-		return true;
 		$this->cookie_file = tempnam( '/tmp', 'cook_' );
 
 		$c = curl_init();
@@ -93,21 +92,22 @@ class Bugcrowd extends Platform
 		curl_setopt( $c, CURLOPT_COOKIEFILE, $this->cookie_file );
 		curl_setopt( $c, CURLOPT_RETURNTRANSFER, true );
 		curl_setopt( $c, CURLOPT_HTTPHEADER, ['User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:60.0) Gecko/20100101 Firefox/60.0'] );
-		//$data = curl_exec($c );
-		//$t_info = curl_getinfo( $c );
+		$data = curl_exec($c );
+		$t_info = curl_getinfo( $c );
 		//echo $data;
 		//var_dump( $t_info['http_code'] );
 		//file_put_contents( 'data/bc_submission.html', $data );
 		$data = file_get_contents( 'data/bc_submission.html' );
 
-		/*if( !$data || $t_info['http_code']!=200 ) {
+		if( !$data || $t_info['http_code']!=200 ) {
 			return false;
-		}*/
+		}
 
 		$m = preg_match( '#<div data-react-class="ResearcherSubmissionsApp" data-react-props="(.*)" data-reducer="researcherSubmissionsApp" class="react-component react-component-researcher-submissions-app "></div>#', $data, $t_match );
 		//var_dump( $t_match );
 		$t_data = json_decode( html_entity_decode( urldecode( $t_match[1] ) ), true );
 		//var_dump( $t_submission );
+
 		// deal with page
 		{
 			$this->t_bugs = array_merge( $this->t_bugs, $t_data['submissions'] );
@@ -163,17 +163,17 @@ class Bugcrowd extends Platform
 		curl_setopt( $c, CURLOPT_COOKIEFILE, $this->cookie_file );
 		curl_setopt( $c, CURLOPT_RETURNTRANSFER, true );
 		curl_setopt( $c, CURLOPT_HTTPHEADER, ['User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:60.0) Gecko/20100101 Firefox/60.0'] );
-		//$data = curl_exec($c );
-		//$t_info = curl_getinfo( $c );
+		$data = curl_exec($c );
+		$t_info = curl_getinfo( $c );
 		//echo $data;
 		//var_dump( $t_info['http_code'] );
 		//file_put_contents( 'data/'.$report_id.'.html', $data );
-		$data = file_get_contents( 'data/'.$report_id.'.html' );
+		//$data = file_get_contents( 'data/'.$report_id.'.html' );
 
-		/*if( !$data || $t_info['http_code']!=200 ) {
+		if( !$data || $t_info['http_code']!=200 ) {
 			Utils::_print( '.', 'dark_grey' );
 			return false;
-		}*/
+		}
 
 		Utils::_print( '.', 'white' );
 		
@@ -184,9 +184,6 @@ class Bugcrowd extends Platform
 		$m = preg_match( '#<div data-react-class="ActivityFeed" data-react-props="(.*)" data-reducer="activityFeed" class="react-component react-component-activity-feed "></div>#', $data, $t_match );
 		//var_dump( $t_match );
 		$t_data = json_decode( html_entity_decode( urldecode( $t_match[1] ) ), true );
-		//var_dump( $t_submission );
-		// deal with page
-		//var_dump($t_data);
 
 		return array_merge( $t_user, $t_data );
 	}
