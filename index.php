@@ -2,8 +2,7 @@
 
 /**
  * I don't believe in license
- * You can do want you want with this program
- * - gwen -
+ * You can do whatever you want with this program
  */
 
 require_once( 'config.php' );
@@ -37,22 +36,27 @@ $t_reports = $db->getReports();
         <script src="js/dataTables.bootstrap.min.js"></script>
    		<script src="js/highcharts.src.min.js"></script>
 	</head>
-	
+
 	<body>
 		<?php include( 'include/popup_about.php' ); ?>
 		<?php include( 'include/popup_more.php' ); ?>
 		<?php include( 'include/popup_report_add.php' ); ?>
 		<?php include( 'include/popup_report_edit.php' ); ?>
 		<?php include( 'include/popup_tag_add.php' ); ?>
-		
+
 		<div id="menubar">
 			<button id="add-bounty-btn" type="button" class="btn btn-warning" title="Manually add a report">+</button>
 			<button id="about-btn" type="button" class="btn btn-success" title="About">?</button>
 		</div>
-		
+
 		<span id="filter-reset"><a href="javascript:setFilterTerm('');"><img src="img/stop.png" width="20" /></a></span>
-		
-		<div class="container-fluid">
+
+		<div id="hacker-container" class="container-fluid">
+			<div class="row">
+                <div class="col-md-12" id="hacker-infos">
+                    <?php include( 'include/hacker_infos.php' ); ?>
+                </div>
+            </div>
 			<div class="row">
 				<div class="col-md-6" style="/*margin-top:30px;*/">
 					<div class="row">
@@ -113,14 +117,14 @@ $t_reports = $db->getReports();
 				<?php } ?>
 			</div>
 		</div>
-		
+
         <script type="text/javascript">
         	function reloadGraph()
         	{
         		for( var i=0 ; i<Highcharts.charts.length ; i++ ) {
         			Highcharts.charts[i].userOptions.mine[0].reload();
         		}
-        		
+
             	if( $('#top-programs').length ) {
 			    	$.post( 'ajax.php', {'_a':'graph-reload','graph':'top-programs-html'}, function(data) {
 				        var data = jQuery.parseJSON( data );
@@ -132,7 +136,7 @@ $t_reports = $db->getReports();
 		            	})
 		            });
             	}
-            	
+
             	if( $('#top-tags').length ) {
 			    	$.post( 'ajax.php', {'_a':'graph-reload','graph':'top-tags-html'}, function(data) {
 				        var data = jQuery.parseJSON( data );
@@ -145,14 +149,14 @@ $t_reports = $db->getReports();
 		            });
             	}
         	}
-        	
+
         	function reloadReportLine( report_key )
 			{
 	            var tr = $('tr[data-key="'+report_key+'"]');
-	            
+
 	            $.post( 'ajax.php', {'_a':'report-get','key':report_key}, function(data) {
 			        var report = jQuery.parseJSON( data );
-					
+
 			        var td_state = tr.find('.report-state');
 		            td_state.attr( 'class', 'report-state state_'+report.state );
 
@@ -164,24 +168,24 @@ $t_reports = $db->getReports();
 
 			        var input_bounty = tr.find('.report-bounty');
 		            input_bounty.html( report.total_bounty );
-		            
+
 			        var input_created_at = tr.find('.report-created_at');
 		            input_created_at.html( report.created_at );
-			        
+
 	            	var a = input_title.parent();
 	            	a.removeClass( 'rating_0 rating_1 rating_2 rating_3 rating_4 rating_5' );
 	            	a.addClass( 'rating_'+report.rating );
-	            	
+
 		            var input_tags = tr.find('.report-tags');
 		            input_tags.html( '' );
 	            	jQuery.each( report.tags, function(k,v){
 		            	input_tags.append( '<span class="report-tag">'+v+'</span> ' );
 	            	});
-	            	
+
 	            	reloadGraph();
 	            });
 			}
-			
+
             function setFilterTerm( term )
             {
 				var input_search = $('input[type="search"]');
@@ -189,13 +193,13 @@ $t_reports = $db->getReports();
 				$("html, body").animate({scrollTop: 0}, 100);
 				input_search.keyup();
             }
-            
+
             $(document).ready(function() {
 				$('.search-term').click(function(){
 					var term = $(this).html();
 		            setFilterTerm( term );
 	            });
-	            
+
             	$('.datatable').DataTable({
             		'paging': true,
 				    'pageLength': 75,
@@ -208,7 +212,7 @@ $t_reports = $db->getReports();
 						'sSearch': ''
 				     }
             	});
-            	
+
             	var reset_btn = $('#filter-reset');
 				var input_search = $('input[type="search"]');
             	input_search.attr( 'placeholder', 'Search...' );

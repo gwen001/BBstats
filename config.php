@@ -2,20 +2,28 @@
 
 /**
  * I don't believe in license
- * You can do want you want with this program
- * - gwen -
+ * You can do whatever you want with this program
  */
 
 //ini_set( 'display_errors', false );
 //error_reporting( 0 );
 
 // DO NOT TOUCH THIS
-function __autoload( $c ) {
+
+spl_autoload_register(function ( $c ) {
 	$f = __DIR__.'/class/class.'.strtolower($c).'.php';
 	if( is_file($f) ) {
 		require_once( __DIR__.'/class/class.'.strtolower($c).'.php' );
 	}
-}
+});
+
+// function __autoload( $c ) {
+// 	$f = __DIR__.'/class/class.'.strtolower($c).'.php';
+// 	if( is_file($f) ) {
+// 		require_once( __DIR__.'/class/class.'.strtolower($c).'.php' );
+// 	}
+// }
+
 
 $demo = (isset($_GET) && isset($_GET['demo'])) ? '.demo' : '';
 

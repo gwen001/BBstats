@@ -303,6 +303,51 @@ div.datop > .table > tbody > tr:last-child {
 }
 
 
+#hacker-container #hacker-infos {
+	border-bottom: 1px solid #000;
+	display: table;
+	font-size: 1.2em;
+	margin-left: 25px;
+	margin-bottom: 50px;
+	padding-bottom: 50px;
+	width: 100%;
+}
+#hacker-container #hacker-infos h3 {
+	margin: 0px;
+	padding: 0px;
+	text-align: left;
+}
+#hacker-container #hacker-infos a {
+	color: #000 ;
+}
+#hacker-container #hacker-infos a:hover {
+	text-decoration: none;
+}
+#hacker-container #hacker-infos .hacker-logo {
+	width: 100px;
+}
+#hacker-container #hacker-infos [class*="col-"] {
+	display: table-cell;
+}
+#hacker-container #hacker-profile-picture {
+	border: 1px solid #000;
+	border-radius: 3px;
+}
+
+#hacker-container .p_positive {
+	color: #5eae00;
+	font-weight: bold;
+}
+#hacker-container .p_negative {
+	color: #d13535;
+	font-weight: bold;
+}
+#hacker-container .p_null {
+	color: #AAA;
+	font-weight: bold;
+}
+
+
 #program-container #severity-legend {
 	background-color: rgba(245, 245, 245, 0.8);
 	border: 1px solid rgb(212, 24, 24);

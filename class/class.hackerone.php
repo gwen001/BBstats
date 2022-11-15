@@ -2,22 +2,21 @@
 
 /**
  * I don't believe in license
- * You can do want you want with this program
- * - gwen -
+ * You can do whatever you want with this program
  */
 
 class Hackerone extends Platform
 {
 	CONST REPORT_PAGE_LIMIT = 100;
-	
+
 	private $csrf_token = '';
-	
-	
+
+
 	public function __construct() {
 		$this->setName( 'hackerone' );
 	}
-	
-	
+
+
 	public function login()
 	{
 		$this->username = getenv( 'HACKERONE_USERNAME' );
@@ -30,8 +29,8 @@ class Hackerone extends Platform
 
 		return true;
 	}
-	
-	
+
+
 	public function connect()
 	{
 		$this->cookie_file = tempnam( '/tmp', 'cook_' );
@@ -48,16 +47,16 @@ class Hackerone extends Platform
 		$t_info = curl_getinfo( $c );
 		//var_dump( $data );
 		//var_dump( $t_info );
-		
+
 		if( !$data || $t_info['http_code']!=200 ) {
 			return -1;
 		}
-		
+
 		$t_data = json_decode( $data, true );
 		if( !isset($t_data['csrf_token']) ) {
 			return -2;
 		}
-		
+
 		$this->csrf_token = $t_data['csrf_token'];
 		//var_dump( $this->csrf_token );
 
@@ -76,11 +75,11 @@ class Hackerone extends Platform
 		$t_info = curl_getinfo( $c );
 		//var_dump( $data );
 		//var_dump( $t_info );
-		
+
 		if( $t_info['http_code']!=200 ) {
 			return -3;
 		}
-		
+
 		$t_data = json_decode( $data, true );
 		if( !isset($t_data['result_code']) || $t_data['result_code'] != 'valid-credentials' ) {
 			return -4;
@@ -101,19 +100,44 @@ class Hackerone extends Platform
 		$t_info = curl_getinfo( $c );
 		//var_dump( $data );
 		//var_dump( $t_info );
-		
+
 		if( !$data || $t_info['http_code']!=302 ) {
 			return -5;
 		}
-		
+
 		/*if( $data != '<html><body>You are being <a href="https://hackerone.com/10d/setup_guide">redirected</a>.</body></html>' ) {
 			return -6;
 		}*/
-		
+
 		return true;
 	}
-	
-	
+
+
+	public function getUserInfos()
+	{
+		$c = curl_init();
+		curl_setopt( $c, CURLOPT_URL, 'https://hackerone.com/current_user' );
+		curl_setopt( $c, CURLOPT_USERAGENT, 'User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:56.0) Gecko/20100101 Firefox/56.0' );
+		curl_setopt( $c, CURLOPT_TIMEOUT, 15 );
+		curl_setopt( $c, CURLOPT_FOLLOWLOCATION, false );
+		curl_setopt( $c, CURLOPT_COOKIEJAR, $this->cookie_file );
+		curl_setopt( $c, CURLOPT_COOKIEFILE, $this->cookie_file );
+		curl_setopt( $c, CURLOPT_RETURNTRANSFER, true );
+		$data = curl_exec($c );
+		$t_info = curl_getinfo( $c );
+		//var_dump( $data );
+		//var_dump( $t_info );
+
+		if( !$data || $t_info['http_code']!=200 ) {
+			return -1;
+		}
+
+		$t_data = json_decode( $data, true );
+
+		return $t_data;
+	}
+
+
 	public function grabReportList( $quantity )
 	{
 		$bbstats = BBstats::getInstance();
@@ -122,7 +146,7 @@ class Hackerone extends Platform
 		}
 
 		$n_page = ceil( $quantity/self::REPORT_PAGE_LIMIT );
-		
+
 		for( $page=1 ; $page<=$n_page ; $page++ )
 		{
 			$c = curl_init();
@@ -141,7 +165,7 @@ class Hackerone extends Platform
 			//$data = @file_get_contents( 'data/page_'.$page.'.json' );
 			//var_dump( $data );
 			//var_dump( $t_info );
-			
+
 			if( !$data || $t_info['http_code']!=200 || !$t_info['size_download'] || stristr($data,'You need to sign in') || stristr($data,'Sign in to HackerOne') ) {
 				Utils::_print( '.', 'dark_grey' );
 				return false;
@@ -152,48 +176,48 @@ class Hackerone extends Platform
 					$n_page = $t_data['pages'];
 				}
 			}
-			
+
 			Utils::_print( '.', 'white' );
 		}
-		
+
 		return $n_page;
 	}
-	
-	
+
+
 	protected function grabReportListFromFile( $quantity )
 	{
 		$bbstats = BBstats::getInstance();
-		
+
 		$fp = fopen( $bbstats->getSourceFile(), 'r' );
 		if( !$fp ) {
 			return false;
 		}
-		
+
 		for( $i=0 ; ($line=fgetcsv($fp)) && $i<=$quantity ; $i++ )
 		{
 			if( !$i ) {
 				continue;
 			}
-			
+
 			$report_id = $line[0];
 			$this->t_bugs[ $report_id ] = array_merge( ['id'=>$report_id], $line);
 		}
-		
+
 		Utils::_print( '.', 'white' );
 
 		return $i;
 	}
-	
-	
+
+
 	public function grabReports( $quantity, $t_reputation )
 	{
 		$bbstats = BBstats::getInstance();
 		if( $bbstats->isImport() ) {
 			return $this->grabReportsFromFile( $quantity, $t_reputation );
 		}
-		
+
 		$db = $bbstats->getDatabase();
-		
+
 		for( $n=0 ; $n<$quantity && list($k,$bug)=each($this->t_bugs) ; $n++ )
 		{
 			$report_id = $bug['id'];
@@ -202,7 +226,7 @@ class Hackerone extends Platform
 			if( !$db->exists($key) || $bbstats->updateAllowed() || $bbstats->overwriteAllowed() )
 			{
 				$report = $this->grabReport( $report_id );
-				
+
 				if( $report && $report['reporter']['is_me?'] ) {
 					if( $t_reputation && isset($t_reputation[$report_id]) ) {
 						$report['reputation'] = $t_reputation[$report_id];
@@ -211,13 +235,13 @@ class Hackerone extends Platform
 				}
 			}
 		}
-		
+
 		echo "\n";
 
 		return count($this->t_reports);
 	}
-	
-	
+
+
 	public function grabReportsFromFile( $quantity, $t_reputation )
 	{
 		$bbstats = BBstats::getInstance();
@@ -231,7 +255,7 @@ class Hackerone extends Platform
 			if( !$db->exists($key) || $bbstats->updateAllowed() || $bbstats->overwriteAllowed() )
 			{
 				$report = $this->grabReportFromFile( $report_id );
-				
+
 				if( $report ) {
 					if( $t_reputation && isset($t_reputation[$report_id]) ) {
 						$report['reputation'] = $t_reputation[$report_id];
@@ -240,13 +264,13 @@ class Hackerone extends Platform
 				}
 			}
 		}
-		
+
 		echo "\n";
 
 		return count($this->t_reports);
 	}
-			
-	
+
+
 	protected function grabReport( $report_id )
 	{
 		$c = curl_init();
@@ -266,28 +290,28 @@ class Hackerone extends Platform
 		//$data = @file_get_contents( 'data/report_'.$report_id.'.json' );
 		//var_dump( $data );
 		//var_dump( $t_info );
-		
+
 		if( !$data || $t_info['http_code']!=200 || !$t_info['size_download'] || stristr($data,'You need to sign in') || stristr($data,'Sign in to HackerOne') ) {
 			Utils::_print( '.', 'dark_grey' );
 			return false;
 		}
 
 		Utils::_print( '.', 'white' );
-		
+
 		$t_data = json_decode( $data, true );
-		
+
 		return $t_data;
 	}
 
-	
+
 	protected function grabReportFromFile( $report_id )
 	{
 		if( !isset($this->t_bugs[$report_id]) ) {
 			return false;
 		}
-		
+
 		$bug = $this->t_bugs[$report_id];
-		
+
 		$tmp = [];
 		$tmp['id'] = $bug[0];
 		$tmp['title'] = $bug[1];
@@ -297,19 +321,19 @@ class Hackerone extends Platform
 		$tmp['activities'][] = [ 'bounty_amount'=>$bug[3], 'created_at'=>$bug[7] ];
 		$tmp['created_at'] = $bug[7];
 		$tmp['substate'] = $bug[8];
-		
+
 		Utils::_print( '.', 'white' );
-		
+
 		return $tmp;
 	}
 
-	
+
 	public function extractReportDatas()
 	{
 		foreach( $this->t_reports as $key=>$report )
 		{
 			$t = [];
-			
+
 			$r = new Report();
 			$r->setPlatform( $this->getName() );
 			$r->setId( $report['id'] );
@@ -318,13 +342,13 @@ class Hackerone extends Platform
 			$r->setCreatedAt( strtotime($report['created_at']) );
 			$r->setProgram( $report['team']['handle'] );
 			$r->setState( $report['substate'] );
-			
+
 			if( isset($report['reputation']) ) {
 				foreach( $report['reputation'] as $reput ) {
 					$r->addReputation( $reput['created_at'], $reput['points'] );
 				}
 			}
-			
+
 			foreach( $report['activities'] as $activity )
 			{
 				if( !$r->getFirstResponseDate() && $activity['automated_response'] === false ) {
@@ -333,26 +357,26 @@ class Hackerone extends Platform
 					if( $a != $report['reporter']['username'] && $c != $report['reporter']['username'] ) {
 						$r->setFirstResponseDate( strtotime($activity['created_at']) );
 					}
-				}				
+				}
 				if( !$r->getFirstBountyDate() && (isset($activity['bonus_amount']) || isset($activity['bounty_amount'])) ) {
 					$r->setFirstBountyDate( strtotime($activity['created_at']) );
 				}
 				if( !$r->getTriageDate() && $activity['type'] == 'Activities::BugTriaged' ) {
 					$r->setTriageDate( strtotime($activity['created_at']) );
-				}				
+				}
 				if( !$r->getResolutionDate() && $activity['type'] == 'Activities::BugResolved' ) {
 					$r->setResolutionDate( strtotime($activity['created_at']) );
-				}				
+				}
 
 				$bounty_amount = 0;
-				
+
 				if( isset($activity['bonus_amount']) ) {
 					$bounty_amount += $activity['bonus_amount'];
 				}
 				if( isset($activity['bounty_amount']) ) {
 					$bounty_amount += $activity['bounty_amount'];
 				}
-				
+
 				if( $bounty_amount ) {
 					$r->addBounty( strtotime($activity['created_at']), $bounty_amount );
 				}
@@ -361,20 +385,20 @@ class Hackerone extends Platform
 			$this->t_reports_final[ $key ] = $r;
 		}
 	}
-	
-	
+
+
 	public static function getReportLink( $report_id ) {
 		return 'https://hackerone.com/reports/'.$report_id;
 	}
-	
-	
+
+
 	public function grabReputation()
 	{
 		$bbstats = BBstats::getInstance();
 		if( $bbstats->isImport() ) {
 			return false;
 		}
-			
+
 		$page = 1;
 		$t_reput = [];
 		$t_headers = [
@@ -383,7 +407,7 @@ class Hackerone extends Platform
 			'X-Requested-With: XMLHttpRequest',
 			'Referer: https://hackerone.com/settings/reputation/log',
 		];
-		
+
 		do
 		{
 			$c = curl_init();
@@ -403,22 +427,22 @@ class Hackerone extends Platform
 			//$data = @file_get_contents( 'data/reput_'.$page.'.html' );
 			//var_dump( $data );
 			//var_dump( $t_info );
-			
+
 			if( !$data || $t_info['http_code']!=200 || !$t_info['size_download'] || stristr($data,'You need to sign in') || stristr($data,'Sign in to HackerOne') ) {
 				return false;
 			}
-			
+
 			echo '.';
 			$page++;
-			
+
 			$t_reput = array_merge( $t_reput, $this->extractReputationJson($data) );
 			//var_dump( $t_reput );
-			
+
 			$grab = !preg_match( '#user_joined#', $data );
 			//$grab = preg_match( '#audit-log-item#', $data );
 		}
 		while( $grab );
-		
+
 		$t_final = [];
 		foreach( $t_reput as $reput )
 		{
@@ -427,7 +451,7 @@ class Hackerone extends Platform
 			if( !isset($t_final[$report_id]) ) {
 				$t_final[$report_id] = [];
 			}
-			
+
 			$t_final[$report_id][] = [ 'created_at'=>$reput['created_at'], 'points'=>$reput['points'] ];
 		}
 
@@ -435,24 +459,24 @@ class Hackerone extends Platform
 
 		return $t_final;
 	}
-	
-	
+
+
 	public function grabReputationFromFile() {
-		
+
 	}
 
-	
+
 	protected function extractReputation( $data )
 	{
 		$doc = new DOMDocument();
 		$doc->preserveWhiteSpace = false;
 		@$doc->loadHTML( $data );
-		
+
 		$t_reput = [];
 		$xpath = new DOMXPath( $doc );
 		$t_items = $xpath->query("//div[contains(@class,'audit-log-item')]");
 		//var_dump( $t_items );
-		
+
 		foreach( $t_items as $item )
 		{
 			$date = $xpath->query("span[contains(@class,'meta-text')]/span[@title]", $item );
@@ -464,7 +488,7 @@ class Hackerone extends Platform
 			$point = $xpath->query("span[contains(@class,'reputation-change-badge')]", $item );
 			$points = (int)($point[0]->nodeValue);
 			//var_dump( $points );
-			
+
 			$report = $xpath->query("a[contains(@href,'/reports/')]", $item );
 			if( $report && isset($report[0]) ) {
 				foreach( $report[0]->attributes as $attr ) {
@@ -474,22 +498,22 @@ class Hackerone extends Platform
 	        	$t_reput[] = [ 'report_id'=>$report_id, 'created_at'=>$ts, 'points'=>$points ];
 			}
 		}
-		
+
 		return $t_reput;
 	}
-	
-	
+
+
 	protected function extractReputationJson( $data )
 	{
 		$data = json_decode( $data, true );
 		$t_reput = [];
-		
+
 		foreach( $data['reputations'] as $item )
 		{
 			if( $item['type'] == 'user_joined' ) {
 				continue;
 			}
-			
+
 	        $ts = strtotime( $item['created_at'] );
 	        $report_id = $item['report']['id'];
 	        $points = $item['change'];
@@ -520,11 +544,11 @@ class Hackerone extends Platform
 		$data = curl_exec($c );
 		$t_info = curl_getinfo( $c );
 		//file_put_contents( DATABASE_PATH.'/h_'.$program.'.json', $data );
-		
+
 		if( !$data || $t_info['http_code']!=200 || !$t_info['size_download'] || stristr($data,'You need to sign in') || stristr($data,'Sign in to HackerOne') || stristr($data,'It looks like your JavaScript is disabled') ) {
 			return false;
 		}
-		
+
 		return $data;
 	}
 
@@ -561,7 +585,7 @@ class Hackerone extends Platform
 			$data = @file_get_contents( 'data/'.$program.'_'.$page.'.json' );*/
 			//var_dump( $data );
 			//var_dump( $t_info );
-			
+
 			if( !$data || $t_info['http_code']!=200 || !$t_info['size_download'] || stristr($data,'You need to sign in') || stristr($data,'Sign in to HackerOne') || stristr($data,'It looks like your JavaScript is disabled') ) {
 				echo "errr\n";
 				return false;
@@ -571,7 +595,7 @@ class Hackerone extends Platform
 			$n_page = $t_data['pages'];
 			//echo "n_page: ".$n_page."\n";
 			$page++;
-			
+
 			if( isset($t_data['reports']) ) {
 				$t_reports = array_merge( $t_reports, $t_data['reports'] );
 			}
@@ -603,7 +627,7 @@ class Hackerone extends Platform
 				}
 			}
 		}
-		
+
 		echo "\n";
 
 		return count($this->t_reports);

@@ -2,8 +2,7 @@
 
 /**
  * I don't believe in license
- * You can do want you want with this program
- * - gwen -
+ * You can do whatever you want with this program
  */
 
 if( !isset($_POST['_a']) ) {
@@ -62,12 +61,12 @@ if( $_POST['_a'] == 'graph-reload' && isset($_POST['graph']) )
 			$datas = json_encode( Statistics::top_tags_html($db) );
 			break;
 	}
-	
+
 	if( !is_null($datas) ) {
 		echo $datas;
 	}
 	exit();
-	
+
 }
 
 
@@ -76,12 +75,12 @@ if( $_POST['_a'] == 'report-get' )
 	if( !isset($_POST['key']) || ($key=trim($_POST['key']))=='' ) {
 		exit();
 	}
-	
+
 	$report = $db->getReport( $key );
 	if( !$report ) {
 		exit();
 	}
-	
+
 	$report->total_bounty = $report->getTotalBounty();
 	$report->str_tags = $report->getTags( true );
 	$report->setCreatedAt( date('Y/m/d',$report->getCreatedAt()) );
@@ -94,7 +93,7 @@ if( $_POST['_a'] == 'report-add' )
 {
 	$report = new Report();
 	$report->setManual( true );
-	
+
 	if( isset($_POST['id']) ) {
 		$report->setId( trim($_POST['id']) );
 	} else {
@@ -128,9 +127,9 @@ if( $_POST['_a'] == 'report-add' )
 			$report->setTags( explode(',',trim($_POST['tags'],', ')) );
 		}
 	}
-	
+
 	$key = Report::generateKey( $report->getPlatform(), $report->getProgram(), $report->getId() );
-	
+
 	$db->addReport( $key, $report );
 	$db->save();
 	exit();
@@ -142,12 +141,12 @@ if( $_POST['_a'] == 'report-edit' )
 	if( !isset($_POST['key']) || ($key=trim($_POST['key']))=='' ) {
 		exit();
 	}
-	
+
 	$report = $db->getReport( $key );
 	if( !$report ) {
 		exit();
 	}
-	
+
 	if( isset($_POST['id']) && $report->getManual() ) {
 		$report->setId( trim($_POST['id']) );
 	}
@@ -182,7 +181,7 @@ if( $_POST['_a'] == 'report-edit' )
 	if( isset($_POST['created_at']) && $report->getManual() ) {
 		$report->setCreatedAt( strtotime(trim($_POST['created_at'])) );
 	}
-	
+
 	$db->setReport( $key, $report );
 	$db->save();
 	exit();
@@ -194,14 +193,14 @@ if( $_POST['_a'] == 'report-unignore' )
 	if( !isset($_POST['key']) || ($key=trim($_POST['key']))=='' ) {
 		exit();
 	}
-	
+
 	$report = $db->getReport( $key );
 	if( !$report ) {
 		exit();
 	}
 
 	$report->unignore();
-	
+
 	$db->setReport( $key, $report );
 	$db->save();
 	exit();
@@ -213,7 +212,7 @@ if( $_POST['_a'] == 'report-ignore' )
 	if( !isset($_POST['key']) || ($key=trim($_POST['key']))=='' ) {
 		exit();
 	}
-	
+
 	$report = $db->getReport( $key );
 	if( !$report ) {
 		exit();
@@ -221,7 +220,7 @@ if( $_POST['_a'] == 'report-ignore' )
 
 	$report->ignore();
 	//var_dump($report);
-	
+
 	$db->setReport( $key, $report );
 	$db->save();
 	exit();
@@ -233,12 +232,12 @@ if( $_POST['_a'] == 'report-delete' )
 	if( !isset($_POST['key']) || ($key=trim($_POST['key']))=='' ) {
 		exit();
 	}
-	
+
 	$report = $db->getReport( $key );
 	if( !$report ) {
 		exit();
 	}
-	
+
 	$db->deleteReport( $key );
 	$db->save();
 	exit();
@@ -250,18 +249,18 @@ if( $_POST['_a'] == 'tag-add' )
 	if( !isset($_POST['key']) || ($key=trim($_POST['key']))=='' ) {
 		exit();
 	}
-	
+
 	$report = $db->getReport( $key );
 	if( !$report ) {
 		exit();
 	}
-	
+
 	if( !isset($_POST['tag']) || ($tags=trim($_POST['tag']))=='' ) {
 		exit();
 	}
 
 	$report->setTags( explode(',',trim($_POST['tag'],', ')) );
-	
+
 	$db->setReport( $key, $report );
 	$db->save();
 	exit();

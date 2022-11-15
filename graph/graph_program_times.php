@@ -41,13 +41,6 @@ if( isset($_GET['program']) ) {
 	    }],
 	    plotOptions: {
             series: {
-                fillColor: {
-                    linearGradient: [0, 0, 0, 0],
-                    stops: [
-                        [0, Highcharts.getOptions().colors[0]],
-                        [1, 'rgba(255,255,255,0)']
-                    ]
-                },
                 lineWidth: 1,
                 marker: {
                     //enabled: false
@@ -76,19 +69,15 @@ if( isset($_GET['program']) ) {
             shared: true
         },
 	    series: [{
-	        type: 'area',
             name: 'Average time to 1st response',
             data: program_times_data.first_response,
 		},{
-	        type: 'area',
             name: 'Average time to 1st bounty',
             data: program_times_data.first_bounty,
 		},{
-	        type: 'area',
             name: 'Average resolution time',
             data: program_times_data.resolution,
 		},{
-	        type: 'area',
             name: 'Average triage time',
             data: program_times_data.triage,
 		}]

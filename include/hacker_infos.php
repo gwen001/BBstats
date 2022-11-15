@@ -1,8 +1,13 @@
-<div class="col-md-1 program-logo">
-    <a href="<?php echo $db->getUrl(); ?>" title="<?php echo $db->getName(); ?>" target="_blank"><img src="<?php echo $db->getProfilePicture(); ?>" id="program-profile-picture" /></a>
+<div class="col-md-1 hacker-logo">
+    <a href="<?php echo $db->getUrl(); ?>" title="<?php echo $db->getName(); ?>" target="_blank"><img src="<?php echo $db->getProfilePicture(); ?>" id="hacker-profile-picture" /></a>
 </div>
 <div class="col-md-2">
     <a href="<?php echo $db->getUrl(); ?>" title="<?php echo $db->getName(); ?>" target="_blank"><h3><?php echo $db->getName(); ?></h3></a>
+</div>
+    <div class="col-md-2">
+    Reputation: <b><?php echo $db->getTotalReputation(); ?></b> <br />
+    Signal: <b><?php printf( '%.02f', $db->getSignal() ); ?></b> <br />
+    Impact: <b><?php printf( '%.02f', $db->getImpact() ); ?></b> <br />
 </div>
 <div class="col-md-2">
     Report count: <b><?php echo $db->getTotalReport(); ?></b> <br />
@@ -21,10 +26,10 @@
         $n0 = $db->getReportsByMonth( date('m/Y') );
         $nd = $n0 - $n1;
         if( $nd < 0 ) {
-            $c = 'p_positive';
+            $c = 'p_negative';
             $n = $nd;
         } elseif( $nd > 0 ) {
-            $c = 'p_negative';
+            $c = 'p_positive';
             $n = '+'.$nd;
         } else {
             $c = 'p_null';
@@ -37,10 +42,10 @@
         $n0 = $db->getBountiesByMonth( date('m/Y') );
         $nd = $n0 - $n1;
         if( $nd < 0 ) {
-            $c = 'p_positive';
+            $c = 'p_negative';
             $n = $nd.'$';
         } elseif( $nd > 0 ) {
-            $c = 'p_negative';
+            $c = 'p_positive';
             $n = '+'.$nd.'$';
         } else {
             $c = 'p_null';

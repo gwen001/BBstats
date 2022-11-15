@@ -84,8 +84,19 @@ if( isset($_GET['program']) ) {
 	            enabled: false
 	        }
 	    }, {
+	        type: 'spline',
+	        name: 'Average bounty',
+	        data: program_bounty_data.average_bounty,
+	        color: '#c124bf',
+	        tooltip: {
+            	valueSuffix: ' $'
+        	},
+	        marker: {
+	            enabled: false
+	        }
+		}, {
 			type: 'spline',
-	        name: 'Average bounties',
+	        name: 'Average bounties by month',
 	        data: program_bounty_data.average_bounties,
 	        color: '#f659ee',
 	        tooltip: {

@@ -112,7 +112,7 @@ __bugs__
 	</tbody>
 </table>
 
-<br><br><br><br>
 
+---
 I don't believe in license.  
-You can do want you want with this program.  
+You can do whatever you want with this program.  

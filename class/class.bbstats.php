@@ -2,8 +2,7 @@
 
 /**
  * I don't believe in license
- * You can do want you want with this program
- * - gwen -
+ * You can do whatever you want with this program
  */
 
 class BBstats
@@ -22,10 +21,10 @@ class BBstats
 		}
 		return self::$_instance;
 	}
-	
-	
+
+
 	private $database = null;
-	
+
 	public function getDatabase() {
 		return $this->database;
 	}
@@ -33,10 +32,10 @@ class BBstats
 		$this->database = $v;
 		return true;
 	}
-	
-	
+
+
 	private $platform = '';
-	
+
 	public function getPlatform() {
 		return $this->platform;
 	}
@@ -44,10 +43,10 @@ class BBstats
 		$this->platform = trim( $v );
 		return true;
 	}
-	
-	
+
+
 	private $program = '';
-	
+
 	public function getProgram() {
 		return $this->program;
 	}
@@ -55,11 +54,11 @@ class BBstats
 		$this->program = trim( $v );
 		return true;
 	}
-	
-	
+
+
 	private $source_file = null;
 	private $is_import = false;
-	
+
 	public function isImport() {
 		return $this->is_import;
 	}
@@ -75,10 +74,10 @@ class BBstats
 		$this->source_file = $f;
 		return true;
 	}
-	
-	
+
+
 	private $action = 'n'; // new
-	
+
 	public function getAction() {
 		return $this->action;
 	}
@@ -102,19 +101,19 @@ class BBstats
 		$this->action = $v;
 		return true;
 	}
-	
-	
+
+
 	private $allow_update = false;
-	
+
 	public function updateAllowed() {
 		return $this->allow_update;
 	}
 	private function allowUpdate() {
 		$this->allow_update = true;
 	}
-	
+
 	private $allow_overwrite = true;
-	
+
 	public function overwriteAllowed() {
 		return $this->allow_overwrite;
 	}
@@ -122,19 +121,19 @@ class BBstats
 		$this->allow_overwrite = false;
 	}
 
-	
+
 	private $demo = false;
-	
+
 	public function isDemo() {
 		return $this->demo;
 	}
 	public function enableDemoMode() {
 		$this->demo = true;
 	}
-	
-	
+
+
 	private $quantity = 2147483647;
-	
+
 	public function getQuantity() {
 		return $this->quantity;
 	}
@@ -145,10 +144,10 @@ class BBstats
 		}
 		return true;
 	}
-	
-	
+
+
 	private $autotag = 0;
-	
+
 	public function getAutoTagMode() {
 		return $this->autotag;
 	}
@@ -156,10 +155,10 @@ class BBstats
 		$this->autotag = (int)$v;
 		return true;
 	}
-	
-	
+
+
 	private $autorate = 0;
-	
+
 	public function getAutoRateMode() {
 		return $this->autorate;
 	}
@@ -167,15 +166,15 @@ class BBstats
 		$this->autorate = (int)$v;
 		return true;
 	}
-	
-	
+
+
 	private $reputation = false;
-	
+
 	public function isReputation() {
 		return $this->reputation;
 	}
 	public function enableReputation() {
 		$this->reputation = true;
 	}
-	
+
 }

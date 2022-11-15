@@ -2,8 +2,7 @@
 
 /**
  * I don't believe in license
- * You can do want you want with this program
- * - gwen -
+ * You can do whatever you want with this program
  */
 
 class Bugcrowd extends Platform
@@ -12,8 +11,8 @@ class Bugcrowd extends Platform
 	public function __construct() {
 		$this->setName( 'bugcrowd' );
 	}
-	
-	
+
+
 	public function login()
 	{
 		$this->username = getenv( 'BUGCROWD_USERNAME' );
@@ -26,8 +25,8 @@ class Bugcrowd extends Platform
 
 		return true;
 	}
-		
-	
+
+
 	public function connect()
 	{
 		$this->cookie_file = tempnam( '/tmp', 'cook_' );
@@ -77,11 +76,11 @@ class Bugcrowd extends Platform
 		if( !$data || $t_info['http_code']!=200 ) {
 			return -3;
 		}
-		
+
 		return true;
 	}
-	
-	
+
+
 	public function grabReportList( $quantity )
 	{
 		$c = curl_init();
@@ -116,18 +115,18 @@ class Bugcrowd extends Platform
 
 		return $n_page;
 	}
-	
-	
+
+
 	protected function grabReportListFromFile( $quantity )
 	{
 	}
 
-	
+
 	public function grabReports( $quantity, $t_reputation )
 	{
 		$bbstats = BBstats::getInstance();
 		$db = $bbstats->getDatabase();
-		
+
 		for( $n=0 ; $n<$quantity && list($k,$bug)=each($this->t_bugs) ; $n++ )
 		{
 			$report_id = $bug['reference_number'];
@@ -139,18 +138,18 @@ class Bugcrowd extends Platform
 				$this->t_reports[$key] = $report;
 			}
 		}
-		
+
 		echo "\n";
 
 		return count($this->t_reports);
 	}
-	
-	
+
+
 	public function grabReportsFromFile( $quantity, $t_reputation )
 	{
 	}
-	
-	
+
+
 	protected function grabReport( $report_id )
 	{
 		$c = curl_init();
@@ -174,24 +173,24 @@ class Bugcrowd extends Platform
 		}
 
 		Utils::_print( '.', 'white' );
-		
+
 		$m = preg_match( '#<div data-react-class="ResearcherNavbar" data-react-props="(.*)" data-reducer="researcherNavbar" class="react-component react-component-researcher-navbar "></div>#', $data, $t_match );
 		//var_dump( $t_match );
 		$t_user = json_decode( html_entity_decode( urldecode( $t_match[1] ) ), true );
-		
+
 		$m = preg_match( '#<div data-react-class="ActivityFeed" data-react-props="(.*)" data-reducer="activityFeed" class="react-component react-component-activity-feed "></div>#', $data, $t_match );
 		//var_dump( $t_match );
 		$t_data = json_decode( html_entity_decode( urldecode( $t_match[1] ) ), true );
 
 		return array_merge( $t_user, $t_data );
 	}
-	
-	
+
+
 	protected function grabReportFromFile( $report_id )
 	{
 	}
-	
-	
+
+
 	public function extractReportDatas()
 	{
 		foreach( $this->t_reports as $key=>$report )
@@ -207,7 +206,7 @@ class Bugcrowd extends Platform
 			$r->setProgram( $report['program_name'] );
 			$r->setState( $report['substate'] );
 			$r->addReputation( strtotime($report['created_at']), (int)$report['points'] );
-			
+
 			foreach( $report['activities'] as $activity )
 			{
 				switch( $activity['key'] )
@@ -252,8 +251,8 @@ class Bugcrowd extends Platform
 			$this->t_reports_final[ $key ] = $r;
 		}
 	}
-	
-	
+
+
 	public static function getReportLink( $report_id ) {
 		return 'https://bugcrowd.com/submissions/'.$report_id;
 	}

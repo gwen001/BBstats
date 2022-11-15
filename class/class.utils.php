@@ -2,8 +2,7 @@
 
 /**
  * I don't believe in license
- * You can do want you want with this program
- * - gwen -
+ * You can do whatever you want with this program
  */
 
 class Utils
@@ -34,15 +33,15 @@ class Utils
 	{
 		$help = self::fromReadme( 'help' );
 		echo $help."\n";
-		
+
 		if( $error ) {
 			echo "\nError: ".$error."!\n";
 		}
 
 		exit();
 	}
-	
-	
+
+
 	public static function fromReadme( $tag )
 	{
 		$readme = APP_PATH.'/README.md';
@@ -104,8 +103,8 @@ class Utils
 
 		return false;
 	}
-	
-	
+
+
 	public static function isDomain( $str )
 	{
 		$str = strtolower( $str );
@@ -129,7 +128,7 @@ class Utils
 		}
 	}
 
-	
+
 	public static function extractDomain( $host )
 	{
 		$tmp = explode( '.', $host );
@@ -146,22 +145,22 @@ class Utils
 
 		return $domain;
 	}
-	
-	
+
+
 	public static function cleanOutput( $str )
 	{
 		$str = preg_replace( '#\[[0-9;]{1,4}m#', '', $str );
 
 		return $str;
 	}
-	
+
 
 	public static function _exec( $cmd )
 	{
 		$output = '';
-	
+
 		while( @ob_end_flush() );
-		
+
 		$proc = popen( $cmd, 'r' );
 		while( !feof($proc) ) {
 			$line = fread( $proc, 4096 );
@@ -169,11 +168,11 @@ class Utils
 			$output .= $line;
 			@flush();
 		}
-		
+
 		return $output;
 	}
-	
-	
+
+
 	public function printDebug( $txt ) {
 		self::_println( '[*] '.$txt, 'white' );
 	}
@@ -186,12 +185,12 @@ class Utils
 	public function printError( $txt ) {
 		self::_println( '[-] '.$txt, 'red' );
 	}
-	
-	
+
+
 	public static function array2object( $array, $class )
 	{
 		$object = new $class();
-		
+
 		foreach( $array as $k=>$v ) {
 			$k = self::camelize( $k );
 			$method = 'set'.$k;
@@ -199,21 +198,21 @@ class Utils
 				$object->$method( $v );
 			}
 		}
-		
+
 		return $object;
 	}
-	
-	
+
+
 	public static function camelize( $str )
 	{
 		$str = strtolower( $str );
 		$tmp = explode( '_', $str );
 		$tmp = array_map( 'ucfirst', $tmp );
 		$str = implode( '', $tmp );
-		
+
 		return $str;
 	}
-	
+
 
 	public static function datetimeDiff( $ts1, $ts2 )
 	{
@@ -228,15 +227,15 @@ class Utils
         $dtd->hour = $dtd->total_hour -($dtd->total_day*24);
         $dtd->min = $dtd->total_min -($dtd->total_hour*60);
 		$dtd->sec = $dtd->total_sec -($dtd->total_min*60);
-		
+
         return $dtd;
     }
-	
+
 	public static function demonize( $t_reports )
 	{
 		$t_random_program = [ 'google', 'facebook', 'yahoo', 'salesforce', 'uber', 'pornhub', 'yelp', 'imgur', 'github' ];
 		$n_random_program = count($t_random_program) - 1;
-		
+
 		foreach( $t_reports as $r )
 		{
 			if( rand(0,100) <= 70 ) {
@@ -244,15 +243,16 @@ class Utils
 			} else {
 				$r->setPlatform( 'bugcrowd' );
 			}
-			
+
 			$program = $r->getProgram();
 			$r->setProgram( $t_random_program[rand(0,$n_random_program)] );
 
 			$title = $r->getTitle();
 			$title = preg_replace( '#'.$program.'#i', $r->getProgram(), $title );
+			$title = preg_replace( '#[^\s]+\.com#i', $r->getProgram().'.com', $title );
 			$title = preg_replace( '#\d{1,3}\.\d{1,3}\.\d{1,3}\.\d{1,3}#', '192.168.'.rand(0,10).'.'.rand(1,253), $title );
 			$r->setTitle( $title );
-				
+
 			$t_bounties = $r->getBounties();
 			foreach( $t_bounties as $b ) {
 				$rating = $r->getRating() ? $r->getRating() : 6;
@@ -260,7 +260,7 @@ class Utils
 			}
 			$r->setBounties( $t_bounties );
 		}
-		
+
 		return $t_reports;
 	}
 }

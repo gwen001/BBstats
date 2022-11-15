@@ -2,8 +2,7 @@
 
 /**
  * I don't believe in license
- * You can do want you want with this program
- * - gwen -
+ * You can do whatever you want with this program
  */
 
 class Statistics
@@ -33,7 +32,7 @@ class Statistics
 		</table>';
 		$n_report = ob_get_contents();
 		ob_end_clean();
-		
+
 		ob_start();
 		echo '<table class="table">
 			<thead>
@@ -54,7 +53,7 @@ class Statistics
 		</table>';
 		$bounty = ob_get_contents();
 		ob_end_clean();
-		
+
 		ob_start();
 		echo '<table class="table">
 			<thead>
@@ -75,15 +74,15 @@ class Statistics
 		</table>';
 		$reputation = ob_get_contents();
 		ob_end_clean();
-		
+
 		return ['n_report'=>$n_report, 'bounty'=>$bounty, 'reputation'=>$reputation];
 	}
-	
-	
+
+
 	public static function top_program( $db )
 	{
 		$t_programs = [];
-		
+
 		foreach( $db->getReports() as $key=>$report )
 		{
 			if( $report->getIgnore() ) {
@@ -91,47 +90,47 @@ class Statistics
 			}
 
 			$program = $report->getProgram();
-			
+
 			if( !isset($t_programs[$program]) ) {
 				$t_programs[$program] = [ 'n_report'=>0, 'bounty'=>0, 'reputation'=>0 ];
 			}
-			
+
 			$t_programs[$program]['n_report']++;
 			$t_programs[$program]['bounty'] += $report->getTotalBounty();
 			$t_programs[$program]['reputation'] += $report->getTotalReputation();
 		}
-		
+
 		$t_total = [];
 		$t_total['n_report'] = $db->getTotalReport();
 		$t_total['bounty'] = $db->getTotalBounty();
 		$t_total['reputation'] = $db->getTotalReputation();
-		
+
 		foreach( $t_programs as $program=>&$data ) {
 			$data['n_report_p'] = sprintf( '%.01f', $data['n_report']*100 / $t_total['n_report'] );
 			$data['bounty_p'] = sprintf( '%.01f', $data['bounty']*100 / $t_total['bounty'] );
 			$data['reputation_p'] = @sprintf( '%.01f', $data['reputation']*100 / $t_total['reputation'] );
 		}
-		
+
 		array_multisort( array_column($t_programs,'n_report'), SORT_DESC, SORT_NUMERIC, $t_programs );
 		$t_n_report = $t_programs;
-		
+
 		array_multisort( array_column($t_programs,'bounty'), SORT_DESC, SORT_NUMERIC, $t_programs );
 		$t_bounty = $t_programs;
-		
+
 		array_multisort( array_column($t_programs,'reputation'), SORT_DESC, SORT_NUMERIC, $t_programs );
 		$t_reputation = $t_programs;
-		
+
 		$t_top = [
 			't_total' => $t_total,
 			't_n_report' => $t_n_report,
 			't_bounty' => $t_bounty,
 			't_reputation' => $t_reputation,
 		];
-		
+
 		return $t_top;
 	}
-	
-	
+
+
 	public static function top_tags_html( $db )
 	{
 		$limit = self::TOP_LIMIT;
@@ -157,7 +156,7 @@ class Statistics
 		</table>';
 		$n_report = ob_get_contents();
 		ob_end_clean();
-		
+
 		ob_start();
 		echo '<table class="table">
 			<thead>
@@ -178,7 +177,7 @@ class Statistics
 		</table>';
 		$bounty = ob_get_contents();
 		ob_end_clean();
-		
+
 		ob_start();
 		echo '<table class="table">
 			<thead>
@@ -199,15 +198,15 @@ class Statistics
 		</table>';
 		$reputation = ob_get_contents();
 		ob_end_clean();
-		
+
 		return ['n_report'=>$n_report, 'bounty'=>$bounty, 'reputation'=>$reputation];
 	}
-	
-	
+
+
 	public static function top_tags( $db )
 	{
 		$t_tags = [];
-		
+
 		foreach( $db->getReports() as $key=>$report )
 		{
 			if( $report->getIgnore() ) {
@@ -215,54 +214,54 @@ class Statistics
 			}
 
 			$r_tags = $report->getTags();
-			
+
 			foreach( $r_tags as $tag ) {
 				if( !isset($t_tags[$tag]) ) {
 					$t_tags[$tag] = [ 'n_report'=>0, 'bounty'=>0, 'reputation'=>0 ];
 				}
-				
+
 				$t_tags[$tag]['n_report']++;
 				$t_tags[$tag]['bounty'] += $report->getTotalBounty();
 				$t_tags[$tag]['reputation'] += $report->getTotalReputation();
 			}
 		}
-		
+
 		$t_total = [];
 		$t_total['n_report'] = $db->getTotalReport();
 		$t_total['bounty'] = $db->getTotalBounty();
 		$t_total['reputation'] = $db->getTotalReputation();
-		
+
 		foreach( $t_tags as $tag=>&$data ) {
 			$data['n_report_p'] = sprintf( '%.01f', $data['n_report']*100 / $t_total['n_report'] );
 			$data['bounty_p'] = sprintf( '%.01f', $data['bounty']*100 / $t_total['bounty'] );
 			$data['reputation_p'] = @sprintf( '%.01f', $data['reputation']*100 / $t_total['reputation'] );
 		}
-		
+
 		array_multisort( array_column($t_tags,'n_report'), SORT_DESC, SORT_NUMERIC, $t_tags );
 		$t_n_report = $t_tags;
-		
+
 		array_multisort( array_column($t_tags,'bounty'), SORT_DESC, SORT_NUMERIC, $t_tags );
 		$t_bounty = $t_tags;
-		
+
 		array_multisort( array_column($t_tags,'reputation'), SORT_DESC, SORT_NUMERIC, $t_tags );
 		$t_reputation = $t_tags;
-		
+
 		$t_top = [
 			't_total' => $t_total,
 			't_n_report' => $t_n_report,
 			't_bounty' => $t_bounty,
 			't_reputation' => $t_reputation,
 		];
-		
+
 		return $t_top;
 	}
-	
-	
+
+
 	public static function reports_platform_pie( $db )
 	{
 		$t_program = [];
 		$t_average = [];
-		
+
 		foreach( $db->getReports() as $report )
 		{
 			if( $report->getIgnore() ) {
@@ -274,10 +273,10 @@ class Statistics
 			}
 			$t_platform[ $report->getPlatform() ]++;
 		}
-		
+
 		arsort( $t_platform );
 		$total = $db->getTotalReport();
-		
+
 		$t_platforms = array_slice( array_keys($t_platform), 0, 5 );
 		$t_platforms = array_merge( ['other'], $t_platforms );
 		$t_platforms = array_map( 'ucfirst', $t_platforms );
@@ -286,23 +285,23 @@ class Statistics
 		$t_values = array_merge( [$others], $t_values );
 		//var_dump( $t_platforms );
 		//var_dump( $t_values );
-		
+
 		$t_return = [
 			'total' => $total,
 			'platforms' => $t_platforms,
 			'values' => $t_values,
 		];
-		
+
 		return json_encode( $t_return );
 	}
-	
-	
+
+
 	public static function reports_program_pie( $db )
 	{
 		$t_program = [];
 		$t_total = [];
 		$total = 0;
-		
+
 		foreach( $db->getReports() as $report )
 		{
 			if( $report->getIgnore() ) {
@@ -315,10 +314,10 @@ class Statistics
 			$t_program[ $report->getProgram() ]++;
 			$total++;
 		}
-		
+
 		arsort( $t_program );
 		//var_dump( $total );
-		
+
 		$t_programs = array_slice( array_keys($t_program), 0, 5 );
 		$t_programs = array_merge( ['other'], $t_programs );
 		$t_programs = array_map( 'ucfirst', $t_programs );
@@ -327,24 +326,24 @@ class Statistics
 		$t_values = array_merge( [$others], $t_values );
 		//var_dump( $t_programs );
 		//var_dump( $t_values );
-		
+
 		$t_return = [
 			'total' => $total,
 			'programs' => $t_programs,
 			'values' => $t_values,
 		];
-		
+
 		return json_encode( $t_return );
 	}
-	
-	
+
+
 	public static function reports_tags_pie( $db )
 	{
 		$t_tag = [];
 		$t_total = [];
 		$total = 0;
 		$none = 0;
-		
+
 		foreach( $db->getReports() as $report )
 		{
 			if( $report->getIgnore() ) {
@@ -352,7 +351,7 @@ class Statistics
 			}
 
 			$r_tags = $report->getTags();
-			
+
 			if( $r_tags && is_array($r_tags) && count($r_tags) )
 			{
 				foreach( $r_tags as $tag )
@@ -367,13 +366,13 @@ class Statistics
 			{
 				$none++;
 			}
-			
+
 			$total++;
 		}
-		
+
 		arsort( $t_tag );
 		//var_dump( $total );
-		
+
 		$t_tags = array_slice( array_keys($t_tag), 0, 5 );
 		$t_tags = array_merge( ['untaged'], $t_tags );
 		$t_tags = array_merge( ['other'], $t_tags );
@@ -384,17 +383,17 @@ class Statistics
 		$t_values = array_merge( [$others], $t_values );
 		//var_dump( $t_tags );
 		//var_dump( $t_values );
-		
+
 		$t_return = [
 			'total' => $total,
 			'tags' => $t_tags,
 			'values' => $t_values,
 		];
-		
+
 		return json_encode( $t_return );
 	}
-	
-	
+
+
 	public static function reports_rating( $db, $jencode=true )
 	{
 		$t_p0 = [];
@@ -407,7 +406,7 @@ class Statistics
 		$t_average = [];
 		$t_reputation = [];
 		$n = 0;
-		
+
 		foreach( $db->getReports() as $report )
 		{
 			if( $report->getIgnore() ) {
@@ -419,7 +418,7 @@ class Statistics
 				$t_total[ $d ] = 0;
 			}
 			$t_total[ $d ]++;
-			
+
 			if( !isset($t_reputation[$d]) ) {
 				$t_reputation[ $d ] = 0;
 			}
@@ -431,12 +430,12 @@ class Statistics
 			}
 			$$tab[ $d ]++;
 		}
-		
+
 		$t_total = self::createTimeline( $t_total, $db->getFirstReportDate() );
 		$average_report = (float)sprintf( '%.02f', array_sum($t_total) / count($t_total) );
 		$average_rate = array_sum($t_p1)*5 + array_sum($t_p2)*4 + array_sum($t_p3)*3 + array_sum($t_p4)*2 + array_sum($t_p5)*1;
 		$average_rate = (float)sprintf( '%.02f', $average_rate / (array_sum($t_total)-array_sum($t_p0)) );
-		
+
 		$t_reputation = self::createTimeline( $t_reputation, $db->getFirstReportDate() );
 		$t_p0 = self::createTimeline( $t_p0, $db->getFirstReportDate() );
 		$t_p1 = self::createTimeline( $t_p1, $db->getFirstReportDate() );
@@ -451,9 +450,9 @@ class Statistics
 			$t_average_report[ $d ] = $average_report;
 			$t_average_rate[ $d ] = $average_rate;
 		}
-		
+
 		$t_return = [];
-		
+
 		$t_return['p0'] = array_values( $t_p0 );
 		$t_return['p1'] = array_values( $t_p1 );
 		$t_return['p2'] = array_values( $t_p2 );
@@ -465,15 +464,15 @@ class Statistics
 		$t_return['average_rate'] = array_values( $t_average_rate );
 		$t_return['reputation'] = array_values( $t_reputation );
 		$t_return['categories'] = array_keys( $t_total );
-		
+
 		return json_encode( $t_return );
 	}
-	
-	
+
+
 	public static function reports_rating_pie( $db )
 	{
 		$p0 = $p1 = $p2 = $p3 = $p4 = $p5 = 0;
-		
+
 		foreach( $db->getReports() as $report )
 		{
 			if( $report->getIgnore() ) {
@@ -493,15 +492,15 @@ class Statistics
 			'p4' => $p4,
 			'p5' => $p5,
 		];
-		
+
 		return json_encode( $t_return );
 	}
-	
+
 
 	public static function reports_severity_pie( $db )
 	{
 		$none = $low = $medium = $high = $critical = 0;
-		
+
 		foreach( $db->getReports() as $report )
 		{
 			if( $report->getIgnore() ) {
@@ -520,21 +519,21 @@ class Statistics
 			'high' => $high,
 			'critical' => $critical,
 		];
-		
+
 		return json_encode( $t_return );
 	}
-	
-	
+
+
 	public static function reports_state_pie( $db )
 	{
 		$t_state = [ 'new'=>0,'triaged'=>0,'duplicate'=>0,'informative'=>0,'not-applicable'=>0,'resolved'=>0,'spam'=>0, 'wont_fix'=>0, 'not_applicable'=>0, 'unresolved'=>0 ];
-		
+
 		foreach( $db->getReports() as $report )
 		{
 			if( $report->getIgnore() ) {
 				continue;
 			}
-			
+
 			$s = strtolower( $report->getState() );
 			$t_state[$s]++;
 		}
@@ -549,11 +548,11 @@ class Statistics
 			's_resolved' => $t_state['resolved'],
 			's_spam' => $t_state['spam'],
 		];
-		
+
 		return json_encode( $t_return );
 	}
-	
-	
+
+
 	public static function bounties( $db )
 	{
 		$t_datas_rcd = [];
@@ -561,7 +560,7 @@ class Statistics
 		$t_average_rcd = [];
 		$t_average_pd = [];
 		$t_reputation = [];
-		
+
 		foreach( $db->getReports() as $report )
 		{
 			if( $report->getIgnore() ) {
@@ -569,7 +568,7 @@ class Statistics
 			}
 
 			$dr = date( 'm/y', $report->getCreatedAt() );
-			
+
 			if( !isset($t_reputation[$dr]) ) {
 				$t_reputation[ $dr ] = 0;
 			}
@@ -591,7 +590,7 @@ class Statistics
 				}
 			}
 		}
-		
+
 		$t_reputation = self::createTimeline( $t_reputation, $db->getFirstReportDate() );
 		$t_datas_rcd = self::createTimeline( $t_datas_rcd, $db->getFirstReportDate() );
 		$t_datas_pd = self::createTimeline( $t_datas_pd, $db->getFirstReportDate() );
@@ -602,7 +601,7 @@ class Statistics
 			$t_average_rcd[$d] = $average_rcd;
 			$t_average_pd[$d] = $average_pd;
 		}
-		
+
 		$t_return = [];
 		$t_return['reputation'] = array_values( $t_reputation );
 		$t_return['categories'] = array_keys( $t_datas_rcd );
@@ -610,17 +609,17 @@ class Statistics
 		$t_return['payday'] = array_values( $t_datas_pd );
 		$t_return['report_creation_date_average'] = array_values( $t_average_rcd );
 		$t_return['payday_average'] = array_values( $t_average_pd );
-		
+
 		return json_encode( $t_return );
 	}
-	
-	
+
+
 	public static function bounties_reports_evolution( $db )
 	{
 		$t_reputation = [];
 		$t_bounties = [];
 		$t_reports = [];
-		
+
 		foreach( $db->getReports() as $report )
 		{
 			if( $report->getIgnore() ) {
@@ -633,14 +632,14 @@ class Statistics
 				$t_reports[ $d ] = 0;
 			}
 			$t_reports[ $d ]++;
-			
+
 			foreach( $report->getBounties() as $bounty ) {
 				if( !isset($t_bounties[$d]) ) {
 					$t_bounties[ $d ] = 0;
 				}
 				$t_bounties[ $d ] += $bounty->amount;
 			}
-			
+
 			foreach( $report->getReputations() as $reput ) {
 				if( !isset($t_reputation[$d]) ) {
 					$t_reputation[ $d ] = 0;
@@ -648,11 +647,11 @@ class Statistics
 				$t_reputation[ $d ] += $reput->points;
 			}
 		}
-				
+
 		$t_reports = self::createTimeline( $t_reports, $db->getFirstReportDate() );
 		$t_bounties = self::createTimeline( $t_bounties, $db->getFirstReportDate() );
 		$t_reputation = self::createTimeline( $t_reputation, $db->getFirstReportDate() );
-		
+
 		$total = 0;
 		foreach( $t_reports as $d=>$n ) {
 			$total += $n;
@@ -676,11 +675,11 @@ class Statistics
 		$t_return['n_reports'] = array_values( $t_reports );
 		$t_return['n_bounties'] = array_values( $t_bounties );
 		$t_return['n_reputation'] = array_values( $t_reputation );
-		
+
 		return json_encode( $t_return );
 	}
-	
-	
+
+
 	public static function program_evolution( $db )
 	{
 		$t_p0 = [];
@@ -689,17 +688,18 @@ class Statistics
 		$t_p3 = [];
 		$t_p4 = [];
 		$t_p5 = [];
-		$t_none      = [];
+		$t_none     = [];
 		$t_low      = [];
 		$t_medium   = [];
 		$t_high     = [];
 		$t_critical = [];
 		$t_total    = [];
 		$t_bounties = [];
-		$t_average_bounties  = [];
+		$t_average_bounties = [];
+		$t_average_report = [];
 		$t_cnt = [ 'none'=>0, 'low'=>0, 'medium'=>0, 'high'=>0, 'critical'=>0 ];
 		$first_report_date = null;
-		
+
 		foreach( $db->getReports() as $report )
 		{
 			/*if( $report->getIgnore() ) {
@@ -716,7 +716,7 @@ class Statistics
 				$t_total[ $d ] = 0;
 			}
 			$t_total[ $d ]++;
-			
+
 			if( !isset($t_bounties[$d]) ) {
 				$t_bounties[ $d ] = 0;
 			}
@@ -750,7 +750,9 @@ class Statistics
 		$t_p3 = self::createTimeline( $t_p3, $db->getFirstReportDate() );
 		$t_p4 = self::createTimeline( $t_p4, $db->getFirstReportDate() );
 		$t_p5 = self::createTimeline( $t_p5, $db->getFirstReportDate() );
-			
+
+		$average_report = (int)($db->getTotalReport() / count($t_total));
+
 		foreach( $t_total as $d=>$n ) {
 			if( $t_total[$d] == 0 || $t_bounties[$d] == 0 ) {
 				$t_average_bounties[$d] = 0;
@@ -760,8 +762,9 @@ class Statistics
 			if( $t_p0[$d] || $t_p1[$d] || $t_p2[$d] || $t_p3[$d] || $t_p4[$d] || $t_p5[$d] ) {
 				$t_total[$d] = 0;
 			}
+			$t_average_report[$d] = $average_report;
 		}
-		
+
 		$t_return = [];
 		$t_return['p0'] = array_values( $t_p0 );
 		$t_return['p1'] = array_values( $t_p1 );
@@ -778,8 +781,9 @@ class Statistics
 		$t_return['total'] = array_values( $t_total );
 		$t_return['bounties'] = array_values( $t_bounties );
 		$t_return['average_bounties'] = array_values( $t_average_bounties );
+		$t_return['average_report'] = array_values( $t_average_report );
 		$t_return['cnt'] = $t_cnt;
-		
+
 		return json_encode( $t_return );
 	}
 
@@ -799,10 +803,11 @@ class Statistics
 		$t_critical = [];
 		$t_total    = [];
 		$t_bounties = [];
-		$t_average_bounties  = [];
+		$t_average_bounty   = [];
+		$t_average_bounties = [];
 		$t_cnt = [ 'none'=>0, 'low'=>0, 'medium'=>0, 'high'=>0, 'critical'=>0 ];
 		$first_report_date = null;
-		
+
 		foreach( $db->getReports() as $report )
 		{
 			/*if( $report->getIgnore() ) {
@@ -819,7 +824,7 @@ class Statistics
 				$t_total[ $d ] = 0;
 			}
 			$t_total[ $d ]++;
-			
+
 			if( !isset($t_bounties[$d]) ) {
 				$t_bounties[ $d ] = 0;
 			}
@@ -853,7 +858,9 @@ class Statistics
 		$t_p3 = self::createTimeline( $t_p3, $db->getFirstReportDate() );
 		$t_p4 = self::createTimeline( $t_p4, $db->getFirstReportDate() );
 		$t_p5 = self::createTimeline( $t_p5, $db->getFirstReportDate() );
-			
+
+		$average_bounty = (int)($db->getTotalBounty() / $db->getTotalReport());
+
 		foreach( $t_total as $d=>$n ) {
 			if( $t_total[$d] == 0 || $t_bounties[$d] == 0 ) {
 				$t_average_bounties[$d] = 0;
@@ -863,8 +870,10 @@ class Statistics
 			if( $t_p0[$d] || $t_p1[$d] || $t_p2[$d] || $t_p3[$d] || $t_p4[$d] || $t_p5[$d] ) {
 				$t_total[$d] = 0;
 			}
+
+			$t_average_bounty[$d] = $average_bounty;
 		}
-		
+
 		$t_return = [];
 		$t_return['p0'] = array_values( $t_p0 );
 		$t_return['p1'] = array_values( $t_p1 );
@@ -881,8 +890,9 @@ class Statistics
 		$t_return['total'] = array_values( $t_total );
 		$t_return['bounties'] = array_values( $t_bounties );
 		$t_return['average_bounties'] = array_values( $t_average_bounties );
+		$t_return['average_bounty'] = array_values( $t_average_bounty );
 		$t_return['cnt'] = $t_cnt;
-		
+
 		return json_encode( $t_return );
 	}
 
@@ -903,7 +913,7 @@ class Statistics
 			}*/
 
 			$d = date( 'm/y', $r->getCreatedAt() );
-		
+
 			if( is_null($first_report_date) || $r->getCreatedAt() < $first_report_date ) {
 				$first_report_date = $r->getCreatedAt();
 			}
@@ -942,25 +952,25 @@ class Statistics
 			/*
 			if( $r->getFirstResponseDate() ) {
 				$t_created_at['fb'][] = $r->getCreatedAt();
-				$t_first_response[] = [ 
-					(int)($r->getCreatedAt().'000'), 
-					$r->getFirstResponseTime(), 
+				$t_first_response[] = [
+					(int)($r->getCreatedAt().'000'),
+					$r->getFirstResponseTime(),
 				];
 			}
 
 			if( $r->getFirstBountyDate() ) {
 				$t_created_at['fb'][] = $r->getCreatedAt();
-				$t_first_bounty[] = [ 
-					(int)($r->getCreatedAt().'000'), 
-					$r->getFirstBountyTime(), 
+				$t_first_bounty[] = [
+					(int)($r->getCreatedAt().'000'),
+					$r->getFirstBountyTime(),
 				];
 			}
 
 			if( $r->getResolutionDate() ) {
 				$t_created_at['r'][] = $r->getCreatedAt();
-				$t_resolution[] = [ 
-					(int)($r->getCreatedAt().'000'), 
-					$r->getResolutionTime(), 
+				$t_resolution[] = [
+					(int)($r->getCreatedAt().'000'),
+					$r->getResolutionTime(),
 				];
 			}
 			*/
@@ -996,7 +1006,7 @@ class Statistics
 				$t_resolution[$d] = (float)sprintf( "%.02f", @(array_sum($v) / count($v)) );
 			}
 		}
-		
+
 		ksort( $t_first_response );
 		ksort( $t_first_bounty );
 		ksort( $t_triage );
@@ -1056,7 +1066,7 @@ class Statistics
 		{
 			//$t = $tt = null;
 			$d = date( 'm/y', $r->getCreatedAt() );
-		
+
 			foreach( $t_bigone as &$t ) {
 				foreach( $t as &$tt ) {
 					if( !isset($tt[$d]) ) {
@@ -1069,7 +1079,7 @@ class Statistics
 				$time = $r->getFirstResponseTime();
 				$t_bigone['t_first_response']['all'][$d][] = $time;
 				$t_bigone['t_first_response'][$r->getSeverity()][$d][] = $time;
-			}	
+			}
 
 			if( $r->getFirstBountyDate() ) {
 				$time = $r->getFirstBountyTime();
@@ -1101,13 +1111,13 @@ class Statistics
 						$t_bigone[$metric][$severity][$d] = 0;
 					} else {
 						$t_bigone[$metric][$severity][$d] = (float)sprintf( "%.02f", @(array_sum($v) / count($v)) );
-					}		
+					}
 				}
-			
+
 				ksort( $t_bigone[$metric][$severity] );
 				$r = self::createTimeline( $t_bigone[$metric][$severity], $first_report_date );
 				$t_bigone[$metric][$severity] = array_values( $r );
-			
+
 				$t_return['categories'] = array_keys( $r );
 			}
 		}
@@ -1124,7 +1134,7 @@ class Statistics
 		$t_top = self::top_tags( $db );
 
 		$t_tags = [];
-		
+
 		foreach( $db->getReports() as $report )
 		{
 			if( $report->getIgnore() ) {
@@ -1145,7 +1155,7 @@ class Statistics
 				$t_tags[$tag][ $d ]++;
 			}
 		}
-		
+
 		foreach( $t_tags as $k=>$t ) {
 			$t_tags[$k] = self::createTimeline( $t, $db->getFirstReportDate() );
 		}
@@ -1161,7 +1171,7 @@ class Statistics
 		$t_return['tags'] = array_keys( $t_top['t_n_report'] );
 		$t_return['top_datas'] = $t_top_datas;
 		//var_dump( $t_return );
-		
+
 		return json_encode( $t_return );
 	}
 
@@ -1189,7 +1199,7 @@ class Statistics
 		</table>';
 		$n_report = ob_get_contents();
 		ob_end_clean();
-		
+
 		ob_start();
 		echo '<table class="table">
 			<thead>
@@ -1210,7 +1220,7 @@ class Statistics
 		</table>';
 		$bounty = ob_get_contents();
 		ob_end_clean();
-		
+
 		ob_start();
 		echo '<table class="table">
 			<thead>
@@ -1231,11 +1241,11 @@ class Statistics
 		</table>';
 		$reputation = ob_get_contents();
 		ob_end_clean();
-		
+
 		return ['n_report'=>$n_report, 'bounty'=>$bounty, 'reputation'=>$reputation];
 	}
-	
-	
+
+
 	public static function top_program_best_hackers( $db )
 	{
 		$m6_start = mktime( 0, 0, 0, date('m')-6, date('d'), date('Y') );
@@ -1294,8 +1304,8 @@ class Statistics
 				$tmp['average'][] = $data[$p]['datas'][$h]['average'];
 			}
 
-			array_multisort( $tmp['bounty'], SORT_DESC, $tmp['n_report'], SORT_ASC, SORT_NUMERIC, $data[$p]['datas'] );		
-		
+			array_multisort( $tmp['bounty'], SORT_DESC, $tmp['n_report'], SORT_ASC, SORT_NUMERIC, $data[$p]['datas'] );
+
 		}
 
 		return $data;
@@ -1324,7 +1334,7 @@ class Statistics
 		</table>';
 		$n_report = ob_get_contents();
 		ob_end_clean();
-		
+
 		ob_start();
 		echo '<table class="table">
 			<thead>
@@ -1345,7 +1355,7 @@ class Statistics
 		</table>';
 		$bounty = ob_get_contents();
 		ob_end_clean();
-		
+
 		ob_start();
 		echo '<table class="table">
 			<thead>
@@ -1366,11 +1376,11 @@ class Statistics
 		</table>';
 		$reputation = ob_get_contents();
 		ob_end_clean();
-		
+
 		return ['n_report'=>$n_report, 'bounty'=>$bounty, 'reputation'=>$reputation];
 	}
-	
-	
+
+
 	public static function top_program_best_spammers( $db )
 	{
 		$m6_start = mktime( 0, 0, 0, date('m')-6, date('d'), date('Y') );
@@ -1429,8 +1439,8 @@ class Statistics
 				$tmp['average'][] = $data[$p]['datas'][$h]['average'];
 			}
 
-			array_multisort( $tmp['bounty'], SORT_ASC, $tmp['n_report'], SORT_DESC, SORT_NUMERIC, $data[$p]['datas'] );		
-		
+			array_multisort( $tmp['bounty'], SORT_ASC, $tmp['n_report'], SORT_DESC, SORT_NUMERIC, $data[$p]['datas'] );
+
 		}
 
 		return $data;
@@ -1442,13 +1452,13 @@ class Statistics
 		if( is_null($end_date) ) {
 			$end_date = time();
 		}
-		
+
 		$t_date = [];
 		$start = date( 'Ym', $start_date );
 		$end = date( 'Ym', $end_date );
 		$start_month = date( 'n', $start_date );
 		$start_year = date( 'Y', $start_date );
-		
+
 		for( $i=$start,$j=0 ; $i<$end ; $j++ ) {
 			$ts = mktime( 0, 0, 0, $start_month+$j, 1, $start_year );
 			$i = date( 'Ym', $ts );
@@ -1456,7 +1466,7 @@ class Statistics
 		}
 
 		$t_final = [];
-		
+
 		foreach( $t_date as $d ) {
 			if( isset($t_datas[$d]) ) {
 				$t_final[$d] = $t_datas[$d];
@@ -1464,7 +1474,7 @@ class Statistics
 				$t_final[$d] = 0;
 			}
 		}
-		
+
 		return $t_final;
 	}
 }

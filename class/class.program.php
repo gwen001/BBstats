@@ -2,19 +2,18 @@
 
 /**
  * I don't believe in license
- * You can do want you want with this program
- * - gwen -
+ * You can do whatever you want with this program
  */
 
 class program
 {
 	private static $_instance = null;
 
-	
+
 	public function __construct() {
 	}
 
-	
+
 	public static function getInstance() {
 		if( is_null(self::$_instance) ) {
 			$c = __CLASS__;
@@ -26,7 +25,7 @@ class program
     public function setInfos( $infos )
     {
         $o_infos = json_decode( $infos );
-        
+
         $this->setId( $o_infos->id );
         $this->setName( $o_infos->name );
         $this->setHandle( $o_infos->handle );
@@ -211,7 +210,7 @@ class program
 		}
 		return $r->getCreatedAt();
 	}
-	
+
 
     private $last_report_id = '';
 
@@ -261,7 +260,7 @@ class program
         return  true;
     }
 
-    
+
     private $hacktivity = null;
 
     public function getHacktivity() {
@@ -297,7 +296,7 @@ class program
 
         return count($this->hacktivity);
     }
-    
+
 
 
     public static function load( $handle )
@@ -307,12 +306,12 @@ class program
         if( is_null($db_file) || !is_file($db_file) ) {
             return false;
         }
-                    
+
         $datas = file_get_contents( $db_file );
 		if( $datas === false ) {
 			return false;
         }
-        
+
         if( strlen($datas) )
         {
             $program = json_decode( $datas );
@@ -372,12 +371,12 @@ class program
         $this->setSmallestBountyId( $smallest_bounty_id );
         $this->setHigherBountyId( $higher_bounty_id );
         $this->setAverageBounty( (int)($total_bounty/$this->getTotalReport()) );
-        
+
         $range = $higher_bounty / 4;
         $average_bounty = $total_bounty / $this->getTotalReport();
         $average_bounty2 = $average_bounty / 2;
         $average_bounty3 = $average_bounty / 3;
-        
+
         $t_ranges = [
 			'none'     => 0,
 			'low'      => 1,
@@ -392,7 +391,7 @@ class program
             $bounty = $r->getTotalBounty();
 
             foreach( $t_ranges as $k=>$v ) {
-                if( $bounty < $v ) {    
+                if( $bounty < $v ) {
                     break;
                 }
                 $severity = $k;
@@ -414,7 +413,7 @@ class program
 		if( $r === false ) {
 			return false;
 		}
-		
+
 		chmod( $this->db_file, 0777 );
 		return true;
     }

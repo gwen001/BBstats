@@ -137,7 +137,15 @@ if( isset($_GET['program']) ) {
 	        name: 'None',
 	        data: program_evolution_data.none,
 	        color: '#0278b8'
-	    }/*, {
+	    }, {
+	        type: 'spline',
+	        name: 'Average report',
+	        data: program_evolution_data.average_report,
+	        color: '#c124bf',
+	        marker: {
+	            enabled: false
+	        }
+		}/*, {
 			type: 'pie',
 			name: 'Repartition',
 			showInLegend: false,

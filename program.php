@@ -2,8 +2,7 @@
 
 /**
  * I don't believe in license
- * You can do want you want with this program
- * - gwen -
+ * You can do whatever you want with this program
  */
 
 require_once( 'config.php' );
@@ -38,10 +37,10 @@ $t_reports = $db->getReports();
         <script src="js/dataTables.bootstrap.min.js"></script>
    		<script src="js/highcharts.src.min.js"></script>
 	</head>
-	
+
 	<body>
 	    <span id="filter-reset"><a href="javascript:setFilterTerm('');"><img src="img/stop.png" width="20" /></a></span>
-		
+
         <div id="program-container" class="container-fluid">
             <div class="row">
                 <div class="col-md-12" id="program-infos">
@@ -113,13 +112,13 @@ $t_reports = $db->getReports();
 				$("html, body").animate({scrollTop: 2000}, 100);
 				input_search.keyup();
             }
-            
+
             $(document).ready(function(){
 				$('.search-term').click(function(){
 					var term = $(this).html();
 		            setFilterTerm( term );
 	            });
-	            
+
             	$('.datatable').DataTable({
             		'paging': true,
 				    'pageLength': 75,
@@ -132,7 +131,7 @@ $t_reports = $db->getReports();
 						'sSearch': ''
 				     }
             	});
-            	
+
             	var reset_btn = $('#filter-reset');
 				var input_search = $('input[type="search"]');
             	input_search.attr( 'placeholder', 'Search...' );

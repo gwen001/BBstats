@@ -2,8 +2,7 @@
 
 /**
  * I don't believe in license
- * You can do want you want with this program
- * - gwen -
+ * You can do whatever you want with this program
  */
 
 class Report
@@ -28,8 +27,8 @@ class Report
 	public $first_bounty_date = null;
 	public $triage_date = null;
 	public $resolution_date = null;
-	
-	
+
+
 	public function getId() {
 		return $this->id;
 	}
@@ -37,8 +36,8 @@ class Report
 		$this->id = $v;
 		return true;
 	}
-	
-	
+
+
 	public function getIgnore() {
 		return $this->ignore;
 	}
@@ -54,8 +53,8 @@ class Report
 		$this->setIgnore( 0 );
 		return true;
 	}
-	
-	
+
+
 	public function getManual() {
 		return $this->manual;
 	}
@@ -63,8 +62,8 @@ class Report
 		$this->manual = (int)$v;
 		return true;
 	}
-	
-	
+
+
 	public function getPlatform() {
 		return $this->platform;
 	}
@@ -72,7 +71,7 @@ class Report
 		$this->platform = trim( $v );
 		return true;
 	}
-	
+
 
 	public function getReporter() {
 		return $this->reporter;
@@ -81,8 +80,8 @@ class Report
 		$this->reporter = trim( $v );
 		return true;
 	}
-	
-	
+
+
 	public function getCreatedAt() {
 		return $this->created_at;
 	}
@@ -90,8 +89,8 @@ class Report
 		$this->created_at = $v;
 		return true;
 	}
-	
-	
+
+
 	public function getTitle() {
 		return $this->title;
 	}
@@ -99,8 +98,8 @@ class Report
 		$this->title = trim( $v );
 		return true;
 	}
-	
-	
+
+
 	public function getProgram() {
 		return $this->program;
 	}
@@ -108,8 +107,8 @@ class Report
 		$this->program = trim( $v );
 		return true;
 	}
-	
-	
+
+
     public function getSeverity() {
         return $this->severity;
     }
@@ -136,7 +135,7 @@ class Report
 		$this->reputations = [];
 		return true;
 	}
-	
+
 	public function getTotalReputation() {
 		$total = 0;
 		foreach( $this->reputations as $r ) {
@@ -145,7 +144,7 @@ class Report
 		return $total;
 	}
 
-	
+
 	public function addBounty( $created_at, $amount ) {
 		$bounty = new stdClass();
 		$bounty->created_at = $created_at;
@@ -159,8 +158,8 @@ class Report
 		$this->bounties = $v;
 		return true;
 	}
-	
-	
+
+
 	public function getTotalBounty() {
 		$total = 0;
 		foreach( $this->bounties as $b ) {
@@ -175,8 +174,8 @@ class Report
 		$this->setBounties( [$bounty] );
 		return true;
 	}
-	
-	
+
+
 	public function getState() {
 		return $this->state;
 	}
@@ -184,8 +183,8 @@ class Report
 		$this->state = trim( $v );
 		return true;
 	}
-	
-	
+
+
 	public function getRating() {
 		return $this->rating;
 	}
@@ -193,8 +192,14 @@ class Report
 		$this->rating = (int)$v;
 		return true;
 	}
-	
-	
+
+
+	public function getImpact() {
+		$i = ($this->rating) ? (6-$this->rating) : 0;
+		return $i;
+	}
+
+
 	public function getTags( $str=false ) {
 		if( $str ) {
 			return implode(', ',$this->tags);
@@ -229,7 +234,7 @@ class Report
 			return false;
 		}
 	}
-	
+
 
 	public function getFirstResponseDate() {
 		return $this->first_response_date;
@@ -243,7 +248,7 @@ class Report
 		return $scd;
 	}
 
-	
+
 	public function getFirstBountyDate() {
 		return $this->first_bounty_date;
 	}
@@ -255,8 +260,8 @@ class Report
 		$scd = Utils::datetimeDiff( $this->getCreatedAt(), $this->getFirstBountyDate() )->total_sec / 3600 / 24;
 		return $scd;
 	}
-	
-	
+
+
 	public function getTriageDate() {
 		return $this->triage_date;
 	}
@@ -268,7 +273,7 @@ class Report
 		$scd = Utils::datetimeDiff( $this->getCreatedAt(), $this->getTriageDate() )->total_sec / 3600 / 24;
 		return $scd;
 	}
-	
+
 
 	public function getResolutionDate() {
 		return $this->resolution_date;
@@ -281,37 +286,37 @@ class Report
 		$scd = Utils::datetimeDiff( $this->getCreatedAt(), $this->getResolutionDate() )->total_sec / 3600 / 24;
 		return $scd;
 	}
-	
-	
+
+
 	public static function generateKey( $platform, $program, $report_id )
 	{
 		return md5( $platform.'.'.$program.'.'.$report_id );
 	}
-	
-	
+
+
 	public static function massAutoTag( $t_reports )
 	{
 		foreach( $t_reports as $key=>$report ) {
 			$report->autoTag();
 		}
-		
+
 		return $t_reports;
 	}
-	
-	
+
+
 	public function autoTag()
 	{
 		$t_tags = self::guessTag( $this->getTitle() );
 		$this->setTags( $t_tags );
-		
+
 		return count($t_tags);
 	}
-	
-	
+
+
 	public static function guessTag( $title )
 	{
 		$t_guess = [];
-		
+
 		foreach( AUTO_RATE_TAG as $rating=>$t_tags ) {
 			foreach( $t_tags as $tag=>$t_terms ) {
 				foreach( $t_terms['tag_terms'] as $tterm ) {
@@ -322,33 +327,33 @@ class Report
 				}
 			}
 		}
-		
+
 		$t_guess = array_unique($t_guess,SORT_STRING);
 		sort( $t_guess );
-		
+
 		return $t_guess;
 	}
-	
-	
+
+
 	public static function massAutoRate( $t_reports )
 	{
 		foreach( $t_reports as $key=>$report ) {
 			$report->autoRate();
 		}
-		
+
 		return $t_reports;
 	}
-	
-	
+
+
 	public function autoRate()
 	{
 		$rating = self::guessRate( $this->getTitle() );
 		$this->setRating( $rating );
-		
+
 		return $rating;
 	}
-	
-	
+
+
 	public static function guessRate( $title )
 	{
 		foreach( AUTO_RATE_TAG as $rating=>$t_tags ) {
@@ -368,7 +373,7 @@ class Report
 				}
 			}
 		}
-		
+
 		return 0;
 	}
 }
