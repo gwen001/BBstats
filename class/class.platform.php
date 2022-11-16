@@ -1,10 +1,5 @@
 <?php
 
-/**
- * I don't believe in license
- * You can do whatever you want with this program
- */
-
 abstract class Platform
 {
 	protected $username = '';

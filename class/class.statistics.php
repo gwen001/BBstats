@@ -1,10 +1,5 @@
 <?php
 
-/**
- * I don't believe in license
- * You can do whatever you want with this program
- */
-
 class Statistics
 {
 	const TOP_LIMIT = 10;

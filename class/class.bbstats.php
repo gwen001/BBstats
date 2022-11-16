@@ -1,10 +1,5 @@
 <?php
 
-/**
- * I don't believe in license
- * You can do whatever you want with this program
- */
-
 class BBstats
 {
 	const SHORT_OPTIONS = 'a:ef:g:hk:n:p:rrrttt';

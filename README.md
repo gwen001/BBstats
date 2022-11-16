@@ -1,8 +1,23 @@
-# Bug Bounty Stats
-It's a tool that would be able (in the future) to aggregrate your reports/bounties from different platforms in order to create combined stats and graphs.  
+<h1 align="center">BBStats</h1>
 
+<h4 align="center">A tool that display stats and graphs about your bug bounty activity.</h4>
 
-### Requirements
+<p align="center">
+    <img src="https://img.shields.io/badge/php-%3E=5.5-blue" alt="php badge">
+    <img src="https://img.shields.io/badge/license-MIT-green" alt="MIT license badge">
+    <a href="https://twitter.com/intent/tweet?text=https%3a%2f%2fgithub.com%2fgwen001%2fBBStats%2f" target="_blank"><img src="https://img.shields.io/twitter/url?style=social&url=https%3A%2F%2Fgithub.com%2Fgwen001%2FBBStats" alt="twitter badge"></a>
+</p>
+
+<p align="center">
+    <img src="https://img.shields.io/github/stars/gwen001/BBStats?style=social" alt="github stars badge">
+    <img src="https://img.shields.io/github/watchers/gwen001/BBStats?style=social" alt="github watchers badge">
+    <img src="https://img.shields.io/github/forks/gwen001/BBStats?style=social" alt="github forks badge">
+</p>
+
+---
+
+## Requirements
+
 A web server with PHP installed and Curl extension enabled.  
 
 Put the code at the root of your web server:
@@ -10,13 +25,12 @@ Put the code at the root of your web server:
 git clone https://github.com/gwen001/BBstats
 ```
 
-
-### Auth
+## Auth
 
 Set environment variable `HACKERONE_USERNAME` and `HACKERONE_PASSWORD`
 
+## Recommended usage
 
-### Recommended usage
 Grab the datas from your favorite platform for the first time: *quick-init.sh*
 ```
 php data-grabber.php -p hackerone -a n -rr -tt -e
@@ -32,7 +46,8 @@ Enjoy the stats!
 firefox http://127.0.0.1/BBstats/
 ```
 
-### Grabber
+## Grabber
+
 <!-- help -->
 ```
 Usage: php data-grabber.php -p <platform> [OPTIONS]
@@ -63,12 +78,12 @@ Examples:
 ```
 <!-- /help -->
 
-### Web
+## Web
 You can choose which graph you want to display in `config.php`.  
 You create your own autotag and autorate configuration in `config.php`.  
 
+## Todo
 
-### Todo
 __grabber__
 - add more platform (Bugcrowd, Cobalt)  
 
@@ -92,8 +107,8 @@ __graph__
 __bugs__
 - probably alot!
 
+## Samples
 
-### Samples
 <table>
 	<tbody>
 		<tr>
@@ -112,7 +127,7 @@ __bugs__
 	</tbody>
 </table>
 
-
 ---
-I don't believe in license.  
-You can do whatever you want with this program.  
+
+Feel free to [open an issue](/../../issues/) if you have any problem with the script.  
+

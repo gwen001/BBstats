@@ -22,9 +22,9 @@
                 	It doesn't store any sensitive details of the reports. Only the following datas are used:
                 	id, program, title, reputation, bounties, state, creation date.
                 </p>
-                <b>Copyright</b>
+                <b>License</b>
                 <p>
-                	I don't believe in license, you can do want you want with this program.
+                	This program is MIT licensed.
                 </p>
             </div>
         </div>

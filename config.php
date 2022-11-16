@@ -1,10 +1,5 @@
 <?php
 
-/**
- * I don't believe in license
- * You can do whatever you want with this program
- */
-
 //ini_set( 'display_errors', false );
 //error_reporting( 0 );
 

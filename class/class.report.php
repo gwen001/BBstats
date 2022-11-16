@@ -1,10 +1,5 @@
 <?php
 
-/**
- * I don't believe in license
- * You can do whatever you want with this program
- */
-
 class Report
 {
 	public const T_STATE = ['new','triaged','resolved','informative','duplicate','not-applicable'];
