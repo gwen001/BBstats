@@ -107,7 +107,7 @@ __graph__
 __bugs__
 - probably alot!
 
-## Samples
+---
 
 <table>
 	<tbody>
