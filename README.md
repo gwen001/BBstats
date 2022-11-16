@@ -85,7 +85,7 @@ You create your own autotag and autorate configuration in `config.php`.
 ## Todo
 
 __grabber__
-- add more platform (Bugcrowd, Cobalt)  
+- add more platform (Bugcrowd, YesWeHack, Intigriti, Synack...)  
 
 __db__
 - ?
